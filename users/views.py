@@ -15,7 +15,7 @@ from .api.login_serializers import (
     PersonalLoginWebSerializer,
 )
 from .api.register_serializer import (
-    RegisterTravelerSerializer,
+    RegisterStudentSerializer,
     RegisterAdminSerializer
 )
 
@@ -35,8 +35,8 @@ class RegisterAdminView(generics.CreateAPIView):
     queryset = User.objects.all()
 
 
-class RegisterTravelerView(generics.CreateAPIView):
-    serializer_class = RegisterTravelerSerializer
+class RegisterStudentView(generics.CreateAPIView):
+    serializer_class = RegisterStudentSerializer 
     queryset = User.objects.all()
 
 
@@ -56,7 +56,7 @@ class PersonalLoginWebView(generics.GenericAPIView):
         return get_token(user)
 
 
-class TravelerViewSet(viewsets.ModelViewSet):
+class StudentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager | IsUser]
     queryset = User.objects.filter(user_type="traveler")
     serializer_class = UserSerializer

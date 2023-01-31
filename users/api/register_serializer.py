@@ -40,7 +40,7 @@ class RegisterAdminSerializer(serializers.ModelSerializer):
         return user
 
 
-class RegisterTravelerSerializer(serializers.ModelSerializer):
+class RegisterStudentSerializer(serializers.ModelSerializer):
     user_type = serializers.HiddenField(default='traveler')
     password = serializers.CharField(
         write_only=True,

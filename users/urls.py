@@ -10,7 +10,7 @@ from dj_rest_auth.views import (
 from . import views
 from .views import (
     AdminViewSet,
-    TravelerViewSet,
+    StudentViewSet,
     PersonalLoginWebView, ManagerViewSet, AllUserViewSet, TokenVerifyView
 )
 
@@ -18,10 +18,10 @@ user_router = DefaultRouter()
 user_router.register(r'admins', AdminViewSet, basename='admins')
 user_router.register(r'allusers', AllUserViewSet, basename='allusers')
 user_router.register(r'managers', ManagerViewSet, basename='managers')
-user_router.register(r'travelers', TravelerViewSet, basename='travelers')
+user_router.register(r'students', StudentViewSet, basename='students')
 
 urlpatterns = [
-    path("register/student/", views.RegisterTravelerView.as_view()),
+    path("register/student/", views.RegisterStudentView.as_view()),
     path("register/admin/", views.RegisterAdminView.as_view()),
     path("login/personal/", PersonalLoginWebView.as_view()),
     path("refresh/", TokenRefreshView.as_view()),

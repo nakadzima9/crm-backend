@@ -53,3 +53,4 @@ class TokenVerifySerializer(_TokenVerifySerializer):
         }
 
         return data
+
