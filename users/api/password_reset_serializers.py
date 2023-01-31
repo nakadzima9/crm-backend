@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from just_visit import settings
-from rest_auth.serializers import PasswordResetSerializer as _PasswordResetSerializer
+from core import settings
+from dj_rest_auth.serializers import PasswordResetSerializer as _PasswordResetSerializer
 from users.models import User
 
 

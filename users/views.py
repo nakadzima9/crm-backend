@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenVerifyView
 from .models import User
 
 from .api.serializers import (
-    UserSerializer, TokenVerifySerializer, ProfileSerializer
+    UserSerializer, TokenVerifySerializer
 )
 from .api.login_serializers import (
     PersonalLoginWebSerializer,
@@ -87,7 +87,3 @@ class AllUserViewSet(viewsets.ModelViewSet):
 class TokenVerifyView(TokenVerifyView):
     serializer_class = TokenVerifySerializer
 
-
-class ProfileViewSet(viewsets.ModelViewSet):
-    serializer_class = ProfileSerializer
-    queryset = User.objects.all().order_by('id')
