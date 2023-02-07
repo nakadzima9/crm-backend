@@ -4,15 +4,15 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenObtainPairView
 )
-from dj_rest_auth.views import (
-    PasswordResetView, PasswordResetConfirmView
-)
+
 from . import views
 from .views import (
     AdminViewSet,
     StudentViewSet,
     PersonalLoginWebView, ManagerViewSet, AllUserViewSet, TokenVerifyView
 )
+
+from .api.password_reset_views import PasswordResetCheckCodeView, PasswordResetEmailView, PasswordChangeView
 
 user_router = DefaultRouter()
 user_router.register(r'admins', AdminViewSet, basename='admins')
@@ -34,6 +34,7 @@ urlpatterns = [
     path('jwt/token/verify',
          TokenVerifyView.as_view(),
          name='token_verify'),
-    path("password_reset/", PasswordResetView.as_view(), name="password_reset"),
-    path("confirm-email/<uidb64>/<token>/", PasswordResetConfirmView.as_view(), name="confirm-email"),
+    path("password_reset/", PasswordResetEmailView.as_view(), name="password_reset_email"),
+    path("password_reset_code/", PasswordResetCheckCodeView.as_view(), name="password_reset_code"),
+    path("password_reset_change/", PasswordChangeView.as_view(), name="password_reset_change")
 ]
