@@ -14,7 +14,7 @@ from .api.serializers import (
 from .api.login_serializers import (
     PersonalLoginWebSerializer,
 )
-from .api.register_serializer import (
+from .api.register_serializers import (
     RegisterStudentSerializer,
     RegisterAdminSerializer
 )

@@ -137,7 +137,7 @@ AUTH_USER_MODEL = 'users.User'
 
 REST_USER_JWT = True
 JWT_AUTH_COOKIE = 'access-token'
-JWT_AUHT_REFRESH_COOKIE = 'refresh-token'
+JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -209,7 +209,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIRA_URL = '/media/'
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

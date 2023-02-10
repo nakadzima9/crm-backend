@@ -41,7 +41,7 @@ class RegisterAdminSerializer(serializers.ModelSerializer):
 
 
 class RegisterStudentSerializer(serializers.ModelSerializer):
-    user_type = serializers.HiddenField(default='traveler')
+    user_type = serializers.HiddenField(default='student')
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -60,7 +60,7 @@ class RegisterStudentSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        return validate(self, data, User, RegisterTravelerSerializer)
+        return validate(self, data, User, RegisterStudentSerializer)
 
     def validate_email(self, value):
         return validate_email(value)

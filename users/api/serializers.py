@@ -5,7 +5,7 @@ from rest_framework_simplejwt.tokens import UntypedToken, RefreshToken
 from rest_framework.exceptions import ValidationError
 
 from core import settings
-from users.models import User
+from users.models import User, OTP
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,3 +54,35 @@ class TokenVerifySerializer(_TokenVerifySerializer):
 
         return data
 
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+    password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('password', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+
+        return instance
+
+
+class PasswordCheckEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email"]
+
+
+class PasswordCodeCheckSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OTP
+        fields = ["code"]

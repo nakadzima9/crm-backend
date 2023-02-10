@@ -70,3 +70,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'Системный пользователь'
         verbose_name_plural = "Системные пользователи"
 
+
+class OTP(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    code = models.CharField(max_length=6, unique=True)
+    created_time = models.DateTimeField(auto_now_add=True)
+    # life_time_in_seconds = models.PositiveSmallIntegerField(default=60)
