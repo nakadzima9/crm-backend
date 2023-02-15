@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils import timezone
+from PIL import Image
 
 
 class SuperUser(BaseUserManager):
@@ -76,3 +77,10 @@ class OTP(models.Model):
     code = models.CharField(max_length=6, unique=True)
     created_time = models.DateTimeField(auto_now_add=True)
     # life_time_in_seconds = models.PositiveSmallIntegerField(default=60)
+
+
+class Profile(models.Model):
+    objects = None
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics', blank=True, null=True)
+

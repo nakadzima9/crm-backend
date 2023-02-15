@@ -48,6 +48,7 @@ class Course(models.Model):
 
 class ScheduleType(models.Model):
     type_name = models.CharField(max_length=10)
+    time = models.DateTimeField(null=True)
 
 
 class Group(models.Model):
@@ -115,6 +116,7 @@ class Payment(models.Model):
     amount = models.FloatField()
     client_card = models.ForeignKey(StudentCard, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f'{self.client_card}'
@@ -125,9 +127,3 @@ class BlackList(models.Model):
     reason = models.CharField(max_length=100)
     added_at = models.DateField()
 
-
-class StudentCardOperation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    card = models.ForeignKey(StudentCard, on_delete=models.CASCADE)
-    status_changed_to = models.ForeignKey(CardStatus, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
