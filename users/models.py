@@ -37,7 +37,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     TYPE_ROLE_CHOICES = [
         ("admin", "Admin"),
         ("manager", "Manager"),
-        ("traveler", "Traveler"),
     ]
     TYPE_SEX_CHOICES = [
         ("male", "Male"),
@@ -51,10 +50,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     image = models.ImageField(upload_to="media/profile_image/", blank=True, null=True, verbose_name="Фото профиля")
     description = models.TextField(verbose_name="О себе", blank=True, null=True)
     sex = models.CharField(max_length=50, choices=TYPE_SEX_CHOICES, blank=True, null=True, verbose_name="Пол")
-    user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, default="traveler",
+    user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, default="manager",
                                  verbose_name="Тип пользователя")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
-    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    is_active = models.BooleanField(default=False, verbose_name="Активен")
     is_superuser = models.BooleanField(default=False, verbose_name="Суперь пользователь")
     date_joined = models.DateTimeField(default=timezone.now, verbose_name="Дата создания учётной записи")
 
