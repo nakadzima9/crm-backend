@@ -63,7 +63,7 @@ def get_token(user):
             # "status": "You successfully logged in",
             "expires_day": expires_day,
             "is_superuser": user.is_superuser,
-            # "user_type": user.user_type,
+            "user_type": user.user_type,
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }
