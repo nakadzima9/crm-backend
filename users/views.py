@@ -20,7 +20,7 @@ from .api.register_serializers import (
 )
 
 from .api.custom_funcs import get_token
-from .permissions import IsTraveler, IsSuperUser, IsManager, IsUser
+from .permissions import IsSuperUser, IsManager, IsUser
 
 sensitive_post_parameters_m = method_decorator(
     sensitive_post_parameters(

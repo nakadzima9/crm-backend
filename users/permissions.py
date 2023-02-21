@@ -9,25 +9,13 @@ class IsUser(BasePermission):
 
 
 class IsSuperUser(BasePermission):
-
     def has_permission(self, request, view):
         return bool(request.user.is_authenticated and request.user.user_type == 'admin')
 
 
 class IsManager(BasePermission):
-
     def has_permission(self, request, view):
         return bool(request.user.is_authenticated and
                     request.user.user_type == 'manager' and request.method in SAFE_METHODS)
 
-
-class IsTraveler(BasePermission):
-    message = 'Permission denied'
-
-    edit_methods = ["DELETE", ]
-
-    def has_permission(self, request, view):
-        return bool(request.method in SAFE_METHODS or
-                    request.user.is_authenticated and request.user.user_type == 'traveler'
-                    and request.method not in self.edit_methods)
 

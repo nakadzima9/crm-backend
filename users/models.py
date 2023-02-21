@@ -47,7 +47,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")
     phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
-    image = models.ImageField(upload_to="media/profile_image/", blank=True, null=True, verbose_name="Фото профиля")
     description = models.TextField(verbose_name="О себе", blank=True, null=True)
     sex = models.CharField(max_length=50, choices=TYPE_SEX_CHOICES, blank=True, null=True, verbose_name="Пол")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, default="manager",
