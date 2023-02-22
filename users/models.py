@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, default="manager",
                                  verbose_name="Тип пользователя")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
-    is_active = models.BooleanField(default=False, verbose_name="Активен")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
     is_superuser = models.BooleanField(default=False, verbose_name="Суперь пользователь")
     date_joined = models.DateTimeField(default=timezone.now, verbose_name="Дата создания учётной записи")
 
