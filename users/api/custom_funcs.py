@@ -48,17 +48,17 @@ def get_token(user):
     refresh = RefreshToken.for_user(user)
     expires_in = refresh.access_token.lifetime.total_seconds()
     expires_day = datetime.datetime.now() + datetime.timedelta(seconds=expires_in)
-    try:
-        image_url = user.image.url
-    except ValueError:
-        image_url = "null"
+    # try:
+    #     image_url = user.image.url
+    # except ValueError:
+    #     image_url = "null"
 
     return Response(
         {
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
-            "image": image_url,
+            # "image": image_url,
             'user_id': user.id,
             # "status": "You successfully logged in",
             "expires_day": expires_day,
