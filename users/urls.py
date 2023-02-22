@@ -23,8 +23,11 @@ user_router.register(r'students', StudentViewSet, basename='students')
 urlpatterns = [
     # path("register/student/", views.RegisterStudentView.as_view()),
     # path("register/admin/", views.RegisterAdminView.as_view()),
+
     path("login/personal/", PersonalLoginWebView.as_view()),
+
     # path("refresh/", TokenRefreshView.as_view()),
+
     path('jwt/token/',
          TokenObtainPairView.as_view(),
          name='token_obtain_pair'),
