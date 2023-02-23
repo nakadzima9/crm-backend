@@ -1,8 +1,9 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import generics, status, viewsets
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from rest_framework.exceptions import AuthenticationFailed, ValidationError, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.serializers import ValidationError
 
 from rest_framework_simplejwt.views import TokenVerifyView
 
@@ -49,7 +50,7 @@ class PersonalLoginWebView(generics.GenericAPIView):
         password = request.data["password"]
         user = User.objects.filter(email=email).first()
         if user is None or User.objects.filter(email=email, is_active=False):
-            raise AuthenticationFailed("User not found!")
+            raise NotFound("User not found!")
         if not user.check_password(password):
             raise AuthenticationFailed("Incorrect password!")
 
