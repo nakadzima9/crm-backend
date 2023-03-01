@@ -5,24 +5,31 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView
 )
 
-from . import views
+from cmsapp.views import TeacherViewSet
+
 from .views import (
     AdminViewSet,
-    StudentViewSet,
-    PersonalLoginWebView, ManagerViewSet, AllUserViewSet, TokenVerifyView
+    AllUserViewSet,
+    ManagerViewSet,
+    MentorViewSet,
+    PersonalLoginWebView,
+    TokenVerifyView,
+    RegisterAdminView,
+    RegisterManagerView
 )
 
 from .api.password_reset_views import PasswordResetCheckCodeView, PasswordResetEmailView, PasswordChangeView
 
 user_router = DefaultRouter()
 user_router.register(r'admins', AdminViewSet, basename='admins')
-user_router.register(r'allusers', AllUserViewSet, basename='allusers')
+user_router.register(r'all-users', AllUserViewSet, basename='all-users')
 user_router.register(r'managers', ManagerViewSet, basename='managers')
-user_router.register(r'students', StudentViewSet, basename='students')
+# user_router.register(r'mentors', MentorViewSet, basename='mentors')
+user_router.register(r'teachers', TeacherViewSet, basename='teachers')
 
 urlpatterns = [
-    # path("register/student/", views.RegisterStudentView.as_view()),
-    # path("register/admin/", views.RegisterAdminView.as_view()),
+    # path("register/admin/", RegisterAdminView.as_view()),
+    # path("register/manager/", RegisterManagerView.as_view()),
 
     path("login/personal/", PersonalLoginWebView.as_view()),
 
