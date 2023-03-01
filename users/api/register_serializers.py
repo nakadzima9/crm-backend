@@ -4,7 +4,7 @@ from .custom_funcs import validate_phone, validate_email, create, validate
 
 
 class RegisterAdminSerializer(serializers.ModelSerializer):
-    user_type = serializers.HiddenField(default='manager')
+    user_type = serializers.HiddenField(default='admin')
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -14,11 +14,14 @@ class RegisterAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name',
-                  'last_name',
-                  'email',
-                  'password',
-                  'user_type']
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'password',
+            'user_type'
+        ]
         read_only_fields = ['user_type', 'is_superuser']
 
     def validate(self, data):
@@ -40,8 +43,8 @@ class RegisterAdminSerializer(serializers.ModelSerializer):
         return user
 
 
-class RegisterStudentSerializer(serializers.ModelSerializer):
-    user_type = serializers.HiddenField(default='student')
+class RegisterManagerSerializer(serializers.ModelSerializer):
+    user_type = serializers.HiddenField(default='manager')
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -52,6 +55,7 @@ class RegisterStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'id',
             'first_name',
             'last_name',
             'password',
@@ -60,7 +64,7 @@ class RegisterStudentSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        return validate(self, data, User, RegisterStudentSerializer)
+        return validate(self, data, User, RegisterManagerSerializer)
 
     def validate_email(self, value):
         return validate_email(value)
