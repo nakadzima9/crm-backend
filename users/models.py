@@ -47,10 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")
     phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
-    description = models.TextField(verbose_name="О себе", blank=True, null=True)
+    description = models.TextField(max_length=300, blank=True, null=True, verbose_name="О себе")
     sex = models.CharField(max_length=50, choices=TYPE_SEX_CHOICES, blank=True, null=True, verbose_name="Пол")
-    user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, default="manager",
-                                 verbose_name="Тип пользователя")
+    user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     is_superuser = models.BooleanField(default=False, verbose_name="Суперь пользователь")
