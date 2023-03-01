@@ -6,10 +6,10 @@ from rest_framework.exceptions import ValidationError
 
 from core import settings
 from users.models import User, OTP
-
+from .custom_funcs import validate_phone, validate_email, create, validate
 
 class UserSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField('get_image_url')
+    # image = serializers.SerializerMethodField('get_image_url')
 
     class Meta:
         model = User
@@ -35,6 +35,95 @@ class UserSerializer(serializers.ModelSerializer):
             return None
 
 
+class AdminSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text='Leave empty if no change needed',
+        style={'input_type': 'password', 'placeholder': 'Password'}
+    )
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'password',
+                  'phone',
+                  # 'image',
+                  # 'description',
+                  # 'sex',
+                  'user_type',
+                  ]
+        extra_kwargs = {
+            "user_type": {"write_only": True}
+        }
+
+    def validate(self, data):
+        return validate(self, data, User, AdminSerializer)
+
+    def validated_email(self, value):
+        return validate_email(value)
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.is_superuser = True
+        user.is_staff = True
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class ManagerSerializer(serializers.ModelSerializer):
+    # user_type = serializers.HiddenField(default='manager')
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text='Leave empty if no change needed',
+        style={'input_type': 'password', 'placeholder': 'Password'}
+    )
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'password',
+                  'phone',
+                  # 'image',
+                  # 'description',
+                  # 'sex',
+                  'user_type',
+                  ]
+        extra_kwargs = {
+            "user_type": {"write_only": True}
+        }
+
+    def validate(self, data):
+        return validate(self, data, User, ManagerSerializer)
+
+    def validate_email(self, value):
+        return validate_email(value)
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.is_staff = True
+        user.set_password(password)
+        user.user_type = 'manager'
+        user.save()
+        return user
+
+
 class TokenVerifySerializer(_TokenVerifySerializer):
 
     def validate(self, attrs):
@@ -57,14 +146,14 @@ class TokenVerifySerializer(_TokenVerifySerializer):
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
-    password2 = serializers.CharField(write_only=True, required=True)
+    repeat_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ('password', 'password2')
+        fields = ('password', 'repeat_password')
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        if attrs['password'] != attrs['repeat_password']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
