@@ -80,7 +80,7 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class ManagerSerializer(serializers.ModelSerializer):
-    # user_type = serializers.HiddenField(default='manager')
+    user_type = serializers.CharField(default='manager')
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -101,9 +101,9 @@ class ManagerSerializer(serializers.ModelSerializer):
                   # 'sex',
                   'user_type',
                   ]
-        extra_kwargs = {
-            "user_type": {"write_only": True}
-        }
+        # extra_kwargs = {
+        #     "user_type": {"write_only": True}
+        # }
 
     def validate(self, data):
         return validate(self, data, User, ManagerSerializer)
