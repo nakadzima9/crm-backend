@@ -18,10 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone',
+                  'user_type',
                   # 'image',
                   # 'description',
                   # 'sex',
-                  'user_type',
                   ]
 
     read_only_fields = ['user_type']
@@ -114,6 +114,33 @@ class ManagerSerializer(serializers.ModelSerializer):
         user.is_staff = True
         user.set_password(password)
         user.user_type = 'manager'
+        user.save()
+        return user
+
+
+class MentorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'phone',
+                  # 'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+
+    def validate_email(self, value):
+        return validate_email(value)
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.user_type = 'teacher'
         user.save()
         return user
 

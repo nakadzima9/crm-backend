@@ -12,7 +12,7 @@ from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.register_serializers import (RegisterAdminSerializer,
                                        RegisterManagerSerializer)
-from .api.serializers import TokenVerifySerializer, UserSerializer, AdminSerializer, ManagerSerializer
+from .api.serializers import TokenVerifySerializer, UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer
 from .models import User
 from .permissions import IsManager, IsSuperUser, IsUser
 
@@ -55,8 +55,8 @@ class PersonalLoginWebView(generics.GenericAPIView):
 
 class MentorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager | IsUser]
-    queryset = User.objects.filter(user_type="user")
-    serializer_class = UserSerializer
+    queryset = User.objects.filter(user_type="teacher")
+    serializer_class = MentorSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
 

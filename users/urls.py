@@ -5,8 +5,6 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView
 )
 
-from cmsapp.views import TeacherViewSet
-
 from .views import (
     AdminViewSet,
     AllUserViewSet,
@@ -24,8 +22,7 @@ user_router = DefaultRouter()
 user_router.register(r'admins', AdminViewSet, basename='admins')
 user_router.register(r'all-users', AllUserViewSet, basename='all-users')
 user_router.register(r'managers', ManagerViewSet, basename='managers')
-# user_router.register(r'mentors', MentorViewSet, basename='mentors')
-user_router.register(r'teachers', TeacherViewSet, basename='teachers')
+user_router.register(r'teachers', MentorViewSet, basename='teachers')
 
 urlpatterns = [
     # path("register/admin/", RegisterAdminView.as_view()),
