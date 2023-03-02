@@ -19,15 +19,18 @@ from .views import (
 )
 
 from .api.password_reset_views import PasswordResetCheckCodeView, PasswordResetEmailView, PasswordChangeView
+from .views import get_all_users
 
 user_router = DefaultRouter()
 user_router.register(r'admins', AdminViewSet, basename='admins')
-user_router.register(r'all-users', AllUserViewSet, basename='all-users')
+# user_router.register(r'all-users', AllUserViewSet, basename='all-users')
 user_router.register(r'managers', ManagerViewSet, basename='managers')
-# user_router.register(r'mentors', MentorViewSet, basename='mentors')
+user_router.register(r'mentors', MentorViewSet, basename='mentors')
 user_router.register(r'teachers', TeacherViewSet, basename='teachers')
 
 urlpatterns = [
+    path('TwoModels', get_all_users),
+    path('get_all_users', AllUserViewSet.as_view()),
     # path("register/admin/", RegisterAdminView.as_view()),
     # path("register/manager/", RegisterManagerView.as_view()),
 

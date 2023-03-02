@@ -27,7 +27,7 @@ urlpatterns = [
 
     # path('api/cms', include('cmsapp.urls')),
 
-    path('api/staffers/', include(user_router.urls)),
+    path('api/employee/', include(user_router.urls)),
     path("api/cms/", include(router.urls)),
     path("api/auth/", include("users.urls")),
     path(

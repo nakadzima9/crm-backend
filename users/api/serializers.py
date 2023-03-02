@@ -8,6 +8,7 @@ from core import settings
 from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, create, validate
 
+
 class UserSerializer(serializers.ModelSerializer):
     # image = serializers.SerializerMethodField('get_image_url')
 
