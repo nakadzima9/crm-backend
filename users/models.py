@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     TYPE_ROLE_CHOICES = [
         ("admin", "Admin"),
         ("manager", "Manager"),
+        ("teacher", "Teacher"),
     ]
     TYPE_SEX_CHOICES = [
         ("male", "Male"),
