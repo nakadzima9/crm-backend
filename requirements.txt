@@ -7,6 +7,7 @@ dj-rest-auth==2.2.7
 Django==3.2.16
 django-cors-headers==3.13.0
 django-filter==22.1
+django-jazzmin==2.6.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 drf-yasg==1.21.4
