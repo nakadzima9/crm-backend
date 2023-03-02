@@ -55,7 +55,7 @@ class PasswordResetEmailView(APIView):
                 send_mail(
                     "Код активации",
                     f"Ваш код для сброса пароля: {otp} ",
-                    "from@http://mikieok.pythonanywhere.com/",
+                    "from@crm-backend-production.up.railway.app",
                     [user.email],
                     fail_silently=False,
                 )
