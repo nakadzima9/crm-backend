@@ -1,5 +1,5 @@
 from rest_framework import serializers, response
-
+import django.contrib.auth.password_validation as validators
 from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, create, validate
 
@@ -156,6 +156,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return attrs
 
     def update(self, instance, validated_data):
+        validators.validate_password(user=instance, password=validated_data['password'])
         instance.set_password(validated_data['password'])
         instance.save()
 

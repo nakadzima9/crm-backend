@@ -72,8 +72,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class OTP(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
+    status = models.BooleanField(default=True)
     code = models.CharField(max_length=6)
     created_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"User: {self.user} - OTP: {self.code}"
+
+    class Meta:
+        verbose_name = 'Системный пользователь'
+
 
 
 class Profile(models.Model):
