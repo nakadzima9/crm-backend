@@ -23,9 +23,6 @@ class PersonalLoginWebView(generics.GenericAPIView):
     serializer_class = PersonalLoginWebSerializer
     permission_classes = (AllowAny,)
 
-    def get(self, request):
-        return Response(data={"detail": "НЕФИГ ЩАСТАТЬ!!!"}, status=status.HTTP_200_OK)
-
     def post(self, request):
         email = request.data['email']
         password = request.data["password"]

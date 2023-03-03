@@ -72,9 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class OTP(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
-    code = models.CharField(max_length=6, unique=True)
+    code = models.CharField(max_length=6)
     created_time = models.DateTimeField(auto_now_add=True)
-    # life_time_in_seconds = models.PositiveSmallIntegerField(default=60)
 
 
 class Profile(models.Model):
