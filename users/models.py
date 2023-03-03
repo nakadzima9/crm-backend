@@ -37,7 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     TYPE_ROLE_CHOICES = [
         ("admin", "Admin"),
         ("manager", "Manager"),
-        ("teacher", "Teacher"),
+        ("mentor", "mentor"),
     ]
     TYPE_SEX_CHOICES = [
         ("male", "Male"),
@@ -80,7 +80,8 @@ class OTP(models.Model):
         return f"User: {self.user} - OTP: {self.code}"
 
     class Meta:
-        verbose_name = 'Системный пользователь'
+        verbose_name = 'OTP'
+        verbose_name_plural = 'OTP'
 
 
 
