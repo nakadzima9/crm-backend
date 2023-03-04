@@ -1,6 +1,7 @@
 from django.db import models
 
-from users.models import User
+from core import settings
+# from users.models import User
 
 
 class Department(models.Model):
@@ -68,7 +69,8 @@ class Course(models.Model):
 
 class ScheduleType(models.Model):
     type_name = models.CharField(max_length=10, verbose_name="Тип расписания")
-    time = models.DateTimeField(null=True, verbose_name="Время")
+    start_time = models.TimeField(null=True, blank=True, verbose_name="Начало урока")
+    end_time = models.TimeField(null=True, blank=True, verbose_name="Конец урока")
 
     def __str__(self):
         return self.type_name
@@ -86,10 +88,9 @@ class Group(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
     schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, verbose_name="Тип расписания")
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, verbose_name="Комната")
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name="Преподаватель")
 
     def __str__(self):
-        return f'Number {self.number}, status {self.status}, teacher {self.teacher}'
+        return f'Number: {self.number}, status: {self.status}'
 
     class Meta:
         verbose_name = "Группа"
@@ -167,7 +168,7 @@ class Payment(models.Model):
     amount = models.FloatField(verbose_name="Скидка")
     client_card = models.ForeignKey(StudentCard, on_delete=models.CASCADE, verbose_name="Карта клиента")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Дата оплаты")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
     def __str__(self):
         return f'{self.client_card}'
