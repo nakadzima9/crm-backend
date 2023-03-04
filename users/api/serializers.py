@@ -1,6 +1,8 @@
 from rest_framework import serializers, response
 import django.contrib.auth.password_validation as validators
-from users.models import User, OTP
+
+from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
+from users.models import User, OTP, Mentor
 from .custom_funcs import validate_phone, validate_email, create, validate
 
 
@@ -15,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'email',
                   'phone',
                   'user_type',
-                  # 'image',
+                  'image',
                   # 'description',
                   # 'sex',
                   ]
@@ -47,7 +49,7 @@ class AdminSerializer(serializers.ModelSerializer):
                   'email',
                   'password',
                   'phone',
-                  # 'image',
+                  'image',
                   # 'description',
                   # 'sex',
                   ]
@@ -89,7 +91,7 @@ class ManagerSerializer(serializers.ModelSerializer):
                   'email',
                   'password',
                   'phone',
-                  # 'image',
+                  'image',
                   # 'description',
                   # 'sex',
                   ]
@@ -115,14 +117,24 @@ class ManagerSerializer(serializers.ModelSerializer):
 
 
 class MentorSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
+    schedule_type = ScheduleTypeSerializer(read_only=True)
+
     class Meta:
-        model = User
+        model = Mentor
         fields = ['id',
                   'first_name',
                   'last_name',
                   'email',
                   'phone',
-                  # 'image',
+                  'group',
+                  'department',
+                  'schedule_type',
+                  'patent_number',
+                  'patent_start',
+                  'patent_end',
+                  'image',
                   # 'description',
                   # 'sex',
                   ]
@@ -135,10 +147,10 @@ class MentorSerializer(serializers.ModelSerializer):
         return validate_phone(value)
 
     def create(self, validated_data):
-        user = User(**validated_data)
-        user.user_type = 'teacher'
-        user.save()
-        return user
+        mentor = Mentor(**validated_data)
+        mentor.user_type = 'mentor'
+        mentor.save()
+        return mentor
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):

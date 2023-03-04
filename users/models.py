@@ -5,6 +5,8 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils import timezone
+
+from cmsapp.models import Department, ScheduleType, Group
 from PIL import Image
 
 
@@ -37,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     TYPE_ROLE_CHOICES = [
         ("admin", "Admin"),
         ("manager", "Manager"),
-        ("mentor", "mentor"),
+        ("mentor", "Mentor"),
     ]
     TYPE_SEX_CHOICES = [
         ("male", "Male"),
@@ -48,6 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")
     phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
+    image = models.ImageField(upload_to='profiles/%Y/%m/%d/',blank=True, null=True, verbose_name="Аватар")
     description = models.TextField(max_length=300, blank=True, null=True, verbose_name="О себе")
     sex = models.CharField(max_length=50, choices=TYPE_SEX_CHOICES, blank=True, null=True, verbose_name="Пол")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
@@ -70,6 +73,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Системные пользователи"
 
 
+class Mentor(User):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='department',
+                                   verbose_name='Департамент')
+    schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, related_name='schedule',
+                                      verbose_name='Расписание')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group', verbose_name='Группа')
+    patent_number = models.PositiveIntegerField(null=True, verbose_name="Номер патента")
+    patent_start = models.DateField(null=True, verbose_name="Срок действия патента")
+    patent_end = models.DateField(null=True, verbose_name="Срок окончания патента")
+
+    def __str__(self):
+        return f"Имя: {self.first_name} | Фамилия: {self.last_name} | Департамент {self.department}"
+
+    class Meta:
+        verbose_name = "Ментор"
+        verbose_name_plural = "Ментора"
+
+
 class OTP(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     status = models.BooleanField(default=True)
@@ -82,11 +103,3 @@ class OTP(models.Model):
     class Meta:
         verbose_name = 'OTP'
         verbose_name_plural = 'OTP'
-
-
-
-class Profile(models.Model):
-    objects = None
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics', blank=True, null=True)
-

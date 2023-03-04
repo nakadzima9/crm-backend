@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.serializers import UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer
-from .models import User
+from .models import User, Mentor
 from .permissions import IsManager, IsSuperUser
 
 sensitive_post_parameters_m = method_decorator(
@@ -37,7 +37,7 @@ class PersonalLoginWebView(generics.GenericAPIView):
 
 class MentorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.filter(user_type="teacher")
+    queryset = Mentor.objects.filter(user_type="mentor")
     serializer_class = MentorSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
