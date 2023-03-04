@@ -1,7 +1,6 @@
 from django.db import models
 
 from core import settings
-# from users.models import User
 
 
 class Department(models.Model):
