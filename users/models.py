@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -7,7 +9,6 @@ from django.db import models
 from django.utils import timezone
 
 from cmsapp.models import Department, ScheduleType, Group
-from PIL import Image
 
 
 class SuperUser(BaseUserManager):
@@ -34,6 +35,30 @@ class SuperUser(BaseUserManager):
         user.save()
         return user
 
+def user_directory_path(instance, filename):
+    extension = filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{extension}"
+    return f"profiles/{timezone.now().date().strftime('%Y/%m/%d')}/{filename}"
+
+# def user_directory_path(instance, filename):
+#     extension = filename.split('.')[-1]
+#     filename = f"{instance.unique_id}.{extension}"
+#     return f"profiles/user_{instance.owner.unique_id}/{timezone.now().date().strftime('%Y/%m/%d')}/{filename}"
+#
+#
+# class UserImage(models.Model):
+#     owner = models.ForeignKey('User', on_delete=models.CASCADE)
+#     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+#     image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, null=True,
+#                               verbose_name="Аватар")
+#
+#     def __str__(self):
+#         return f"{self.image}"
+#
+#     class Meta:
+#         verbose_name = "Изображение пользователя"
+#         verbose_name_plural = "Изображения пользователей"
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     TYPE_ROLE_CHOICES = [
@@ -50,7 +75,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")
     phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
-    image = models.ImageField(upload_to='profiles/%Y/%m/%d/',blank=True, null=True, verbose_name="Аватар")
+    # unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    # image = models.ForeignKey(UserImage, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Аватар")
+    image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, null=True,
+                              verbose_name="Аватар")
     description = models.TextField(max_length=300, blank=True, null=True, verbose_name="О себе")
     sex = models.CharField(max_length=50, choices=TYPE_SEX_CHOICES, blank=True, null=True, verbose_name="Пол")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")

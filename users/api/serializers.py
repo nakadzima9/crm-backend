@@ -75,6 +75,42 @@ class AdminSerializer(serializers.ModelSerializer):
         return user
 
 
+class AdminSerializerWithoutEmail(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+
+class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+
 class ManagerSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
@@ -128,13 +164,13 @@ class MentorSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone',
+                  'image',
                   'group',
                   'department',
                   'schedule_type',
                   'patent_number',
                   'patent_start',
                   'patent_end',
-                  'image',
                   # 'description',
                   # 'sex',
                   ]
