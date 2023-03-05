@@ -1,11 +1,8 @@
 from rest_framework import serializers, response
-from jwt import decode as jwt_decode
-from rest_framework_simplejwt.serializers import TokenVerifySerializer as _TokenVerifySerializer
-from rest_framework_simplejwt.tokens import UntypedToken, RefreshToken
-from rest_framework.exceptions import ValidationError
+import django.contrib.auth.password_validation as validators
 
-from core import settings
-from users.models import User, OTP
+from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
+from users.models import User, OTP, Mentor
 from .custom_funcs import validate_phone, validate_email, create, validate
 
 
@@ -19,10 +16,10 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone',
-                  # 'image',
+                  'user_type',
+                  'image',
                   # 'description',
                   # 'sex',
-                  'user_type',
                   ]
 
     read_only_fields = ['user_type']
@@ -52,14 +49,11 @@ class AdminSerializer(serializers.ModelSerializer):
                   'email',
                   'password',
                   'phone',
-                  # 'image',
+                  'image',
                   # 'description',
                   # 'sex',
-                  'user_type',
                   ]
-        extra_kwargs = {
-            "user_type": {"write_only": True}
-        }
+
 
     def validate(self, data):
         return validate(self, data, User, AdminSerializer)
@@ -76,12 +70,12 @@ class AdminSerializer(serializers.ModelSerializer):
         user.is_superuser = True
         user.is_staff = True
         user.set_password(password)
+        user.user_type = 'admin'
         user.save()
         return user
 
 
 class ManagerSerializer(serializers.ModelSerializer):
-    user_type = serializers.CharField(default='manager')
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -97,14 +91,11 @@ class ManagerSerializer(serializers.ModelSerializer):
                   'email',
                   'password',
                   'phone',
-                  # 'image',
+                  'image',
                   # 'description',
                   # 'sex',
-                  'user_type',
                   ]
-        # extra_kwargs = {
-        #     "user_type": {"write_only": True}
-        # }
+
 
     def validate(self, data):
         return validate(self, data, User, ManagerSerializer)
@@ -125,24 +116,41 @@ class ManagerSerializer(serializers.ModelSerializer):
         return user
 
 
-class TokenVerifySerializer(_TokenVerifySerializer):
+class MentorSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
+    schedule_type = ScheduleTypeSerializer(read_only=True)
 
-    def validate(self, attrs):
-        UntypedToken(attrs['token'])
-        data = jwt_decode(attrs['token'], settings.SECRET_KEY, algorithms=['HS256'])
-        user_data = User.objects.get(id=data['user_id'])
-        refresh = RefreshToken.for_user(user_data)
-        data = {
-            'access_token': str(refresh.access_token),
-            'id': data['user_id'],
-            'first_name': user_data.first_name,
-            'last_name': user_data.last_name,
-            'email': user_data.email,
-            'phone': user_data.phone,
-            'user_type': user_data.user_type,
-        }
+    class Meta:
+        model = Mentor
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'phone',
+                  'group',
+                  'department',
+                  'schedule_type',
+                  'patent_number',
+                  'patent_start',
+                  'patent_end',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
 
-        return data
+
+    def validate_email(self, value):
+        return validate_email(value)
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+    def create(self, validated_data):
+        mentor = Mentor(**validated_data)
+        mentor.user_type = 'mentor'
+        mentor.save()
+        return mentor
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
@@ -160,6 +168,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return attrs
 
     def update(self, instance, validated_data):
+        validators.validate_password(user=instance, password=validated_data['password'])
         instance.set_password(validated_data['password'])
         instance.save()
 

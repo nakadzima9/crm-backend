@@ -1,8 +1,9 @@
 import os
-
-from pathlib import Path
-from decouple import config, Csv
 from datetime import timedelta
+from pathlib import Path
+
+import dj_database_url
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,13 +83,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 SITE_ID = 1
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
+DATABASES = {'default': dj_database_url.config(
+    default=config("DATABASE_URL"),
+    conn_max_age=600,
+    conn_health_checks=True,
+)
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -124,10 +131,6 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'users.User'
 
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'access-token'
-JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -140,13 +143,6 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%d.%m.%Y',
     'DATE_FORMAT': '%d.%m.%Y',
     'TIME_FORMAT': '%H:%M',
-}
-
-REST_AUTH_SERIALIZERS = {
-    'PASSWORD_RESET_SERIALIZER':
-        'users.api.password_reset_serializers.PasswordResetSerializer',
-    'TOKEN_SERIALIZER':
-        'users.api.serializers.TokenVerifySerializer',
 }
 
 
@@ -201,6 +197,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False
+}
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,

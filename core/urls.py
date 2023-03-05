@@ -9,13 +9,14 @@ from users.urls import user_router
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Snippets API",
+        title="CRM API",
         default_version="v1",
         description="Test description",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@snippets.local"),
         license=openapi.License(name="BSD License"),
     ),
+    url = 'https://crm-backend-production.up.railway.app/api/v1/swagger/',
     public=True,
     permission_classes=[permissions.AllowAny],
 )
@@ -27,7 +28,7 @@ urlpatterns = [
 
     # path('api/cms', include('cmsapp.urls')),
 
-    path('api/employee/', include(user_router.urls)),
+    path('api/', include(user_router.urls)),
     path("api/cms/", include(router.urls)),
     path("api/auth/", include("users.urls")),
     path(

@@ -54,9 +54,14 @@ class ScheduleTypeSerializer(ModelSerializer):
 
 
 class GroupSerializer(ModelSerializer):
+    status = GroupStatusSerializer(read_only=True)
+    course = CourseSerializer(read_only=True)
+    schedule_type = ScheduleTypeSerializer(read_only=True)
+    classroom = ClassroomSerializer(read_only=True)
+
     class Meta:
         model = Group
-        fields = "__all__"
+        fields = ['id', 'number', 'students_max', 'status', 'created_at', 'course', 'schedule_type', 'classroom']
 
 
 class AdvertisingSourceSerializer(ModelSerializer):
