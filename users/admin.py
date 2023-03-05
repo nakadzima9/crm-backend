@@ -1,24 +1,29 @@
 from django.contrib import admin
-from users.models import User, Mentor, OTP
+from django.contrib.auth.admin import UserAdmin
+from users.models import User, Mentor, OTP #, UserImage
 
 
-class StaffAdmin(admin.ModelAdmin):
+class StaffAdmin(UserAdmin):
     list_display = ('id', 'email', 'first_name', 'last_name', 'user_type',)
 
-    def get_form(self, request, obj=User, **kwargs):
-        if obj.user_type == 'mentor':
-            self.exclude = ('password', 'last_login')
-        elif 'password' in self.exclude:
-            self.exclude = ('last_login',)
-        form = super(StaffAdmin, self).get_form(request, obj, **kwargs)
-        return form
-
+    fieldsets = (
+        (None, {'fields': ('username', 'password', 'email', 'first_name', 'last_name', 'phone', 'image',
+                                         'description', 'sex', 'user_type', 'is_active')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'email', 'first_name', 'last_name',  'phone', 'image',
+                       'description', 'sex', 'user_type', 'is_active',),
+        }),
+    )
 
 
 class MentorAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name', 'department',)
-    exclude = ('password', 'last_login', 'groups', 'user_permissions',)
+    exclude = ('password', 'last_login', 'groups', 'user_permissions', 'date_joined', 'is_staff', 'is_superuser',)
 
 admin.site.register(User, StaffAdmin)
 admin.site.register(Mentor, MentorAdmin)
 admin.site.register(OTP)
+# admin.site.register(UserImage)
