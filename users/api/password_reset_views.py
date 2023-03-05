@@ -87,50 +87,48 @@ class PasswordResetCheckCodeView(APIView):
         request_body=PasswordCodeCheckSerializer,
     )
     def post(self, request):
-        try:
-            req_email = request.session["email"]
-            req_otp = request.data["code"]
-            try:
-                user = User.objects.get(email=req_email)
-                try:
-                    otp_ob = OTP.objects.get(user=user, code=req_otp)
+        req_otp = request.data["code"]
+        otp_ob = OTP.objects.get(code=req_otp)
+        if otp_ob.created_time <= datetime.datetime.fromtimestamp(timezone.now().timestamp() - 60,
+                                                                  tz=timezone.utc):
+            return Response({"detail": "code has expired"}, status=status.HTTP_202_ACCEPTED)
+        # otp_ob.status = True
+        print(otp_ob.status, otp_ob.code)
+        return Response(data="you can change password during 10 minutes", status=status.HTTP_200_OK)
+        # try:
+        #     req_email = request.session["email"]
+        #     req_otp = request.data["code"]
+        #     try:
+        #         user = User.objects.get(email=req_email)
+        #         try:
+        #             otp_ob = OTP.objects.get(user=user, code=req_otp)
 
-                    if otp_ob.created_time <= datetime.datetime.fromtimestamp(
-                        timezone.now().timestamp() - 60, tz=timezone.utc
-                    ):
-                        return Response(
-                            {"detail": "code has expired"},
-                            status=status.HTTP_202_ACCEPTED,
-                        )
+        #             if otp_ob.created_time <= datetime.datetime.fromtimestamp(timezone.now().timestamp() - 60,
+        #                                                                       tz=timezone.utc):
+        #                 return Response({"detail": "code has expired"}, status=status.HTTP_202_ACCEPTED)
 
-                    request.session["opt_status"] = True
+        #             request.session["opt_status"] = True
 
-                    opt_status_lifetime = datetime.datetime.fromtimestamp(
-                        timezone.now().timestamp() + 600, tz=timezone.utc
-                    )
-                    opt_status_lifetime = opt_status_lifetime.strftime(
-                        "%Y-%m-%d-%H-%M-%S"
-                    )
-                    request.session["opt_status_lifetime"] = opt_status_lifetime
+        #             opt_status_lifetime = datetime.datetime.fromtimestamp(timezone.now().timestamp() + 600,
+        #                                                                   tz=timezone.utc)
+        #             opt_status_lifetime = opt_status_lifetime.strftime('%Y-%m-%d-%H-%M-%S')
+        #             request.session["opt_status_lifetime"] = opt_status_lifetime
 
-                    return Response(
-                        data="you can change password during 10 minutes",
-                        status=status.HTTP_200_OK,
-                    )
-                except ObjectDoesNotExist:
-                    return Response(
-                        PasswordResetCheckCodeView.opt_not_exists,
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
-            except ObjectDoesNotExist:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-        except KeyError:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        #             return Response(data="you can change password during 10 minutes", status=status.HTTP_200_OK)
+        #         except ObjectDoesNotExist:
+        #             return Response(PasswordResetCheckCodeView.opt_not_exists, status=status.HTTP_404_NOT_FOUND)
+        #     except ObjectDoesNotExist:
+        #         return Response(status=status.HTTP_404_NOT_FOUND)
+        # except KeyError:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # for change password
 class PasswordChangeView(APIView):
-    on_get = {"password": "new password", "repeat_password": "repeat new password"}
+    on_get = {
+        "password": "new password",
+        "repeat_password": "repeat new password"
+    }
     on_error = {"detail": "you have not provide send email and check"}
 
     @swagger_auto_schema(
@@ -140,30 +138,34 @@ class PasswordChangeView(APIView):
     )
     def post(self, request):
         try:
-            req_email = request.session["email"]
-            opt_status = request.session["opt_status"]
-            otp_lifetime = datetime.datetime.strptime(
-                request.session["opt_status_lifetime"], "%Y-%m-%d-%H-%M-%S"
-            )
-            try:
-                if opt_status is True:
-                    user = User.objects.get(email=req_email)
-                    utc = pytz.UTC
-                    if timezone.now() <= utc.localize(otp_lifetime):
-                        serializer = ChangePasswordSerializer(
-                            user, data=request.data)
-                        if serializer.is_valid():
-                            serializer.save()
-                            del request.session["email"]
-                            del request.session["opt_status"]
-                            del request.session["opt_status_lifetime"]
-                            return Response(status=status.HTTP_200_OK)
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
-            except ObjectDoesNotExist:
-                return Response(
-                    {"detail", "User not exists"}, status.HTTP_404_NOT_FOUND
-                )
-        except KeyError:
-            return Response(
-                data=PasswordChangeView.on_error, status=status.HTTP_400_BAD_REQUEST
-            )
+            otp_obj = OTP.objects.get(status=True)
+            print(otp_obj)
+            user = otp_obj.user
+            print(user)
+            serializer = ChangePasswordSerializer(user, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data="Password changed successfully!", status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response(data='Current user can\'t change the password!', status=status.HTTP_404_NOT_FOUND)
+        # try:
+        #     req_email = request.session["email"]
+        #     opt_status = request.session["opt_status"]
+        #     otp_lifetime = datetime.datetime.strptime(request.session["opt_status_lifetime"], '%Y-%m-%d-%H-%M-%S')
+        #     try:
+        #         if opt_status is True:
+        #             user = User.objects.get(email=req_email)
+        #             utc = pytz.UTC
+        #             if timezone.now() <= utc.localize(otp_lifetime):
+        #                 serializer = ChangePasswordSerializer(user, data=request.data)
+        #                 if serializer.is_valid():
+        #                     serializer.save()
+        #                     del request.session["email"]
+        #                     del request.session["opt_status"]
+        #                     del request.session["opt_status_lifetime"]
+        #                     return Response(status=status.HTTP_200_OK)
+        #                 return Response(status=status.HTTP_400_BAD_REQUEST)
+        #     except ObjectDoesNotExist:
+        #         return Response({"detail", "User not exists"}, status.HTTP_404_NOT_FOUND)
+        # except KeyError:
+        #     return Response(data=PasswordChangeView.on_error, status=status.HTTP_400_BAD_REQUEST)
