@@ -80,26 +80,15 @@ class Group(models.Model):
         verbose_name_plural = "Группы"
 
 
-class AdvertisingSource(models.Model):
-    name = models.CharField(max_length=15, verbose_name="Рекламный курс")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Рекламный курс"
-        verbose_name_plural = "Рекламные курсы"
-
-
-class RequestStatus(models.Model):
-    status = models.CharField(max_length=30, verbose_name="Статус карточки")
-
-    def __str__(self):
-        return self.status
-
-    class Meta:
-        verbose_name = "Статус заявки"
-        verbose_name_plural = "Статусы заявок"
+# class RequestStatus(models.Model):
+#     status = models.CharField(max_length=30, verbose_name="Статус карточки")
+#
+#     def __str__(self):
+#         return self.status
+#
+#     class Meta:
+#         verbose_name = "Статус заявки"
+#         verbose_name_plural = "Статусы заявок"
 
 
 class PaymentMethod(models.Model):
@@ -113,14 +102,29 @@ class PaymentMethod(models.Model):
         verbose_name_plural = "Методы оплат"
 
 
-class StudentRequest(models.Model):
-    first_name = models.CharField(max_length=30, verbose_name="Имя")
-    last_name = models.CharField(max_length=30, verbose_name="Фамилия")
+class Student(models.Model):
+    TYPE_STATUS_CHOICES = [
+        ("ждет звонка", "Ждет звонка"),
+        ("звонок совершен", "Звонок совершен"),
+        ("записан на пробный урок", "Записан на пробный урок"),
+        ("посетил пробный урок", "Посетил пробный урок"),
+    ]
+    TYPE_ADVERTISING_SOURCE = [
+        ("instagram", "Instagram"),
+        ("объявление", "Объявление"),
+        ("через сайт", "Через сайт"),
+        ("другое", "Другое"),
+    ]
+    first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
+    last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
+    surname = models.CharField(max_length=30, verbose_name="Отчество", null=True)
+    notes = models.CharField(max_length=200, verbose_name="Заметка", null=True)
     phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
-    laptop = models.BooleanField(verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, verbose_name="Откуда пришёл")
-    status = models.ForeignKey(RequestStatus, on_delete=models.CASCADE, verbose_name="Статус заявки")
+    laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
+    came_from = models.CharField(max_length=20, choices=TYPE_ADVERTISING_SOURCE, verbose_name="Откуда пришёл", null=True)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
+    status = models.CharField(max_length=30, choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False)
 
     def __str__(self):
@@ -131,20 +135,9 @@ class StudentRequest(models.Model):
         verbose_name_plural = "Заявки студентов"
 
 
-class Student(models.Model):
-    student = models.ForeignKey(StudentRequest, on_delete=models.CASCADE, null=True)
-    surname = models.CharField(max_length=30, verbose_name="Отчество", null=True)
-
-    # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Группа")
-
-    class Meta:
-        verbose_name = "Студент"
-        verbose_name_plural = "Студенты"
-
-
 class Payment(models.Model):
     amount = models.FloatField(verbose_name="Скидка")
-    client_card = models.ForeignKey(StudentRequest, on_delete=models.CASCADE, verbose_name="Карта клиента")
+    client_card = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Кто оплатил")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Дата оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 

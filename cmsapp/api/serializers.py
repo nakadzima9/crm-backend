@@ -6,11 +6,10 @@ from cmsapp.models import (
     Course,
     ScheduleType,
     Group,
-    AdvertisingSource,
-    RequestStatus,
+    # AdvertisingSource,
+    # RequestStatus,
     PaymentMethod,
     Student,
-    StudentRequest,
     Payment,
 )
 
@@ -56,16 +55,16 @@ class GroupSerializer(ModelSerializer):
         fields = ['id', 'number', 'students_max', 'status', 'created_at', 'course', 'schedule_type', 'classroom']
 
 
-class AdvertisingSourceSerializer(ModelSerializer):
-    class Meta:
-        model = AdvertisingSource
-        fields = "__all__"
-
-
-class RequestStatusSerializer(ModelSerializer):
-    class Meta:
-        model = RequestStatus
-        fields = "__all__"
+# class AdvertisingSourceSerializer(ModelSerializer):
+#     class Meta:
+#         model = AdvertisingSource
+#         fields = "__all__"
+#
+#
+# class RequestStatusSerializer(ModelSerializer):
+#     class Meta:
+#         model = RequestStatus
+#         fields = "__all__"
 
 
 class PaymentMethodSerializer(ModelSerializer):
@@ -77,12 +76,6 @@ class PaymentMethodSerializer(ModelSerializer):
 class StudentSerializer(ModelSerializer):
     class Meta:
         model = Student
-        fields = "__all__"
-
-
-class StudentRequestSerializer(ModelSerializer):
-    class Meta:
-        model = StudentRequest
         fields = "__all__"
 
 

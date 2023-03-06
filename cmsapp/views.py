@@ -35,14 +35,14 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
 
 
-class AdvertisingSourceViewSet(ModelViewSet):
-    serializer_class = AdvertisingSourceSerializer
-    queryset = AdvertisingSource.objects.all()
-
-
-class RequestStatusViewSet(ModelViewSet):
-    serializer_class = RequestStatusSerializer
-    queryset = RequestStatus.objects.all()
+# class AdvertisingSourceViewSet(ModelViewSet):
+#     serializer_class = AdvertisingSourceSerializer
+#     queryset = AdvertisingSource.objects.all()
+#
+#
+# class RequestStatusViewSet(ModelViewSet):
+#     serializer_class = RequestStatusSerializer
+#     queryset = RequestStatus.objects.all()
 
 
 class PaymentMethodViewSet(ModelViewSet):
@@ -53,11 +53,6 @@ class PaymentMethodViewSet(ModelViewSet):
 class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
-
-
-class StudentRequestViewSet(ModelViewSet):
-    serializer_class = StudentRequestSerializer
-    queryset = StudentRequest.objects.all()
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
 

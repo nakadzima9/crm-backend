@@ -1,8 +1,8 @@
 from django.contrib import admin
 
 from .models import (
-    AdvertisingSource,
-    RequestStatus,
+    # AdvertisingSource,
+    # RequestStatus,
     Classroom,
     Course,
     Department,
@@ -12,7 +12,6 @@ from .models import (
     PaymentMethod,
     ScheduleType,
     Student,
-    StudentRequest,
 )
 
 
@@ -68,7 +67,7 @@ class AdvertisingSourceAdmin(admin.ModelAdmin):
 #     list_display = ('id', 'card_number', 'note', 'department', 'came_from', 'status', 'laptop', 'payment_method',)
 
 # admin.site.register(AdvertisingSource)
-admin.site.register(RequestStatus)
+# admin.site.register(RequestStatus)
 admin.site.register(Classroom)
 admin.site.register(Course)
 admin.site.register(Department)
@@ -78,10 +77,9 @@ admin.site.register(Payment)
 admin.site.register(PaymentMethod)
 admin.site.register(ScheduleType)
 admin.site.register(Student)
-admin.site.register(StudentRequest)
 
 
-admin.site.register(AdvertisingSource, AdvertisingSourceAdmin)
+# admin.site.register(AdvertisingSource, AdvertisingSourceAdmin)
 # admin.site.register(RequestStatus, RequestStatusAdmin)
 # admin.site.register(Classroom, ClassroomAdmin)
 # admin.site.register(Course, CourseAdmin)
