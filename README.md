@@ -5,6 +5,7 @@ __Копируем репозиторий__
 ```
 git@gitlab.com:crm-team2/crm-backend.git
 ```
+- __Я использую Python версии 3.10__
 - __Создаём виртуальное окружение (UNIX/MACos)__
 ```
 python3 -m venv venv
