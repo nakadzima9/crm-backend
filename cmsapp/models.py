@@ -14,22 +14,6 @@ class Department(models.Model):
         verbose_name_plural = "Департаменты"
 
 
-class Teacher(models.Model):
-    first_name = models.CharField(max_length=30, verbose_name="Имя")
-    last_name = models.CharField(max_length=30, verbose_name="Фамилия")
-    phone_number = models.CharField(max_length=20, verbose_name="Номер телефона")
-    patent_number = models.IntegerField(null=True, verbose_name="Номер патента")
-    patent_start = models.DateField(null=True, verbose_name="Срок действия патента")
-    patent_end = models.DateField(null=True, verbose_name="Срок окончания патента")
-
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
-    class Meta:
-        verbose_name = "Преподаватель"
-        verbose_name_plural = "Преподаватели"
-
-
 class GroupStatus(models.Model):
     status_name = models.CharField(max_length=15, verbose_name="Статус группы")
 
@@ -107,15 +91,15 @@ class AdvertisingSource(models.Model):
         verbose_name_plural = "Рекламные курсы"
 
 
-class CardStatus(models.Model):
-    status = models.CharField(max_length=15, verbose_name="Статус карточки")
+class RequestStatus(models.Model):
+    status = models.CharField(max_length=30, verbose_name="Статус карточки")
 
     def __str__(self):
         return self.status
 
     class Meta:
-        verbose_name = "Статус карточки"
-        verbose_name_plural = "Статусы карточек"
+        verbose_name = "Статус заявки"
+        verbose_name_plural = "Статусы заявок"
 
 
 class PaymentMethod(models.Model):
@@ -129,43 +113,38 @@ class PaymentMethod(models.Model):
         verbose_name_plural = "Методы оплат"
 
 
-class Student(models.Model):
+class StudentRequest(models.Model):
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
-    date_of_birth = models.DateField(verbose_name="Дата рождения")
-    email = models.CharField(max_length=20, null=True, verbose_name="Почта")
-    phone_number = models.CharField(max_length=20, verbose_name="Номер телефона")
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Группа")
+    phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
+    laptop = models.BooleanField(verbose_name="Наличиее ноутбука")
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
+    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, verbose_name="Откуда пришёл")
+    status = models.ForeignKey(RequestStatus, on_delete=models.CASCADE, verbose_name="Статус заявки")
+    paid = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        verbose_name = "Заявка студента"
+        verbose_name_plural = "Заявки студентов"
+
+
+class Student(models.Model):
+    student = models.ForeignKey(StudentRequest, on_delete=models.CASCADE, null=True)
+    surname = models.CharField(max_length=30, verbose_name="Отчество", null=True)
+
+    # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Группа")
 
     class Meta:
         verbose_name = "Студент"
         verbose_name_plural = "Студенты"
 
 
-class StudentCard(models.Model):
-    card_number = models.IntegerField(unique=True, verbose_name="Номер карты")
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Студент")
-    note = models.CharField(max_length=100, blank=True, verbose_name="Заметка")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, verbose_name="Откуда пришёл")
-    status = models.ForeignKey(CardStatus, on_delete=models.CASCADE, verbose_name="Статус")
-    laptop = models.BooleanField(verbose_name="Наличиее ноутбука")
-    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, verbose_name="Метод оплаты")
-
-    def __str__(self):
-        return f'number {self.card_number}, student {self.student}'
-
-    class Meta:
-        verbose_name = "Карточка студента"
-        verbose_name_plural = "Карточки студентов"
-
-
 class Payment(models.Model):
     amount = models.FloatField(verbose_name="Скидка")
-    client_card = models.ForeignKey(StudentCard, on_delete=models.CASCADE, verbose_name="Карта клиента")
+    client_card = models.ForeignKey(StudentRequest, on_delete=models.CASCADE, verbose_name="Карта клиента")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Дата оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
@@ -175,16 +154,3 @@ class Payment(models.Model):
     class Meta:
         verbose_name = "Платёж"
         verbose_name_plural = "Платёжы"
-
-
-class BlackList(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Студент")
-    reason = models.CharField(max_length=100, verbose_name="Причина")
-    added_at = models.DateField(verbose_name="Дата добавления")
-
-    def __str__(self):
-        return f'Student: {self.student}, reason: {self.reason}'
-
-    class Meta:
-        verbose_name = "Чёрный список"
-        verbose_name_plural = "Чёрные списки"

@@ -6,7 +6,7 @@ from rest_framework import permissions
 
 from django.conf import settings
 from django.conf.urls.static import static
-from cmsapp.urls import router
+from cmsapp.urls import router, main_page_router
 from users.urls import user_router
 
 schema_view = get_schema_view(
@@ -18,7 +18,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="contact@snippets.local"),
         license=openapi.License(name="BSD License"),
     ),
-    url = 'https://crm-backend-production.up.railway.app/api/v1/swagger/',
+    url='https://crm-backend-production.up.railway.app/api/v1/swagger/',
     public=True,
     permission_classes=[permissions.AllowAny],
 )
@@ -27,10 +27,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
-
-    # path('api/cms', include('cmsapp.urls')),
-
     path('api/', include(user_router.urls)),
+    # path("api/", include(main_page_router.urls)),
     path("api/cms/", include(router.urls)),
     path("api/auth/", include("users.urls")),
     path(

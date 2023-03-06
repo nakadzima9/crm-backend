@@ -1,31 +1,23 @@
 from rest_framework.serializers import ModelSerializer
 from cmsapp.models import (
     Department,
-    Teacher,
     GroupStatus,
     Classroom,
     Course,
     ScheduleType,
     Group,
     AdvertisingSource,
-    CardStatus,
+    RequestStatus,
     PaymentMethod,
     Student,
-    StudentCard,
+    StudentRequest,
     Payment,
-    BlackList,
 )
 
 
 class DepartmentSerializer(ModelSerializer):
     class Meta:
         model = Department
-        fields = "__all__"
-
-
-class TeacherSerializer(ModelSerializer):
-    class Meta:
-        model = Teacher
         fields = "__all__"
 
 
@@ -70,9 +62,9 @@ class AdvertisingSourceSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class CardStatusSerializer(ModelSerializer):
+class RequestStatusSerializer(ModelSerializer):
     class Meta:
-        model = CardStatus
+        model = RequestStatus
         fields = "__all__"
 
 
@@ -88,19 +80,13 @@ class StudentSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class StudentCardSerializer(ModelSerializer):
+class StudentRequestSerializer(ModelSerializer):
     class Meta:
-        model = StudentCard
+        model = StudentRequest
         fields = "__all__"
 
 
 class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment
-        fields = "__all__"
-
-
-class BlackListSerializer(ModelSerializer):
-    class Meta:
-        model = BlackList
         fields = "__all__"

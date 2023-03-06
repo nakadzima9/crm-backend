@@ -10,11 +10,6 @@ class DepartmentViewSet(ModelViewSet):
     queryset = Department.objects.all()
 
 
-class TeacherViewSet(ModelViewSet):
-    serializer_class = TeacherSerializer
-    queryset = Teacher.objects.all()
-
-
 class GroupStatusViewSet(ModelViewSet):
     serializer_class = GroupStatusSerializer
     queryset = GroupStatus.objects.all()
@@ -45,9 +40,9 @@ class AdvertisingSourceViewSet(ModelViewSet):
     queryset = AdvertisingSource.objects.all()
 
 
-class CardStatusViewSet(ModelViewSet):
-    serializer_class = CardStatusSerializer
-    queryset = CardStatus.objects.all()
+class RequestStatusViewSet(ModelViewSet):
+    serializer_class = RequestStatusSerializer
+    queryset = RequestStatus.objects.all()
 
 
 class PaymentMethodViewSet(ModelViewSet):
@@ -60,16 +55,12 @@ class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
 
 
-class StudentCardViewSet(ModelViewSet):
-    serializer_class = StudentCardSerializer
-    queryset = StudentCard.objects.all()
+class StudentRequestViewSet(ModelViewSet):
+    serializer_class = StudentRequestSerializer
+    queryset = StudentRequest.objects.all()
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
 
 class PaymentViewSet(ModelViewSet):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
-
-
-class BlackListViewSet(ModelViewSet):
-    serializer_class = BlackListSerializer
-    queryset = BlackList.objects.all()
