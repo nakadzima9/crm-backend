@@ -90,7 +90,7 @@ class AllUserViewSet(viewsets.ModelViewSet):
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(user_type__in=['admin', 'manager'])
     serializer_class = ProfileSerializer
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    http_method_names = ['get', 'put', 'patch', 'delete']
 
     @swagger_auto_schema(request_body=UserSerializerWithoutEmail)
     def get_serializer_class(self):
