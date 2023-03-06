@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.serializers import UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer, \
-    AdminSerializerWithoutEmail, ManagerSerializerWithoutEmail
+    AdminSerializerWithoutEmail, ManagerSerializerWithoutEmail, ProfileSerializer, UserSerializerWithoutEmail
 from .models import User, Mentor
 from .permissions import IsManager, IsSuperUser
 
@@ -86,3 +86,16 @@ class AllUserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = ['get', 'delete']
 
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(user_type__in=['admin', 'manager'])
+    serializer_class = ProfileSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
+    @swagger_auto_schema(request_body=UserSerializerWithoutEmail)
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+
+        if self.request.method in ['PUT', 'PATCH']:
+            serializer_class = UserSerializerWithoutEmail
+        return serializer_class

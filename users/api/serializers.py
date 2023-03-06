@@ -75,42 +75,6 @@ class AdminSerializer(serializers.ModelSerializer):
         return user
 
 
-class AdminSerializerWithoutEmail(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
-
-
-    def validate_phone(self, value):
-        return validate_phone(value)
-
-
-class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
-
-
-    def validate_phone(self, value):
-        return validate_phone(value)
-
-
 class ManagerSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
@@ -187,6 +151,78 @@ class MentorSerializer(serializers.ModelSerializer):
         mentor.user_type = 'mentor'
         mentor.save()
         return mentor
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'phone',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+
+class UserSerializerWithoutEmail(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+
+class AdminSerializerWithoutEmail(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+
+class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'image',
+                  # 'description',
+                  # 'sex',
+                  ]
+
+
+    def validate_phone(self, value):
+        return validate_phone(value)
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
