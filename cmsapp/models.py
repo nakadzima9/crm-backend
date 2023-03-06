@@ -131,12 +131,12 @@ class Student(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        verbose_name = "Заявка студента"
-        verbose_name_plural = "Заявки студентов"
+        verbose_name = "Студент"
+        verbose_name_plural = "Студенты"
 
 
 class Payment(models.Model):
-    amount = models.FloatField(verbose_name="Скидка")
+    amount = models.FloatField(verbose_name="Сумма")
     client_card = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Кто оплатил")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Дата оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
@@ -146,4 +146,4 @@ class Payment(models.Model):
 
     class Meta:
         verbose_name = "Платёж"
-        verbose_name_plural = "Платёжы"
+        verbose_name_plural = "Платежи"
