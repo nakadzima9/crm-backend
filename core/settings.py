@@ -1,4 +1,6 @@
 import os
+import cloudinary
+
 from datetime import timedelta
 from pathlib import Path
 
@@ -32,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
     'drf_yasg',
     'django_filters',
     'dj_rest_auth',
@@ -121,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Bishkek'
 
 USE_I18N = True
 
@@ -186,8 +190,23 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', 'seaess')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUD_NAME'),
+    'API_SECRET': config('API_SECRET'),
+    'API_KEY': config('API_KEY'),
+    'SECURE': True,
+    'MEDIA_TAG': 'media',
+    'STATIC_IMAGES_EXTENSIONS': ['jpg', 'jpe', 'jpeg', 'jpc', 'jp2', 'j2k', 'wdp', 'jxr',
+                                 'hdp', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'ico'],
+    'PREFIX': MEDIA_URL
+
+}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
