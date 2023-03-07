@@ -104,13 +104,13 @@ class PaymentMethod(models.Model):
 
 class Student(models.Model):
     TYPE_STATUS_CHOICES = [
-        ("ждет звонка", "Ждет звонка"),
-        ("звонок совершен", "Звонок совершен"),
-        ("записан на пробный урок", "Записан на пробный урок"),
-        ("посетил пробный урок", "Посетил пробный урок"),
+        (1, "Ждет звонка"),
+        (2, "Звонок совершен"),
+        (3, "Записан на пробный урок"),
+        (4, "Посетил пробный урок"),
     ]
     TYPE_ADVERTISING_SOURCE = [
-        ("instagram", "Instagram"),
+        (1, "Instagram"),
         ("объявление", "Объявление"),
         ("через сайт", "Через сайт"),
         ("другое", "Другое"),
@@ -124,7 +124,7 @@ class Student(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
     came_from = models.CharField(max_length=20, choices=TYPE_ADVERTISING_SOURCE, verbose_name="Откуда пришёл", null=True)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
-    status = models.CharField(max_length=30, choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
+    status = models.PositiveSmallIntegerField(max_length=30, choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False)
 
     def __str__(self):
