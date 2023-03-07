@@ -12,6 +12,7 @@ from cmsapp.models import (
     Student,
     Payment,
 )
+from .custom_funcs import validate_phone
 
 
 class DepartmentSerializer(ModelSerializer):
@@ -74,9 +75,38 @@ class PaymentMethodSerializer(ModelSerializer):
 
 
 class StudentSerializer(ModelSerializer):
+    department = DepartmentSerializer()
+    payment_method = PaymentMethodSerializer()
+
     class Meta:
         model = Student
-        fields = "__all__"
+        depth = 1
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "surname",
+            "notes",
+            "phone",
+            "laptop",
+            "department",
+            "came_from",
+            "payment_method",
+            "status",
+            "paid",
+        ]
+
+    def validate_phone(self, value):
+        return validate_phone(value)
+
+    def create(self, validated_data):
+        department_data = validated_data.pop("department")["name"]
+        payment_method_data = validated_data.pop("payment_method")["name"]
+        dep = Department.objects.get(name=department_data)
+        pay = PaymentMethod.objects.get(name=payment_method_data)
+        student = Student(department=dep, payment_method=pay, **validated_data)
+        student.save()
+        return student
 
 
 class PaymentSerializer(ModelSerializer):

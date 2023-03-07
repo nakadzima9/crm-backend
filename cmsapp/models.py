@@ -110,10 +110,10 @@ class Student(models.Model):
         (4, "Посетил пробный урок"),
     ]
     TYPE_ADVERTISING_SOURCE = [
-        (1, "Instagram"),
-        ("объявление", "Объявление"),
-        ("через сайт", "Через сайт"),
-        ("другое", "Другое"),
+        ("Instagram", "Instagram"),
+        ("Объявление", "Объявление"),
+        ("Через сайт", "Через сайт"),
+        ("Другое", "Другое"),
     ]
     first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
@@ -124,7 +124,7 @@ class Student(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
     came_from = models.CharField(max_length=20, choices=TYPE_ADVERTISING_SOURCE, verbose_name="Откуда пришёл", null=True)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
-    status = models.PositiveSmallIntegerField(max_length=30, choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
+    status = models.PositiveSmallIntegerField(choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False)
 
     def __str__(self):

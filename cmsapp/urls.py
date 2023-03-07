@@ -12,12 +12,12 @@ router.register("classrooms", ClassroomViewSet)
 router.register("courses", CourseViewSet)
 router.register("schedule-types", ScheduleTypeViewSet)
 router.register("groups", GroupViewSet)
-router.register("departments", DepartmentViewSet)
+main_page_router.register("departments", DepartmentViewSet)
 # router.register("advertising-sources", AdvertisingSourceViewSet)
-router.register("payment-methods", PaymentMethodViewSet)
+main_page_router.register("payment-methods", PaymentMethodViewSet)
 # router.register(r"request-statuses", RequestStatusViewSet)
 router.register(r"payments", PaymentViewSet)
-router.register(r"students", StudentViewSet)
+main_page_router.register(r"students", StudentViewSet)
 
 urlpatterns = []
 

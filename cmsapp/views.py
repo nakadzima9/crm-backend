@@ -61,7 +61,7 @@ class StudentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    # http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
 
 class PaymentViewSet(ModelViewSet):
