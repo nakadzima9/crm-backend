@@ -23,8 +23,6 @@ class PasswordResetEmailView(APIView):
     # will be adding later object permission
     # self.check_object_permissions(request, contact)
 
-    on_get = {"email": "User email for change password"}
-    on_error = {"Bad Request": "Email not exists or check email"}
 
     @swagger_auto_schema(
         responses={"201": "created", "400": "bad request", "404": "not found"},
@@ -33,16 +31,22 @@ class PasswordResetEmailView(APIView):
     )
     def post(self, request):
         otp = generate_otp()
-        req_email = request.data["email"]
-        user = User.objects.get(email=req_email)
+        request_email = request.data.get('email', None)
+        if request_email is None:
+            return Response(data="Required field email", status=status.HTTP_400_BAD_REQUEST)
+        user_queryset = User.objects.filter(email=request_email)
         OTP.objects.filter(
                     created_time__lte=datetime.datetime.fromtimestamp(
                         timezone.now().timestamp() - 60, tz=timezone.utc
                     )
                 ).delete()
+        if not user_queryset:
+            return Response(data='Email not exists or check email', status=status.HTTP_404_NOT_FOUND)
+        user = user_queryset.first()
+        otp_queryset = OTP.objects.filter(user=user)
+        if not otp_queryset:
+            otp_queryset.delete()
         OTP.objects.create(user=user, code=otp)
-        if not user:
-            return NotFound(self.on_error)
         send_mail(
                     "Код активации",
                     f"Ваш код для сброса пароля: {otp} ",
@@ -57,7 +61,6 @@ class PasswordResetEmailView(APIView):
 
 # for check otp
 class PasswordResetCheckCodeView(APIView):
-    on_get = {"email": "user@example.com"}
     opt_not_exists = {"detail": "Wrong code or code has expired"}
 
     # for check otp
@@ -68,52 +71,34 @@ class PasswordResetCheckCodeView(APIView):
         request_body=PasswordCodeCheckSerializer,
     )
     def post(self, request):
-        req_otp = request.data['code']
-        otp_obj = OTP.objects.get(code=req_otp)
+        fields_errors = {}
+        request_otp = request.data.get('code', None)
+        request_email = request.data.get('email', None)
+
+        if request_otp is None:
+            fields_errors['code'] = "Required field code"
+
+        if request_email is None:
+            fields_errors['email'] = "Required field email"
+
+        if fields_errors:
+            return Response(data=fields_errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user_queryset = User.objects.filter(email=request_email)
+        if not user_queryset:
+            return Response(data="This user does not exist", status=status.HTTP_404_NOT_FOUND)
+        user = user_queryset.first()
+        otp_queryset = OTP.objects.filter(user=user, code=request_otp)
+        if not otp_queryset:
+            return Response(data='Your code is not valid', status=status.HTTP_400_BAD_REQUEST)
+        otp_obj = otp_queryset.first()
         if otp_obj.created_time <= datetime.datetime.fromtimestamp(timezone.now().timestamp() - 60,
                                                                    tz=timezone.utc):
-            return Response({"detail": "code has expired"}, status=status.HTTP_202_ACCEPTED)
-        return Response(data="You can change password during 10 minutes", status=status.HTTP_200_OK)
-
-        # try:
-        #     req_email = request.session["email"]
-        #     req_otp = request.data["code"]
-        #     try:
-        #         user = User.objects.get(email=req_email)
-        #         try:
-        #             otp_ob = OTP.objects.get(user=user, code=req_otp)
-        #
-        #             if otp_ob.created_time <= datetime.datetime.fromtimestamp(
-        #                 timezone.now().timestamp() - 60, tz=timezone.utc
-        #             ):
-        #                 return Response(
-        #                     {"detail": "code has expired"},
-        #                     status=status.HTTP_202_ACCEPTED,
-        #                 )
-        #
-        #             request.session["opt_status"] = True
-        #
-        #             opt_status_lifetime = datetime.datetime.fromtimestamp(
-        #                 timezone.now().timestamp() + 600, tz=timezone.utc
-        #             )
-        #             opt_status_lifetime = opt_status_lifetime.strftime(
-        #                 "%Y-%m-%d-%H-%M-%S"
-        #             )
-        #             request.session["opt_status_lifetime"] = opt_status_lifetime
-        #
-        #             return Response(
-        #                 data="You can change password during 10 minutes",
-        #                 status=status.HTTP_200_OK,
-        #             )
-        #         except ObjectDoesNotExist:
-        #             return Response(
-        #                 PasswordResetCheckCodeView.opt_not_exists,
-        #                 status=status.HTTP_404_NOT_FOUND,
-        #             )
-        #     except ObjectDoesNotExist:
-        #         return Response(status=status.HTTP_404_NOT_FOUND)
-        # except KeyError:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(data="Code has expired", status=status.HTTP_400_BAD_REQUEST)
+        otp_obj.status=True
+        otp_obj.password_life_time = timezone.now() + datetime.timedelta(seconds=300)
+        otp_obj.save()
+        return Response(data="You can change password during 5 minutes", status=status.HTTP_200_OK)
 
 
 # for change password
@@ -127,41 +112,26 @@ class PasswordChangeView(APIView):
         request_body=ChangePasswordSerializer,
     )
     def post(self, request):
-        otp_obj = OTP.objects.get(status=True)
-        user = otp_obj.user
+        fields_errors = {}
+        request_email = request.data.get('email', None)
+
+        if request_email is None:
+            fields_errors['email'] = "Required field email"
+
+        if fields_errors:
+            return Response(data=fields_errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user_queryset = User.objects.filter(email=request_email)
+        user = user_queryset.first()
+        otp_queryset = OTP.objects.filter(user=user, status=True)
+        if not otp_queryset:
+            return Response(data='Current user can\'t change the password!', status=status.HTTP_404_NOT_FOUND)
+        otp = otp_queryset.first()
+        otp_user = otp.user
+        if otp.password_life_time <= timezone.now():
+            return Response(data='Password change time has expired', status=status.HTTP_401_UNAUTHORIZED)
         serializer = ChangePasswordSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(data='Password changed successfully!', status=status.HTTP_200_OK)
-
-
-
-        #
-        # try:
-        #     req_email = request.session["email"]
-        #     opt_status = request.session["opt_status"]
-        #     otp_lifetime = datetime.datetime.strptime(
-        #         request.session["opt_status_lifetime"], "%Y-%m-%d-%H-%M-%S"
-        #     )
-        #     try:
-        #         if opt_status is True:
-        #             user = User.objects.get(email=req_email)
-        #             utc = pytz.UTC
-        #             if timezone.now() <= utc.localize(otp_lifetime):
-        #                 serializer = ChangePasswordSerializer(
-        #                     user, data=request.data)
-        #                 if serializer.is_valid():
-        #                     serializer.save()
-        #                     del request.session["email"]
-        #                     del request.session["opt_status"]
-        #                     del request.session["opt_status_lifetime"]
-        #                     return Response(status=status.HTTP_200_OK)
-        #                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        #     except ObjectDoesNotExist:
-        #         return Response(
-        #             {"detail", "User not exists"}, status.HTTP_404_NOT_FOUND
-        #         )
-        # except KeyError:
-        #     return Response(
-        #         data=PasswordChangeView.on_error, status=status.HTTP_400_BAD_REQUEST
-        #     )
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
