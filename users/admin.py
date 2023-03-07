@@ -3,20 +3,20 @@ from django.contrib.auth.admin import UserAdmin
 from users.models import User, Mentor, OTP #, UserImage
 
 
-class StaffAdmin(UserAdmin):
+class StaffAdmin(admin.ModelAdmin):
     list_display = ('id', 'email', 'first_name', 'last_name', 'user_type',)
-
-    fieldsets = (
-        (None, {'fields': ('username', 'password', 'email', 'first_name', 'last_name', 'phone', 'image',
-                                         'description', 'sex', 'user_type', 'is_active')}),
-    )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2', 'email', 'first_name', 'last_name',  'phone', 'image',
-                       'description', 'sex', 'user_type', 'is_active',),
-        }),
-    )
+    exclude = ('password', 'username', 'last_login', 'groups', 'user_permissions', 'date_joined', 'is_staff', 'is_superuser',)
+    # fieldsets = (
+    #     (None, {'fields': ('username', 'email', 'first_name', 'last_name', 'phone', 'image',
+    #                                      'description', 'sex', 'user_type', 'is_active')}),
+    # )
+    # add_fieldsets = (
+    #     (None, {
+    #         'classes': ('wide',),
+    #         'fields': ('username', 'email', 'first_name', 'last_name',  'phone', 'image',
+    #                    'description', 'sex', 'user_type', 'is_active',),
+    #     }),
+    # )
 
 
 class MentorAdmin(admin.ModelAdmin):

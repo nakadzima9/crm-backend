@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+
+from django.utils import timezone
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 from django.core import exceptions
@@ -44,10 +46,27 @@ def validate(self, data, model, serializer):
     return super(serializer, self).validate(data)
 
 
+def password_reset_validate(self, data, serializer):
+    password = data.get('password')
+    repeat_password = data.pop('repeat_password')
+    errors = dict()
+    if password != repeat_password:
+        raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+    try:
+        validators.validate_password(password=password, user=self.instance)
+    except exceptions.ValidationError as e:
+        errors['password'] = list(e.messages)
+    if errors:
+        raise serializers.ValidationError(errors)
+    return super(serializer, self).validate(data)
+
+
 def get_token(user):
     refresh = RefreshToken.for_user(user)
     expires_in = refresh.access_token.lifetime.total_seconds()
-    expires_day = datetime.datetime.now() + datetime.timedelta(seconds=expires_in)
+    print(expires_in)
+    expires_day = (timezone.now() + datetime.timedelta(seconds=expires_in)).strftime('%d/%m/%Y %H:%M:%S')
     # try:
     #     image_url = user.image.url
     # except ValueError:

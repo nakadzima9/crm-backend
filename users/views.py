@@ -1,11 +1,9 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, viewsets
 from rest_framework.exceptions import (AuthenticationFailed, NotFound,
                                        ValidationError)
-from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
@@ -39,14 +37,6 @@ class PersonalLoginWebView(generics.GenericAPIView):
         return get_token(user)
 
 
-class MentorViewSet(viewsets.ModelViewSet):
-    # parser_classes = [FileUploadParser]
-    permission_classes = [IsSuperUser | IsManager]
-    queryset = Mentor.objects.filter(user_type="mentor")
-    serializer_class = MentorSerializer
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
-
-
 class AdminViewSet(viewsets.ModelViewSet):
     # parser_classes = [FileUploadParser]
     permission_classes = [IsSuperUser | IsManager]
@@ -61,6 +51,14 @@ class AdminViewSet(viewsets.ModelViewSet):
         if self.request.method in ['PUT','PATCH']:
             serializer_class = AdminSerializerWithoutEmail
         return serializer_class
+
+
+class AllUserViewSet(viewsets.ModelViewSet):
+    # parser_classes = [FileUploadParser]
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = User.objects.all().order_by('id')
+    serializer_class = UserSerializer
+    http_method_names = ['get', 'delete']
 
 
 class ManagerViewSet(viewsets.ModelViewSet):
@@ -79,12 +77,12 @@ class ManagerViewSet(viewsets.ModelViewSet):
         return serializer_class
 
 
-class AllUserViewSet(viewsets.ModelViewSet):
+class MentorViewSet(viewsets.ModelViewSet):
     # parser_classes = [FileUploadParser]
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.all().order_by('id')
-    serializer_class = UserSerializer
-    http_method_names = ['get', 'delete']
+    queryset = Mentor.objects.filter(user_type="mentor")
+    serializer_class = MentorSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
