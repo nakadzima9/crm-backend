@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.serializers import UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer, \
-    AdminSerializerWithoutEmail, ManagerSerializerWithoutEmail, ProfileSerializer, UserSerializerWithoutEmail
+    ProfileSerializer, UserSerializerWithoutEmail
 from .models import User, Mentor
 from .permissions import IsManager, IsSuperUser
 
