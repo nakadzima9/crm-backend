@@ -13,34 +13,40 @@ from cmsapp.models import Department, ScheduleType, Group
 
 
 class SuperUser(BaseUserManager):
-    def create_user(self    , email, password, **extra_fields):
-        if not email:
-            raise ValueError("You must provide an email")
-        user = self.model(
-            email=self.normalize_email(email),
-            password=password
-            **extra_fields
-        )
-        user.set_unusable_password(password)
-        user.save()
+
+    def create_user(self, email,**extra_fields):
+        if not extra_fields.get('without_generate_password', False):
+            if not email:
+                raise ValueError("You must provide an email")
+            generate_password = self.make_random_password()
+            user = self.model(
+                email=self.normalize_email(email),
+                **extra_fields
+            )
+            user.set_password(generate_password)
+            user.save()
+            send_mail("Ваши данные для входа в CRM",
+                      f"Пароль: {generate_password}",
+                      "from@crm-project.com",
+                      [user.email],
+                      fail_silently=False,
+                      )
+            return user
+        extra_fields.pop('without_generate_password')
+        user = self.model(email=self.normalize_email(email), **extra_fields)
         return user
+
 
     def create_superuser(self, email, password):
         user = self.create_user(
-            email=self.normalize_email(email),
-            password=password,
+            email=email,
+            without_generate_password=True
         )
-        generate_password = self.make_random_password()
-        user.set_password(generate_password)
+        user.set_password(password)
         user.is_superuser = True
         user.is_staff = True
         user.user_type = 'admin'
         user.save()
-        send_mail("Ваши данные для входа в CRM:",
-                  f"Пароль: {generate_password}",
-                  [user.email],
-                  )
-        print(user.email)
         return user
 
 def user_directory_path(instance, filename):
@@ -78,7 +84,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         ("male", "Male"),
         ("female", "Female"),
     ]
-    username = models.CharField(max_length=255, null=True, verbose_name="Логин")
     email = models.EmailField(unique=True, null=True, verbose_name="Почта")
     first_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")
@@ -87,7 +92,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     # image = models.ForeignKey(UserImage, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Аватар")
     image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, null=True,
                               verbose_name="Аватар")
-    description = models.TextField(max_length=300, blank=True, null=True, verbose_name="О себе")
     sex = models.CharField(max_length=50, choices=TYPE_SEX_CHOICES, blank=True, null=True, verbose_name="Пол")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
@@ -101,22 +105,23 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = SuperUser()
 
-    def save(self, *args, **kwargs):
-        try:
-            update_status = kwargs.pop("update")
-        except KeyError:
-            update_status = False
-
-        if not update_status:
-            generate_password = User.objects.make_random_password()
-            send_mail(
-                "Ваши данные для входа в CRM:",
-                f"Пароль: {generate_password}",
-                "from@crm-backend-production.up.railway.app",
-                [self.email],
-            )
-            self.set_password(generate_password)
-        super(User, self).save(*args,**kwargs)
+    # def save(self, *args, **kwargs):
+    #     try:
+    #         update_status = kwargs.pop("update")
+    #     except KeyError:
+    #         update_status = False
+    #
+    #     if not update_status:
+    #         generate_password = User.objects.make_random_password()
+    #         send_mail(
+    #             "Ваши данные для входа в CRM:",
+    #             f"Ваши данные для входа в CRM:\n"
+    #             f"Пароль: {generate_password}",
+    #             "from@crm-project.com",
+    #             [self.email],
+    #         )
+    #         self.set_password(generate_password)
+    #     super(User, self).save(*args,**kwargs)
 
     def __str__(self):
         return f"{self.email}"
@@ -147,6 +152,7 @@ class Mentor(User):
 
 class OTP(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     status = models.BooleanField(default=False)
     password_life_time = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     code = models.CharField(max_length=6)

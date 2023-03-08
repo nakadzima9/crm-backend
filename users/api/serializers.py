@@ -66,7 +66,7 @@ class AdminSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # password = validated_data.pop('password')
-        user = User(**validated_data)
+        user = User.objects.create_user(**validated_data)
         user.is_superuser = True
         user.is_staff = True
         # user.set_password(password)
@@ -76,12 +76,12 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class ManagerSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-        help_text='Leave empty if no change needed',
-        style={'input_type': 'password', 'placeholder': 'Password'}
-    )
+    # password = serializers.CharField(
+    #     write_only=True,
+    #     required=True,
+    #     help_text='Leave empty if no change needed',
+    #     style={'input_type': 'password', 'placeholder': 'Password'}
+    # )
 
     class Meta:
         model = User
@@ -89,16 +89,13 @@ class ManagerSerializer(serializers.ModelSerializer):
                   'first_name',
                   'last_name',
                   'email',
-                  'password',
+                  # 'password',
                   'phone',
                   'image',
                   # 'description',
                   # 'sex',
                   ]
 
-
-    def validate(self, data):
-        return validate(self, data, User, ManagerSerializer)
 
     def validate_email(self, value):
         return validate_email(value)
@@ -107,10 +104,8 @@ class ManagerSerializer(serializers.ModelSerializer):
         return validate_phone(value)
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User(**validated_data)
+        user = User.objects.create_user(**validated_data)
         user.is_staff = True
-        user.set_password(password)
         user.user_type = 'manager'
         user.save()
         return user
@@ -118,7 +113,7 @@ class ManagerSerializer(serializers.ModelSerializer):
 
 class MentorSerializer(serializers.ModelSerializer):
     # department = DepartmentSerializer(read_only=True)
-    group = GroupSerializer(read_only=True)
+    # group = GroupSerializer(read_only=True)
     # schedule_type = ScheduleTypeSerializer(read_only=True)
 
     class Meta:
@@ -128,8 +123,8 @@ class MentorSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone',
-                  'image',
-                  'group',
+                  # 'image',
+                  # 'group',
                   # 'department',
                   # 'schedule_type',
                   'patent_number',
@@ -147,7 +142,7 @@ class MentorSerializer(serializers.ModelSerializer):
         return validate_phone(value)
 
     def create(self, validated_data):
-        mentor = User(**validated_data)
+        mentor = Mentor.objects.create_user(**validated_data, without_generate_password=True)
         mentor.user_type = 'mentor'
         mentor.save()
         return mentor
@@ -189,50 +184,52 @@ class UserSerializerWithoutEmail(serializers.ModelSerializer):
         return validate_phone(value)
 
 
-class AdminSerializerWithoutEmail(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
-
-
-    def validate_phone(self, value):
-        return validate_phone(value)
-
-
-class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
-
-
-    def validate_phone(self, value):
-        return validate_phone(value)
+# class AdminSerializerWithoutEmail(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = User
+#         fields = ['id',
+#                   'first_name',
+#                   'last_name',
+#                   'phone',
+#                   'image',
+#                   # 'description',
+#                   # 'sex',
+#                   ]
+#
+#
+#     def validate_phone(self, value):
+#         return validate_phone(value)
+#
+#
+#
+#
+# class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = User
+#         fields = ['id',
+#                   'first_name',
+#                   'last_name',
+#                   'phone',
+#                   'image',
+#                   # 'description',
+#                   # 'sex',
+#                   ]
+#
+#
+#     def validate_phone(self, value):
+#         return validate_phone(value)
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
     repeat_password = serializers.CharField(write_only=True, required=True)
-    email = serializers.EmailField(write_only=True, required=True)
+    unique_id = serializers.SlugField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ('password', 'repeat_password', 'email')
+        fields = ('password', 'repeat_password', 'unique_id')
 
 
     def validate(self, data):
@@ -242,20 +239,21 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         validators.validate_password(user=instance, password=validated_data['password'])
         instance.set_password(validated_data['password'])
-        instance.save(update=True)
-
+        # instance.save(update=True)
+        instance.save()
         return instance
 
 
-class PasswordCheckEmailSerializer(serializers.ModelSerializer):
+class PasswordEmailCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email"]
 
 
 class PasswordCodeCheckSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(write_only=True, required=True)
+    unique_id = serializers.SlugField(write_only=True, required=True)
+    code = serializers.IntegerField(write_only=True, required=True)
 
     class Meta:
         model = OTP
-        fields = ["code", "email"]
+        fields = ["code", "unique_id"]

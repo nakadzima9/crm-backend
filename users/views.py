@@ -42,15 +42,15 @@ class AdminViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="admin")
     serializer_class = AdminSerializer
-    http_method_names = ['get', 'post','put', 'patch', 'delete']
+    http_method_names = ['get', 'post', 'delete']
 
-    @swagger_auto_schema(request_body=AdminSerializerWithoutEmail)
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-
-        if self.request.method in ['PUT','PATCH']:
-            serializer_class = AdminSerializerWithoutEmail
-        return serializer_class
+    # @swagger_auto_schema(request_body=AdminSerializerWithoutEmail)
+    # def get_serializer_class(self):
+    #     serializer_class = self.serializer_class
+    #
+    #     if self.request.method in ['PUT','PATCH']:
+    #         serializer_class = AdminSerializerWithoutEmail
+    #     return serializer_class
 
 
 class AllUserViewSet(viewsets.ModelViewSet):
@@ -66,15 +66,15 @@ class ManagerViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="manager")
     serializer_class = ManagerSerializer
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    http_method_names = ['get', 'post', 'delete']
 
-    @swagger_auto_schema(request_body=ManagerSerializerWithoutEmail)
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-
-        if self.request.method in ['PUT', 'PATCH']:
-            serializer_class = ManagerSerializerWithoutEmail
-        return serializer_class
+    # @swagger_auto_schema(request_body=ManagerSerializerWithoutEmail)
+    # def get_serializer_class(self):
+    #     serializer_class = self.serializer_class
+    #
+    #     if self.request.method in ['PUT', 'PATCH']:
+    #         serializer_class = ManagerSerializerWithoutEmail
+    #     return serializer_class
 
 
 class MentorViewSet(viewsets.ModelViewSet):
