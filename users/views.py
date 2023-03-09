@@ -40,7 +40,7 @@ class PersonalLoginWebView(generics.GenericAPIView):
 class AdminViewSet(viewsets.ModelViewSet):
     # parser_classes = [FileUploadParser]
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.filter(user_type="admin")
+    queryset = User.objects.filter(user_type="admin").order_by('id')
     serializer_class = AdminSerializer
     http_method_names = ['get', 'post', 'delete']
 
@@ -64,7 +64,7 @@ class AllUserViewSet(viewsets.ModelViewSet):
 class ManagerViewSet(viewsets.ModelViewSet):
     # parser_classes = [FileUploadParser]
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.filter(user_type="manager")
+    queryset = User.objects.filter(user_type="manager").order_by('id')
     serializer_class = ManagerSerializer
     http_method_names = ['get', 'post', 'delete']
 
@@ -80,7 +80,7 @@ class ManagerViewSet(viewsets.ModelViewSet):
 class MentorViewSet(viewsets.ModelViewSet):
     # parser_classes = [FileUploadParser]
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Mentor.objects.filter(user_type="mentor")
+    queryset = Mentor.objects.filter(user_type="mentor").order_by('id')
     serializer_class = MentorSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
