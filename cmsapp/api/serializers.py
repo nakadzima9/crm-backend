@@ -1,4 +1,8 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.response import Response
+from rest_framework import status
 from cmsapp.models import (
     Department,
     GroupStatus,
@@ -102,8 +106,14 @@ class StudentSerializer(ModelSerializer):
     def create(self, validated_data):
         department_data = validated_data.pop("department")["name"]
         payment_method_data = validated_data.pop("payment_method")["name"]
-        dep = Department.objects.get(name=department_data)
-        pay = PaymentMethod.objects.get(name=payment_method_data)
+        try:
+            dep = Department.objects.get(name=department_data)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(f"Object {department_data} does not exist.")
+        try:
+            pay = PaymentMethod.objects.get(name=payment_method_data)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(f"Object {payment_method_data} does not exist.")
         student = Student(department=dep, payment_method=pay, **validated_data)
         student.save()
         return student
