@@ -78,7 +78,7 @@ def get_token(user):
             "last_name": user.last_name,
             "email": user.email,
             # "image": image_url,
-            'user_id': user.id,
+            'id': user.id,
             # "status": "You successfully logged in",
             "expires_day": expires_day,
             # "is_superuser": user.is_superuser,
