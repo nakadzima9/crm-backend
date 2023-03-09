@@ -86,7 +86,7 @@ class MentorViewSet(viewsets.ModelViewSet):
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(user_type__in=['admin', 'manager'])
+    queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
     serializer_class = ProfileSerializer
     http_method_names = ['get', 'put', 'patch', 'delete']
 
