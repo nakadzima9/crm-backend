@@ -3,6 +3,7 @@ import django.contrib.auth.password_validation as validators
 
 from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
 from users.models import User, OTP, Mentor
+# from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, create, validate, password_reset_validate
 
 

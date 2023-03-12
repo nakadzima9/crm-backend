@@ -9,7 +9,9 @@ from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.serializers import UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer, \
     ProfileSerializer, UserSerializerWithoutEmail
+
 from .models import User, Mentor
+# from .models import User
 from .permissions import IsManager, IsSuperUser
 
 from drf_yasg.utils import swagger_auto_schema

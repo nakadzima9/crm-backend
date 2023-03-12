@@ -13,11 +13,10 @@ router.register("courses", CourseViewSet)
 router.register("schedule-types", ScheduleTypeViewSet)
 router.register("groups", GroupViewSet)
 main_page_router.register("departments", DepartmentViewSet)
-# router.register("advertising-sources", AdvertisingSourceViewSet)
 main_page_router.register("payment-methods", PaymentMethodViewSet)
-# router.register(r"request-statuses", RequestStatusViewSet)
 router.register(r"payments", PaymentViewSet)
 main_page_router.register(r"students", StudentViewSet)
+main_page_router.register(r"students-on-study", StudentOnStudyViewSet)
 
 urlpatterns = []
 

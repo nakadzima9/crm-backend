@@ -119,6 +119,20 @@ class StudentSerializer(ModelSerializer):
         return student
 
 
+class StudentOnStudySerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "surname",
+            "phone",
+            "department",
+            "payment_method",
+        ]
+
+
 class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment

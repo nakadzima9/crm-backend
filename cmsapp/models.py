@@ -80,17 +80,6 @@ class Group(models.Model):
         verbose_name_plural = "Группы"
 
 
-# class RequestStatus(models.Model):
-#     status = models.CharField(max_length=30, verbose_name="Статус карточки")
-#
-#     def __str__(self):
-#         return self.status
-#
-#     class Meta:
-#         verbose_name = "Статус заявки"
-#         verbose_name_plural = "Статусы заявок"
-
-
 class PaymentMethod(models.Model):
     name = models.CharField(max_length=20, verbose_name="Метод оплаты")
 
@@ -115,6 +104,11 @@ class Student(models.Model):
         ("Через сайт", "Через сайт"),
         ("Другое", "Другое"),
     ]
+    TYPE_REASONS = [
+        ("причина1", "Причина1"),
+        ("причина2", "Причина2"),
+        ("причина3", "Причина3"),
+    ]
     first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, verbose_name="Отчество", null=True)
@@ -125,7 +119,8 @@ class Student(models.Model):
     came_from = models.CharField(max_length=20, choices=TYPE_ADVERTISING_SOURCE, verbose_name="Откуда пришёл", null=True)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.PositiveSmallIntegerField(choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
-    paid = models.BooleanField(default=False)
+    paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
+    reason = models.CharField(max_length=30, choices=TYPE_REASONS, null=True, verbose_name="Причина неуспешной сделки")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

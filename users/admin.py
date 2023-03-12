@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from users.models import User, Mentor, OTP #, UserImage
+# from users.models import User, OTP #, UserImage
 
 
 class StaffAdmin(admin.ModelAdmin):
@@ -22,6 +23,7 @@ class StaffAdmin(admin.ModelAdmin):
 class MentorAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name', 'department',)
     exclude = ('password', 'last_login', 'groups', 'user_permissions', 'date_joined', 'is_staff', 'is_superuser',)
+
 
 admin.site.register(User, StaffAdmin)
 admin.site.register(Mentor, MentorAdmin)
