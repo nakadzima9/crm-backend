@@ -25,8 +25,8 @@ class SuperUser(BaseUserManager):
             )
             user.set_password(generate_password)
             user.save()
-            send_mail("Ваши данные для входа в CRM",
-                      f"Пароль: {generate_password}",
+            send_mail("Пароль от CRM",
+                      f"Ваши данные для входа в CRM:\nПочта: {user.email}\nПароль: {generate_password}",
                       "from@crm-project.com",
                       [user.email],
                       fail_silently=False,

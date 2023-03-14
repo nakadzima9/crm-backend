@@ -10,13 +10,14 @@ from rest_framework.response import Response
 
 
 def validate_phone(value):
-    if not value[1:].isnumeric():
-        raise serializers.ValidationError('Phone must be numeric symbols')
-    if value[:4] != '+996':
-        raise serializers.ValidationError('Phone number should start with +996 ')
-    elif len(value) != 13:
-        raise serializers.ValidationError("Phone number must be 13 characters long")
-    return value
+    if value is not None:
+        if not value[1:].isnumeric():
+            raise serializers.ValidationError('Phone must be numeric symbols')
+        if value[:4] != '+996':
+            raise serializers.ValidationError('Phone number should start with +996 ')
+        elif len(value) != 13:
+            raise serializers.ValidationError("Phone number must be 13 characters long")
+        return value
 
 
 def validate_email(value):
@@ -74,14 +75,12 @@ def get_token(user):
 
     return Response(
         {
+            'id': user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
             # "image": image_url,
-            'id': user.id,
-            # "status": "You successfully logged in",
             "expires_day": expires_day,
-            # "is_superuser": user.is_superuser,
             "user_type": user.user_type,
             "refresh": str(refresh),
             "access": str(refresh.access_token),
