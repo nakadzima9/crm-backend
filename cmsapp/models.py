@@ -105,9 +105,9 @@ class Student(models.Model):
         ("Другое", "Другое"),
     ]
     TYPE_REASONS = [
-        ("причина1", "Причина1"),
-        ("причина2", "Причина2"),
-        ("причина3", "Причина3"),
+        (1, "Причина1"),
+        (2, "Причина2"),
+        (3, "Причина3"),
     ]
     first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
@@ -120,7 +120,7 @@ class Student(models.Model):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.PositiveSmallIntegerField(choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
-    reason = models.CharField(max_length=30, choices=TYPE_REASONS, null=True, verbose_name="Причина неуспешной сделки")
+    reason = models.PositiveSmallIntegerField(choices=TYPE_REASONS, blank=True, null=True, verbose_name="Причина неуспешной сделки")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
