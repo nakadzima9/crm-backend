@@ -63,7 +63,7 @@ class AdminSerializer(serializers.ModelSerializer):
         return validate_email(value)
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         # password = validated_data.pop('password')
@@ -102,7 +102,7 @@ class ManagerSerializer(serializers.ModelSerializer):
         return validate_email(value)
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -140,7 +140,7 @@ class MentorSerializer(serializers.ModelSerializer):
         return validate_email(value)
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         mentor = Mentor.objects.create_user(**validated_data, without_generate_password=True)
@@ -164,7 +164,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                   ]
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
 
 class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
@@ -183,15 +183,17 @@ class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
         fields = ['id',
                   'first_name',
                   'last_name',
+                  'email',
                   'phone',
+                  'image',
                   # 'image',
                   # 'description',
                   # 'sex',
                   ]
-
+        extra_fields = {'email': {'read_only': True}, 'image': {'read_only':True}}
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
 
 # class AdminSerializerWithoutEmail(serializers.ModelSerializer):
