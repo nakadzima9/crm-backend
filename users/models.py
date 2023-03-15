@@ -87,7 +87,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, null=True, verbose_name="Почта")
     first_name = models.CharField(max_length=255, verbose_name="Имя")
     last_name = models.CharField(max_length=255, verbose_name="Фамилия")
-    phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
+    phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
     # unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     # image = models.ForeignKey(UserImage, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Аватар")
     image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, null=True,
