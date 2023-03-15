@@ -105,11 +105,3 @@ class ProfileImageUpdateViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
     serializer_class = ProfileSerializerOnlyWithImage
     http_method_names = ['put', 'patch']
-
-    # @swagger_auto_schema(request_body=ProfileSerializ erOnlyWithImage)
-    # def get_serializer_class(self):
-    #     serializer_class = self.serializer_class
-    #
-    #     if self.request.method in ['PUT', 'PATCH']:
-    #         serializer_class = ProfileSerializerOnlyWithImage
-    #     return serializer_class
