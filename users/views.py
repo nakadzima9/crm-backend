@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.serializers import UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer, \
-    ProfileSerializer, UserSerializerWithoutEmail
+    ProfileSerializer, UserSerializerWithoutEmailAndImage, ProfileSerializerOnlyWithImage
 
 from .models import User, Mentor
 # from .models import User
@@ -92,10 +92,24 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     http_method_names = ['get', 'put', 'patch', 'delete']
 
-    @swagger_auto_schema(request_body=UserSerializerWithoutEmail)
+    @swagger_auto_schema(request_body=UserSerializerWithoutEmailAndImage)
     def get_serializer_class(self):
         serializer_class = self.serializer_class
 
         if self.request.method in ['PUT', 'PATCH']:
-            serializer_class = UserSerializerWithoutEmail
+            serializer_class = UserSerializerWithoutEmailAndImage
         return serializer_class
+
+
+class ProfileImageUpdateViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
+    serializer_class = ProfileSerializerOnlyWithImage
+    http_method_names = ['put', 'patch']
+
+    # @swagger_auto_schema(request_body=ProfileSerializ erOnlyWithImage)
+    # def get_serializer_class(self):
+    #     serializer_class = self.serializer_class
+    #
+    #     if self.request.method in ['PUT', 'PATCH']:
+    #         serializer_class = ProfileSerializerOnlyWithImage
+    #     return serializer_class

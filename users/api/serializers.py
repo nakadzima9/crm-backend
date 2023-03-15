@@ -167,7 +167,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         return validate_phone(value)
 
 
-class UserSerializerWithoutEmail(serializers.ModelSerializer):
+class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'image',
+                  ]
+
+
+class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
 
     class Meta:
         model = User
@@ -175,7 +184,7 @@ class UserSerializerWithoutEmail(serializers.ModelSerializer):
                   'first_name',
                   'last_name',
                   'phone',
-                  'image',
+                  # 'image',
                   # 'description',
                   # 'sex',
                   ]
