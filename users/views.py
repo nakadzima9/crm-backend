@@ -1,6 +1,7 @@
+from cloudinary_storage.storage import MediaCloudinaryStorage
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
 from rest_framework.exceptions import (
     AuthenticationFailed,
     NotFound,
@@ -9,6 +10,7 @@ from rest_framework.exceptions import (
 
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
@@ -18,7 +20,7 @@ from .api.serializers import (
     ManagerSerializer,
     MentorSerializer,
     ProfileSerializer,
-    UserSerializerWithoutEmailAndImage,
+        UserSerializerWithoutEmailAndImage,
     ProfileSerializerOnlyWithImage
 )
 
@@ -101,6 +103,14 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
     serializer_class = ProfileSerializer
     http_method_names = ['get', 'put', 'patch', 'delete']
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        storage = MediaCloudinaryStorage()
+        storage.delete(name=instance.image.name)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
     @swagger_auto_schema(request_body=UserSerializerWithoutEmailAndImage)
     def get_serializer_class(self):

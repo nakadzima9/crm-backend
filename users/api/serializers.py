@@ -1,3 +1,4 @@
+from cloudinary_storage.storage import MediaCloudinaryStorage
 from rest_framework import serializers, response
 import django.contrib.auth.password_validation as validators
 
@@ -174,6 +175,13 @@ class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
         fields = ['id',
                   'image',
                   ]
+
+    def update(self, instance, validated_data):
+        storage = MediaCloudinaryStorage()
+        storage.delete(name=instance.image.name)
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 
 class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
