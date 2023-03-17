@@ -88,7 +88,7 @@ class ReasonSerializer(ModelSerializer):
 class StudentSerializer(ModelSerializer):
     department = DepartmentSerializer()
     payment_method = PaymentMethodSerializer()
-    reason = ReasonSerializer()
+    reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
 
@@ -119,7 +119,7 @@ class StudentSerializer(ModelSerializer):
         department_data = validated_data.pop("department")["name"]
         payment_method_data = validated_data.pop("payment_method")["name"]
         # status_data = validated_data.pop("status")["name"]
-        reason_data = validated_data.pop("reason")["name"]
+        # reason_data = validated_data.pop("reason")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
         try:
@@ -134,15 +134,15 @@ class StudentSerializer(ModelSerializer):
         #     stat = RequestStatus.objects.get(name=status_data)
         # except ObjectDoesNotExist:
         #     raise serializers.ValidationError(f"Object {status_data} does not exist.")
-        try:
-            reason = Reason.objects.get(name=reason_data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"Object {reason_data} does not exist.")
+        # try:
+        #     reason = Reason.objects.get(name=reason_data)
+        # except ObjectDoesNotExist:
+        #     raise serializers.ValidationError(f"Object {reason_data} does not exist.")
         try:
             source = AdvertisingSource.objects.get(name=came_from_data)
         except ObjectDoesNotExist:
             raise serializers.ValidationError(f"Object {came_from_data} does not exist.")
-        student = Student(department=dep, payment_method=pay, reason=reason, came_from=source, **validated_data)
+        student = Student(department=dep, payment_method=pay, came_from=source, **validated_data)
         student.save()
         return student
 
