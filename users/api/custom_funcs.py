@@ -9,7 +9,7 @@ import datetime
 from rest_framework.response import Response
 from users.models import User
 
-def validate_phone(value):
+def validate_phone(self, value):
     if value is not None:
         if not value:
             return ""
@@ -19,9 +19,11 @@ def validate_phone(value):
             raise serializers.ValidationError('Phone number should start with +996 ')
         elif len(value) != 13:
             raise serializers.ValidationError("Phone number must be 13 characters long")
-        if User.objects.filter(phone=value).first():
-            raise serializers.ValidationError("This number already exists in the system")
+        if not self.partial and not self.instance:
+            if User.objects.filter(phone=value).first():
+                raise serializers.ValidationError("This number already exists in the system")
         return value
+
 
 
 def validate_email(value):

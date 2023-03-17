@@ -113,7 +113,7 @@ class Student(models.Model):
     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, verbose_name="Отчество", null=True)
     notes = models.CharField(max_length=200, verbose_name="Заметка", null=True)
-    phone = models.CharField(max_length=13, unique=True, blank=True, null=True, verbose_name="Номер телефона")
+    phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
     came_from = models.CharField(max_length=20, choices=TYPE_ADVERTISING_SOURCE, verbose_name="Откуда пришёл", null=True)

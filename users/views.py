@@ -1,17 +1,30 @@
+from cloudinary_storage.storage import MediaCloudinaryStorage
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from rest_framework import generics, viewsets
-from rest_framework.exceptions import (AuthenticationFailed, NotFound,
-                                       ValidationError)
+from rest_framework import generics, viewsets, status
+from rest_framework.exceptions import (
+    AuthenticationFailed,
+    NotFound,
+    ValidationError
+)
+
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from .api.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
-from .api.serializers import UserSerializer, AdminSerializer, ManagerSerializer, MentorSerializer, \
-    ProfileSerializer, UserSerializerWithoutEmail
+from .api.serializers import (
+    UserSerializer,
+    AdminSerializer,
+    ManagerSerializer,
+    MentorSerializer,
+    ProfileSerializer,
+        UserSerializerWithoutEmailAndImage,
+    ProfileSerializerOnlyWithImage
+)
 
 from .models import User, Mentor
-# from .models import User
 from .permissions import IsManager, IsSuperUser
 
 from drf_yasg.utils import swagger_auto_schema
@@ -40,7 +53,7 @@ class PersonalLoginWebView(generics.GenericAPIView):
 
 
 class AdminViewSet(viewsets.ModelViewSet):
-    # parser_classes = [FileUploadParser]
+    # parser_classes = (MultiPartParser,)
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="admin").order_by('id')
     serializer_class = AdminSerializer
@@ -56,7 +69,6 @@ class AdminViewSet(viewsets.ModelViewSet):
 
 
 class AllUserViewSet(viewsets.ModelViewSet):
-    # parser_classes = [FileUploadParser]
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
@@ -64,7 +76,7 @@ class AllUserViewSet(viewsets.ModelViewSet):
 
 
 class ManagerViewSet(viewsets.ModelViewSet):
-    # parser_classes = [FileUploadParser]
+    # parser_classes = (MultiPartParser,)
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="manager").order_by('id')
     serializer_class = ManagerSerializer
@@ -80,7 +92,7 @@ class ManagerViewSet(viewsets.ModelViewSet):
 
 
 class MentorViewSet(viewsets.ModelViewSet):
-    # parser_classes = [FileUploadParser]
+    # parser_classes = (MultiPartParser,)
     permission_classes = [IsSuperUser | IsManager]
     queryset = Mentor.objects.filter(user_type="mentor").order_by('id')
     serializer_class = MentorSerializer
@@ -92,10 +104,25 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     http_method_names = ['get', 'put', 'patch', 'delete']
 
-    @swagger_auto_schema(request_body=UserSerializerWithoutEmail)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        storage = MediaCloudinaryStorage()
+        storage.delete(name=instance.image.name)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    @swagger_auto_schema(request_body=UserSerializerWithoutEmailAndImage)
     def get_serializer_class(self):
         serializer_class = self.serializer_class
 
         if self.request.method in ['PUT', 'PATCH']:
-            serializer_class = UserSerializerWithoutEmail
+            serializer_class = UserSerializerWithoutEmailAndImage
         return serializer_class
+
+
+class ProfileImageUpdateViewSet(viewsets.ModelViewSet):
+    parser_classes = (MultiPartParser,)
+    queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
+    serializer_class = ProfileSerializerOnlyWithImage
+    http_method_names = ['put', 'patch']

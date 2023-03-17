@@ -1,3 +1,4 @@
+from cloudinary_storage.storage import MediaCloudinaryStorage
 from rest_framework import serializers, response
 import django.contrib.auth.password_validation as validators
 
@@ -63,7 +64,7 @@ class AdminSerializer(serializers.ModelSerializer):
         return validate_email(value)
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         # password = validated_data.pop('password')
@@ -102,7 +103,7 @@ class ManagerSerializer(serializers.ModelSerializer):
         return validate_email(value)
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -140,7 +141,7 @@ class MentorSerializer(serializers.ModelSerializer):
         return validate_email(value)
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         mentor = Mentor.objects.create_user(**validated_data, without_generate_password=True)
@@ -164,25 +165,43 @@ class ProfileSerializer(serializers.ModelSerializer):
                   ]
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
 
-class UserSerializerWithoutEmail(serializers.ModelSerializer):
+class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id',
+                  'image',
+                  ]
+
+    def update(self, instance, validated_data):
+        storage = MediaCloudinaryStorage()
+        storage.delete(name=instance.image.name)
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
+
+
+class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ['id',
                   'first_name',
                   'last_name',
+                  'email',
                   'phone',
                   'image',
+                  # 'image',
                   # 'description',
                   # 'sex',
                   ]
-
+        extra_fields = {'email': {'read_only': True}, 'image': {'read_only':True}}
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
 
 # class AdminSerializerWithoutEmail(serializers.ModelSerializer):
