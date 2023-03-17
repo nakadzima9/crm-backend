@@ -120,7 +120,8 @@ class Student(models.Model):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.PositiveSmallIntegerField(choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
-    reason = models.PositiveSmallIntegerField(choices=TYPE_REASONS, blank=True, null=True, verbose_name="Причина неуспешной сделки")
+    reason = models.PositiveSmallIntegerField(choices=TYPE_REASONS, default=0, blank=True, null=True, verbose_name="Причина неуспешной сделки")
+    on_request = models.BooleanField(default=False, null=True, verbose_name="На этапе заявки")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
