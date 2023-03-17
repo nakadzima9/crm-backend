@@ -1,10 +1,9 @@
 from cloudinary_storage.storage import MediaCloudinaryStorage
-from rest_framework import serializers, response
+from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
 from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
 from users.models import User, OTP, Mentor
-# from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, create, validate, password_reset_validate
 
 
@@ -198,7 +197,7 @@ class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
                   # 'description',
                   # 'sex',
                   ]
-        extra_fields = {'email': {'read_only': True}, 'image': {'read_only':True}}
+        extra_fields = {'email': {'read_only': True}, 'image': {'read_only': True}}
 
     def validate_phone(self, value):
         return validate_phone(self, value)
