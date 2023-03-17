@@ -10,11 +10,12 @@ from cmsapp.models import (
     Course,
     ScheduleType,
     Group,
-    # AdvertisingSource,
-    # RequestStatus,
+    AdvertisingSource,
+    RequestStatus,
     PaymentMethod,
     Student,
     Payment,
+    Reason,
 )
 from .custom_funcs import validate_phone
 
@@ -60,16 +61,16 @@ class GroupSerializer(ModelSerializer):
         fields = ['id', 'number', 'students_max', 'status', 'created_at', 'course', 'schedule_type', 'classroom']
 
 
-# class AdvertisingSourceSerializer(ModelSerializer):
-#     class Meta:
-#         model = AdvertisingSource
-#         fields = "__all__"
-#
-#
-# class RequestStatusSerializer(ModelSerializer):
-#     class Meta:
-#         model = RequestStatus
-#         fields = "__all__"
+class AdvertisingSourceSerializer(ModelSerializer):
+    class Meta:
+        model = AdvertisingSource
+        fields = "__all__"
+
+
+class RequestStatusSerializer(ModelSerializer):
+    class Meta:
+        model = RequestStatus
+        fields = "__all__"
 
 
 class PaymentMethodSerializer(ModelSerializer):
@@ -78,10 +79,18 @@ class PaymentMethodSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class ReasonSerializer(ModelSerializer):
+    class Meta:
+        model = Reason
+        fields = "__all__"
+
+
 class StudentSerializer(ModelSerializer):
     department = DepartmentSerializer()
     payment_method = PaymentMethodSerializer()
-    # reason = serializers.SerializerMethodField()
+    reason = ReasonSerializer()
+    came_from = AdvertisingSourceSerializer()
+    status = RequestStatusSerializer(required=False)
 
     class Meta:
         model = Student
@@ -100,16 +109,19 @@ class StudentSerializer(ModelSerializer):
             "status",
             "paid",
             "reason",
+            "on_request",
         ]
 
     def validate_phone(self, value):
-        return validate_phone(value)
+        return validate_phone(self, value)
 
     def create(self, validated_data):
         department_data = validated_data.pop("department")["name"]
         payment_method_data = validated_data.pop("payment_method")["name"]
-        # dep = self.object_not_found_validate(Department, department_data)
-        # pay = self.object_not_found_validate(PaymentMethod, payment_method_data)
+        # status_data = validated_data.pop("status")["name"]
+        reason_data = validated_data.pop("reason")["name"]
+        came_from_data = validated_data.pop("came_from")["name"]
+
         try:
             dep = Department.objects.get(name=department_data)
         except ObjectDoesNotExist:
@@ -118,7 +130,19 @@ class StudentSerializer(ModelSerializer):
             pay = PaymentMethod.objects.get(name=payment_method_data)
         except ObjectDoesNotExist:
             raise serializers.ValidationError(f"Object {payment_method_data} does not exist.")
-        student = Student(department=dep, payment_method=pay, **validated_data)
+        # try:
+        #     stat = RequestStatus.objects.get(name=status_data)
+        # except ObjectDoesNotExist:
+        #     raise serializers.ValidationError(f"Object {status_data} does not exist.")
+        try:
+            reason = Reason.objects.get(name=reason_data)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(f"Object {reason_data} does not exist.")
+        try:
+            source = AdvertisingSource.objects.get(name=came_from_data)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(f"Object {came_from_data} does not exist.")
+        student = Student(department=dep, payment_method=pay, reason=reason, came_from=source, **validated_data)
         student.save()
         return student
 

@@ -17,6 +17,9 @@ main_page_router.register("payment-methods", PaymentMethodViewSet)
 router.register(r"payments", PaymentViewSet)
 main_page_router.register(r"students", StudentViewSet)
 main_page_router.register(r"students-on-study", StudentOnStudyViewSet)
+main_page_router.register(r"sources", AdvertisingSourceViewSet)
+main_page_router.register(r"request-statuses", RequestStatusViewSet)
+main_page_router.register(r"reasons", ReasonViewSet)
 
 urlpatterns = []
 

@@ -91,24 +91,32 @@ class PaymentMethod(models.Model):
         verbose_name_plural = "Методы оплат"
 
 
+class AdvertisingSource(models.Model):
+    name = models.CharField(max_length=15, verbose_name="Название источника")
+
+    def __str__(self):
+        return self.name
+
+
+class RequestStatus(models.Model):
+    name = models.CharField(max_length=20, verbose_name="Статус заявки")
+
+    def __str__(self):
+        return self.name
+
+
+class Reason(models.Model):
+    name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
+
+    def __str__(self):
+        return self.name
+
+
+def get_default_status():
+    return RequestStatus.objects.get(name="статус1").id
+
+
 class Student(models.Model):
-    TYPE_STATUS_CHOICES = [
-        (1, "Ждет звонка"),
-        (2, "Звонок совершен"),
-        (3, "Записан на пробный урок"),
-        (4, "Посетил пробный урок"),
-    ]
-    TYPE_ADVERTISING_SOURCE = [
-        ("Instagram", "Instagram"),
-        ("Объявление", "Объявление"),
-        ("Через сайт", "Через сайт"),
-        ("Другое", "Другое"),
-    ]
-    TYPE_REASONS = [
-        (1, "Причина1"),
-        (2, "Причина2"),
-        (3, "Причина3"),
-    ]
     first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, verbose_name="Отчество", null=True)
@@ -116,12 +124,12 @@ class Student(models.Model):
     phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
-    came_from = models.CharField(max_length=20, choices=TYPE_ADVERTISING_SOURCE, verbose_name="Откуда пришёл", null=True)
+    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
-    status = models.PositiveSmallIntegerField(choices=TYPE_STATUS_CHOICES, null=True, verbose_name="Статус заявки")
-    paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
-    reason = models.PositiveSmallIntegerField(choices=TYPE_REASONS, default=0, blank=True, null=True, verbose_name="Причина неуспешной сделки")
-    on_request = models.BooleanField(default=False, null=True, verbose_name="На этапе заявки")
+    status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")
+    paid = models.BooleanField(default=False, null=True, verbose_name="Оплатил или нет")
+    reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
+    on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

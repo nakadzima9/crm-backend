@@ -41,14 +41,22 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
 
 
-# class AdvertisingSourceViewSet(ModelViewSet):
-#     serializer_class = AdvertisingSourceSerializer
-#     queryset = AdvertisingSource.objects.all()
-#
-#
-# class RequestStatusViewSet(ModelViewSet):
-#     serializer_class = RequestStatusSerializer
-#     queryset = RequestStatus.objects.all()
+class AdvertisingSourceViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    serializer_class = AdvertisingSourceSerializer
+    queryset = AdvertisingSource.objects.all()
+
+
+class RequestStatusViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    serializer_class = RequestStatusSerializer
+    queryset = RequestStatus.objects.all()
+
+
+class ReasonViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    serializer_class = ReasonSerializer
+    queryset = Reason.objects.all()
 
 
 class PaymentMethodViewSet(ModelViewSet):
@@ -60,12 +68,13 @@ class PaymentMethodViewSet(ModelViewSet):
 class StudentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = StudentSerializer
-    queryset = Student.objects.all()
+    queryset = Student.objects.filter(on_request=True)
 
 
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = Student.objects.filter(paid=True)
+    # queryset = Student.objects.all()
     serializer_class = StudentOnStudySerializer
 
 
