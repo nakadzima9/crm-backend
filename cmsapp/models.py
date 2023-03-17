@@ -99,7 +99,7 @@ class AdvertisingSource(models.Model):
 
 
 class RequestStatus(models.Model):
-    name = models.CharField(max_length=20, default="Ждёт звонка", verbose_name="Статус заявки")
+    name = models.CharField(max_length=30, default="Ждёт звонка", verbose_name="Статус заявки")
 
     def __str__(self):
         return self.name
@@ -128,7 +128,7 @@ class Student(models.Model):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False, null=True, verbose_name="Оплатил или нет")
-    reason = models.ForeignKey(Reason, blank=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
+    reason = models.ForeignKey(Reason, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
 
     def __str__(self):
