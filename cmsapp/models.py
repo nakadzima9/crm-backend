@@ -99,7 +99,7 @@ class AdvertisingSource(models.Model):
 
 
 class RequestStatus(models.Model):
-    name = models.CharField(max_length=20, verbose_name="Статус заявки")
+    name = models.CharField(max_length=20, default="Ждёт звонка", verbose_name="Статус заявки")
 
     def __str__(self):
         return self.name
@@ -113,7 +113,7 @@ class Reason(models.Model):
 
 
 def get_default_status():
-    return RequestStatus.objects.get(name="Ждет звонка").id
+    return RequestStatus.objects.filter(name="Ждёт звонка").first()
 
 
 class Student(models.Model):
