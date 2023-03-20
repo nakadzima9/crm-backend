@@ -53,7 +53,7 @@ class CourseSerializer(ModelSerializer):
         fields = [
             'id',
             'name',
-            'departament',
+            'department',
             'started_at',
             'duration_month'
         ]
