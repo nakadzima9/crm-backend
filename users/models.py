@@ -88,6 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # image = models.ForeignKey(UserImage, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Аватар")
     image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, null=True,
                               verbose_name="Аватар")
+    linkedin = models.URLField(blank=True, null=True, verbose_name="Ссылка на Linkedin")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
