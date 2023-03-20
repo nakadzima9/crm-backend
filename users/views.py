@@ -53,7 +53,6 @@ class PersonalLoginWebView(generics.GenericAPIView):
 
 
 class AdminViewSet(viewsets.ModelViewSet):
-    # parser_classes = (MultiPartParser,)
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="admin").order_by('id')
     serializer_class = AdminSerializer
@@ -76,7 +75,6 @@ class AllUserViewSet(viewsets.ModelViewSet):
 
 
 class ManagerViewSet(viewsets.ModelViewSet):
-    # parser_classes = (MultiPartParser,)
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="manager").order_by('id')
     serializer_class = ManagerSerializer
@@ -92,7 +90,6 @@ class ManagerViewSet(viewsets.ModelViewSet):
 
 
 class MentorViewSet(viewsets.ModelViewSet):
-    # parser_classes = (MultiPartParser,)
     permission_classes = [IsSuperUser | IsManager]
     queryset = Mentor.objects.filter(user_type="mentor").order_by('id')
     serializer_class = MentorSerializer
