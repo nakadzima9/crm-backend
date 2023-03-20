@@ -20,8 +20,6 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'user_type',
             'image',
-            # 'description',
-            # 'sex',
         ]
 
     read_only_fields = ['user_type']
@@ -36,12 +34,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AdminSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(
-    #     write_only=True,
-    #     required=True,
-    #     help_text='Leave empty if no change needed',
-    #     style={'input_type': 'password', 'placeholder': 'Password'}
-    # )
 
     class Meta:
         model = User
@@ -50,16 +42,9 @@ class AdminSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
-            # 'password',
             'phone',
             'image',
-            # 'description',
-            # 'sex',
         ]
-
-
-    # def validate(self, data):
-    #     return validate(self, data, User, AdminSerializer)
 
     def validated_email(self, value):
         return validate_email(value)
@@ -68,23 +53,15 @@ class AdminSerializer(serializers.ModelSerializer):
         return validate_phone(self, value)
 
     def create(self, validated_data):
-        # password = validated_data.pop('password')
         user = User.objects.create_user(**validated_data)
         user.is_superuser = True
         user.is_staff = True
-        # user.set_password(password)
         user.user_type = 'admin'
         user.save()
         return user
 
 
 class ManagerSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(
-    #     write_only=True,
-    #     required=True,
-    #     help_text='Leave empty if no change needed',
-    #     style={'input_type': 'password', 'placeholder': 'Password'}
-    # )
 
     class Meta:
         model = User
@@ -93,11 +70,8 @@ class ManagerSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
-            # 'password',
             'phone',
             'image',
-            # 'description',
-            # 'sex',
           ]
 
 
@@ -128,15 +102,13 @@ class MentorSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'phone',
-              # 'image',
-              # 'group',
-              # 'department',
-              # 'schedule_type',
-              'patent_number',
-              'patent_start',
-              'patent_end',
-              # 'description',
-              # 'sex',
+            # 'image',
+            # 'group',
+            # 'department',
+            # 'schedule_type',
+            'patent_number',
+            'patent_start',
+            'patent_end',
         ]
 
 
@@ -164,8 +136,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
-            # 'description',
-            # 'sex',
         ]
 
     def validate_phone(self, value):
@@ -201,9 +171,6 @@ class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
-            # 'image',
-            # 'description',
-            # 'sex',
         ]
 
     def validate_phone(self, value):
