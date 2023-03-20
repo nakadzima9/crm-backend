@@ -1,4 +1,5 @@
 import uuid
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -136,8 +137,8 @@ class Mentor(User):
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
 
-    # def __str__(self):
-    #     return f"Имя: {self.first_name} | Фамилия: {self.last_name} | Департамент {self.department}"
+    def __str__(self):
+        return f"Имя: {self.first_name} | Фамилия: {self.last_name} | Департамент {self.department}"
 
     class Meta:
         verbose_name = "Ментор"
