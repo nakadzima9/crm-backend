@@ -12,16 +12,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  'user_type',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'user_type',
+            'image',
+            # 'description',
+            # 'sex',
+        ]
 
     read_only_fields = ['user_type']
 
@@ -44,16 +45,17 @@ class AdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  # 'password',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            # 'password',
+            'phone',
+            'image',
+            # 'description',
+            # 'sex',
+        ]
 
 
     # def validate(self, data):
@@ -86,16 +88,17 @@ class ManagerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  # 'password',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            # 'password',
+            'phone',
+            'image',
+            # 'description',
+            # 'sex',
+          ]
 
 
     def validate_email(self, value):
@@ -119,21 +122,22 @@ class MentorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mentor
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  # 'image',
-                  # 'group',
-                  # 'department',
-                  # 'schedule_type',
-                  'patent_number',
-                  'patent_start',
-                  'patent_end',
-                  # 'description',
-                  # 'sex',
-                  ]
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+              # 'image',
+              # 'group',
+              # 'department',
+              # 'schedule_type',
+              'patent_number',
+              'patent_start',
+              'patent_end',
+              # 'description',
+              # 'sex',
+        ]
 
 
     def validate_email(self, value):
@@ -153,15 +157,16 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  'image',
-                  # 'description',
-                  # 'sex',
-                  ]
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'image',
+            # 'description',
+            # 'sex',
+        ]
 
     def validate_phone(self, value):
         return validate_phone(self, value)
@@ -171,9 +176,10 @@ class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id',
-                  'image',
-                  ]
+        fields = [
+            'id',
+            'image',
+        ]
 
     def update(self, instance, validated_data):
         storage = MediaCloudinaryStorage()
@@ -187,17 +193,18 @@ class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone',
-                  'image',
-                  # 'image',
-                  # 'description',
-                  # 'sex',
-                  ]
         extra_fields = {'email': {'read_only': True}, 'image': {'read_only': True}}
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'image',
+            # 'image',
+            # 'description',
+            # 'sex',
+        ]
 
     def validate_phone(self, value):
         return validate_phone(self, value)
@@ -248,7 +255,11 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('password', 'repeat_password', 'unique_id')
+        fields = (
+            'password',
+            'repeat_password',
+            'unique_id'
+        )
 
 
     def validate(self, data):
@@ -266,7 +277,9 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class PasswordEmailCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["email"]
+        fields = [
+            "email"
+        ]
 
 
 class PasswordCodeCheckSerializer(serializers.ModelSerializer):
@@ -275,4 +288,7 @@ class PasswordCodeCheckSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OTP
-        fields = ["code", "unique_id"]
+        fields = [
+            "code",
+            "unique_id"
+        ]
