@@ -293,6 +293,29 @@ files = [
 django = ">=2.2"
 
 [[package]]
+name = "django-storages"
+version = "1.13.2"
+description = "Support for many storage backends in Django"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-storages-1.13.2.tar.gz", hash = "sha256:cbadd15c909ceb7247d4ffc503f12a9bec36999df8d0bef7c31e57177d512688"},
+    {file = "django_storages-1.13.2-py3-none-any.whl", hash = "sha256:31dc5a992520be571908c4c40d55d292660ece3a55b8141462b4e719aa38eab3"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[package.extras]
+azure = ["azure-storage-blob (>=12.0.0)"]
+boto3 = ["boto3 (>=1.4.4)"]
+dropbox = ["dropbox (>=7.2.1)"]
+google = ["google-cloud-storage (>=1.27.0)"]
+libcloud = ["apache-libcloud"]
+sftp = ["paramiko (>=1.10.0)"]
+
+[[package]]
 name = "djangorestframework"
 version = "3.14.0"
 description = "Web APIs for Django, made easy."
@@ -358,6 +381,24 @@ uritemplate = ">=3.0.0"
 
 [package.extras]
 validation = ["swagger-spec-validator (>=2.1.0)"]
+
+[[package]]
+name = "dropbox"
+version = "11.36.0"
+description = "Official Dropbox API Client"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dropbox-11.36.0-py2-none-any.whl", hash = "sha256:91d26a47a6db294e5d787d233e70d8f785efee6d456564588e81a6a2ac4c550b"},
+    {file = "dropbox-11.36.0-py3-none-any.whl", hash = "sha256:5d36e3b08c2e542f31469d82031be2606963f774b2f1105e3aa11c9913c67697"},
+    {file = "dropbox-11.36.0.tar.gz", hash = "sha256:830ce522d8bc3905b4a99b67dc009aa9542550d1de9fa1743c1927de70888b47"},
+]
+
+[package.dependencies]
+requests = ">=2.16.2"
+six = ">=1.12.0"
+stone = ">=2"
 
 [[package]]
 name = "gunicorn"
@@ -596,6 +637,18 @@ files = [
 [package.extras]
 docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline-tabs", "sphinx-issues (>=3.0.1)", "sphinx-removed-in", "sphinxext-opengraph"]
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
+
+[[package]]
+name = "ply"
+version = "3.11"
+description = "Python Lex & Yacc"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce"},
+    {file = "ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"},
+]
 
 [[package]]
 name = "psycopg2-binary"
@@ -847,6 +900,23 @@ files = [
 ]
 
 [[package]]
+name = "stone"
+version = "3.3.1"
+description = "Stone is an interface description language (IDL) for APIs."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "stone-3.3.1-py2-none-any.whl", hash = "sha256:cd2f7f9056fc39b16c8fd46a26971dc5ccd30b5c2c246566cd2c0dd27ff96609"},
+    {file = "stone-3.3.1-py3-none-any.whl", hash = "sha256:e15866fad249c11a963cce3bdbed37758f2e88c8ff4898616bc0caeb1e216047"},
+    {file = "stone-3.3.1.tar.gz", hash = "sha256:4ef0397512f609757975f7ec09b35639d72ba7e3e17ce4ddf399578346b4cb50"},
+]
+
+[package.dependencies]
+ply = ">=3.4"
+six = ">=1.12.0"
+
+[[package]]
 name = "uritemplate"
 version = "4.1.1"
 description = "Implementation of RFC 6570 URI Templates"
@@ -893,4 +963,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "00d33708fa4db75b6dbfb2203afd6e0a4191fc0ef4a25d490b5a48f92c954270"
+content-hash = "3b112a962836f90ca79929d0dbad498b403fc798087ebbbef38d01fced31c04d"
