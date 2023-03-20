@@ -9,6 +9,7 @@ import datetime
 from rest_framework.response import Response
 from users.models import User
 
+
 def validate_phone(self, value):
     if value is not None:
         if not value:
@@ -23,7 +24,6 @@ def validate_phone(self, value):
             if User.objects.filter(phone=value).first():
                 raise serializers.ValidationError("This number already exists in the system")
         return value
-
 
 
 def validate_email(value):
