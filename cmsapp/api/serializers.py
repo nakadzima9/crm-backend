@@ -23,31 +23,51 @@ from .custom_funcs import validate_phone
 class DepartmentSerializer(ModelSerializer):
     class Meta:
         model = Department
-        fields = "__all__"
+        fields = [
+            'id',
+            'name'
+        ]
 
 
 class GroupStatusSerializer(ModelSerializer):
     class Meta:
         model = GroupStatus
-        fields = "__all__"
+        fields = [
+            'id',
+            'status_name'
+        ]
 
 
 class ClassroomSerializer(ModelSerializer):
     class Meta:
         model = Classroom
-        fields = "__all__"
+        fields = [
+            'id',
+            'name'
+        ]
 
 
 class CourseSerializer(ModelSerializer):
     class Meta:
         model = Course
-        fields = "__all__"
+        fields = [
+            'id',
+            'name',
+            'departament',
+            'started_at',
+            'duration_month'
+        ]
 
 
 class ScheduleTypeSerializer(ModelSerializer):
     class Meta:
         model = ScheduleType
-        fields = "__all__"
+        fields = [
+            'id',
+            'type_name',
+            'start_time',
+            'end_time'
+        ]
 
 
 class GroupSerializer(ModelSerializer):
@@ -58,31 +78,52 @@ class GroupSerializer(ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ['id', 'number', 'students_max', 'status', 'created_at', 'course', 'schedule_type', 'classroom']
+        fields = [
+            'id',
+            'number',
+            'students_max',
+            'status',
+            'created_at',
+            'course',
+            'schedule_type',
+            'classroom'
+        ]
 
 
 class AdvertisingSourceSerializer(ModelSerializer):
     class Meta:
         model = AdvertisingSource
-        fields = "__all__"
+        fields = [
+            'id',
+            'name'
+        ]
 
 
 class RequestStatusSerializer(ModelSerializer):
     class Meta:
         model = RequestStatus
-        fields = "__all__"
+        fields = [
+            'id',
+            'name'
+        ]
 
 
 class PaymentMethodSerializer(ModelSerializer):
     class Meta:
         model = PaymentMethod
-        fields = "__all__"
+        fields = [
+            'id',
+            'name'
+        ]
 
 
 class ReasonSerializer(ModelSerializer):
     class Meta:
         model = Reason
-        fields = "__all__"
+        fields = [
+            'id',
+            'name'
+        ]
 
 
 class StudentSerializer(ModelSerializer):
@@ -193,4 +234,10 @@ class StudentOnStudySerializer(ModelSerializer):
 class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment
-        fields = "__all__"
+        fields = [
+            'id',
+            'amount',
+            'client_card',
+            'created_at',
+            'user'
+        ]
