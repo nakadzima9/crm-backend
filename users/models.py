@@ -13,7 +13,7 @@ from cmsapp.models import Department, ScheduleType, Group
 
 class SuperUser(BaseUserManager):
 
-    def create_user(self, email,**extra_fields):
+    def create_user(self, email, **extra_fields):
         if not extra_fields.get('without_generate_password', False):
             if not email:
                 raise ValueError("You must provide an email")
@@ -35,7 +35,6 @@ class SuperUser(BaseUserManager):
         user = self.model(email=self.normalize_email(email), **extra_fields)
         return user
 
-
     def create_superuser(self, email, password):
         user = self.create_user(
             email=email,
@@ -47,6 +46,7 @@ class SuperUser(BaseUserManager):
         user.user_type = 'admin'
         user.save()
         return user
+
 
 def user_directory_path(instance, filename):
     extension = filename.split('.')[-1]
