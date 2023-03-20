@@ -3,7 +3,7 @@ from .permissions import IsManager, IsUser, IsSuperUser
 from .models import *
 
 from cmsapp.api.serializers import *
-
+from rest_framework.parsers import MultiPartParser
 
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
@@ -27,6 +27,13 @@ class CourseViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+
+
+class CourseImageUpdateViewSet(ModelViewSet):
+    parser_classes = (MultiPartParser,)
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializerOnlyWithImage
+    http_method_names = ['put', 'patch']
 
 
 class ScheduleTypeViewSet(ModelViewSet):

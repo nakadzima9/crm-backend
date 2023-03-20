@@ -20,6 +20,7 @@ main_page_router.register(r"students-on-study", StudentOnStudyViewSet)
 main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
 main_page_router.register(r"reasons", ReasonViewSet)
+main_page_router.register(r"courses/image", CourseImageUpdateViewSet)
 
 urlpatterns = []
 

@@ -36,11 +36,18 @@ class Classroom(models.Model):
         verbose_name_plural = "Комнаты"
 
 
+def course_directory_path(instance, filename):
+    # extension = filename.split('.')[-1]
+    return f"courses/{filename}"
+
+
 class Course(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
     started_at = models.DateField(verbose_name="Старт курса")
     duration_month = models.IntegerField(verbose_name="Продолжительность курса в месяцах")
+    image = models.ImageField(upload_to=course_directory_path, default='course.jpg', blank=True, null=True,
+                              verbose_name="Аватар")
 
     def __str__(self):
         return self.name

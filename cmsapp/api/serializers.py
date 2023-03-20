@@ -18,6 +18,7 @@ from cmsapp.models import (
     Reason,
 )
 from .custom_funcs import validate_phone
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
 class DepartmentSerializer(ModelSerializer):
@@ -27,6 +28,23 @@ class DepartmentSerializer(ModelSerializer):
             'id',
             'name'
         ]
+
+
+class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
+
+    class Meta:
+        model = Course
+        fields = [
+            'id',
+            'image',
+        ]
+
+    def update(self, instance, validated_data):
+        storage = MediaCloudinaryStorage()
+        storage.delete(name=instance.image.name)
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 
 class GroupStatusSerializer(ModelSerializer):
