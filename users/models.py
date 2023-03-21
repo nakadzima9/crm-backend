@@ -90,10 +90,17 @@ class User(AbstractBaseUser, PermissionsMixin):
                               verbose_name="Аватар")
     linkedin = models.URLField(blank=True, null=True, verbose_name="Ссылка на Linkedin")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
-    is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
+                                   related_name='department', verbose_name='Департамент')
+    schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, blank=True, null=True,
+                                      related_name='schedule', verbose_name='Расписание')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
+                              verbose_name='Группа')
+    patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
+    patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
+    patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     is_superuser = models.BooleanField(default=False, verbose_name="Суперь пользователь")
-    date_joined = models.DateTimeField(default=timezone.now, verbose_name="Дата создания учётной записи")
 
     USERNAME_FIELD = "email"
 
@@ -127,23 +134,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Системные пользователи"
 
 
-class Mentor(User):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
-                                   related_name='department', verbose_name='Департамент')
-    schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, blank=True, null=True,
-                                      related_name='schedule', verbose_name='Расписание')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
-                              verbose_name='Группа')
-    patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
-    patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
-    patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
-
-    def __str__(self):
-        return f"Имя: {self.first_name} | Фамилия: {self.last_name} | Департамент {self.department}"
-
-    class Meta:
-        verbose_name = "Ментор"
-        verbose_name_plural = "Ментора"
+# class Mentor(User):
+#     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
+#                                    related_name='department', verbose_name='Департамент')
+#     schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, blank=True, null=True,
+#                                       related_name='schedule', verbose_name='Расписание')
+#     group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
+#                               verbose_name='Группа')
+#     patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
+#     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
+#     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
+#
+#     def __str__(self):
+#         return f"Имя: {self.first_name} | Фамилия: {self.last_name} | Департамент {self.department}"
+#
+#     class Meta:
+#         verbose_name = "Ментор"
+#         verbose_name_plural = "Ментора"
 
 
 class OTP(models.Model):

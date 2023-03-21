@@ -24,7 +24,7 @@ from .api.serializers import (
     ProfileSerializerOnlyWithImage
 )
 
-from .models import User, Mentor
+from .models import User
 from .permissions import IsManager, IsSuperUser
 
 from drf_yasg.utils import swagger_auto_schema
@@ -91,7 +91,7 @@ class ManagerViewSet(viewsets.ModelViewSet):
 
 class MentorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Mentor.objects.filter(user_type="mentor").order_by('id')
+    queryset = User.objects.filter(user_type="mentor").order_by('id')
     serializer_class = MentorSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 

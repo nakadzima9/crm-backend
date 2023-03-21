@@ -3,7 +3,7 @@ from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
 from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
-from users.models import User, OTP, Mentor
+from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, create, validate, password_reset_validate
 
 
@@ -95,7 +95,7 @@ class MentorSerializer(serializers.ModelSerializer):
     # schedule_type = ScheduleTypeSerializer(read_only=True)
 
     class Meta:
-        model = Mentor
+        model = User
         fields = [
             'id',
             'first_name',
@@ -119,10 +119,10 @@ class MentorSerializer(serializers.ModelSerializer):
         return validate_phone(self, value)
 
     def create(self, validated_data):
-        mentor = Mentor.objects.create_user(**validated_data, without_generate_password=True)
-        mentor.user_type = 'mentor'
-        mentor.save()
-        return mentor
+        user = User.objects.create_user(**validated_data, without_generate_password=True)
+        user.user_type = 'mentor'
+        user.save()
+        return user
 
 
 class ProfileSerializer(serializers.ModelSerializer):
