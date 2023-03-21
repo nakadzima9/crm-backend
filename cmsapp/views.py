@@ -1,9 +1,38 @@
 from rest_framework.viewsets import ModelViewSet
-from .permissions import IsManager, IsUser, IsSuperUser
-from .models import *
+from .permissions import IsManager, IsSuperUser
+from cmsapp.models import (
+    Department,
+    GroupStatus,
+    Classroom,
+    Course,
+    ScheduleType,
+    Group,
+    AdvertisingSource,
+    RequestStatus,
+    PaymentMethod,
+    Student,
+    Payment,
+    Reason,
+)
 
-from cmsapp.api.serializers import *
+from cmsapp.api.serializers import (
+    DepartmentSerializer,
+    GroupStatusSerializer,
+    ClassroomSerializer,
+    CourseSerializer,
+    CourseSerializerOnlyWithImage,
+    ScheduleTypeSerializer,
+    GroupSerializer,
+    AdvertisingSourceSerializer,
+    RequestStatusSerializer,
+    PaymentMethodSerializer,
+    StudentSerializer,
+    PaymentSerializer,
+    ReasonSerializer,
+    StudentOnStudySerializer,
+)
 from rest_framework.parsers import MultiPartParser
+
 
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]

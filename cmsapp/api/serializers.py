@@ -17,16 +17,43 @@ from cmsapp.models import (
     Payment,
     Reason,
 )
+from users.models import User
 from .custom_funcs import validate_phone
 from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
-class DepartmentSerializer(ModelSerializer):
+class AdvertisingSourceSerializer(ModelSerializer):
     class Meta:
-        model = Department
+        model = AdvertisingSource
         fields = [
             'id',
             'name'
+        ]
+
+
+class ClassroomSerializer(ModelSerializer):
+    class Meta:
+        model = Classroom
+        fields = [
+            'id',
+            'name'
+        ]
+
+
+class CourseSerializer(ModelSerializer):
+    mentors = serializers.PrimaryKeyRelatedField(
+        required=False, many=True, queryset=User.objects.filter(user_type='mentor')
+    )
+
+    class Meta:
+        model = Course
+        fields = [
+            'id',
+            'name',
+            'department',
+            'mentors',
+            'image',
+            'duration_month',
         ]
 
 
@@ -47,33 +74,21 @@ class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
         return instance
 
 
-class GroupStatusSerializer(ModelSerializer):
+class DepartmentSerializer(ModelSerializer):
     class Meta:
-        model = GroupStatus
-        fields = [
-            'id',
-            'status_name'
-        ]
-
-
-class ClassroomSerializer(ModelSerializer):
-    class Meta:
-        model = Classroom
+        model = Department
         fields = [
             'id',
             'name'
         ]
 
 
-class CourseSerializer(ModelSerializer):
+class GroupStatusSerializer(ModelSerializer):
     class Meta:
-        model = Course
+        model = GroupStatus
         fields = [
             'id',
-            'name',
-            'department',
-            'started_at',
-            'duration_month'
+            'status_name'
         ]
 
 
@@ -105,15 +120,6 @@ class GroupSerializer(ModelSerializer):
             'course',
             'schedule_type',
             'classroom'
-        ]
-
-
-class AdvertisingSourceSerializer(ModelSerializer):
-    class Meta:
-        model = AdvertisingSource
-        fields = [
-            'id',
-            'name'
         ]
 
 
@@ -177,8 +183,6 @@ class StudentSerializer(ModelSerializer):
     def create(self, validated_data):
         department_data = validated_data.pop("department")["name"]
         payment_method_data = validated_data.pop("payment_method")["name"]
-        # status_data = validated_data.pop("status")["name"]
-        # reason_data = validated_data.pop("reason")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
         try:
@@ -189,14 +193,6 @@ class StudentSerializer(ModelSerializer):
             pay = PaymentMethod.objects.get(name=payment_method_data)
         except ObjectDoesNotExist:
             raise serializers.ValidationError(f"Object {payment_method_data} does not exist.")
-        # try:
-        #     stat = RequestStatus.objects.get(name=status_data)
-        # except ObjectDoesNotExist:
-        #     raise serializers.ValidationError(f"Object {status_data} does not exist.")
-        # try:
-        #     reason = Reason.objects.get(name=reason_data)
-        # except ObjectDoesNotExist:
-        #     raise serializers.ValidationError(f"Object {reason_data} does not exist.")
         try:
             source = AdvertisingSource.objects.get(name=came_from_data)
         except ObjectDoesNotExist:
