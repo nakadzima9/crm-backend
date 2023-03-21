@@ -160,10 +160,11 @@ class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
 
 
 class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
+    email = serializers.EmailField(required=False, read_only=True)
+    image = serializers.ImageField(required=False, read_only=True)
 
     class Meta:
         model = User
-        extra_fields = {'email': {'read_only': True}, 'image': {'read_only': True}}
         fields = [
             'id',
             'first_name',
