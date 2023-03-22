@@ -99,6 +99,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
+    is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     is_superuser = models.BooleanField(default=False, verbose_name="Суперь пользователь")
 
