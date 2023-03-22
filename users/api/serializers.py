@@ -102,7 +102,7 @@ class MentorSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'phone',
-            # 'image',
+            'image',
             # 'group',
             # 'department',
             # 'schedule_type',
