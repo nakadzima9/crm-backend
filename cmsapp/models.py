@@ -44,12 +44,14 @@ def course_directory_path(instance, filename):
 class Course(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    # started_at = models.DateField(verbose_name="Старт курса")
     duration_month = models.IntegerField(verbose_name="Продолжительность курса в месяцах")
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True, null=True,
                               verbose_name="Аватар")
-    mentors = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
+    mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
     archived = models.BooleanField(default=False, verbose_name="Архивировать")
+
+    def get_mentors(self):
+        return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
 
     def __str__(self):
         return self.name
@@ -106,6 +108,10 @@ class AdvertisingSource(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Название источника"
+        verbose_name = "Названия источников"
+
 
 class RequestStatus(models.Model):
     name = models.CharField(max_length=30, default="Ждёт звонка", verbose_name="Статус заявки")
@@ -113,12 +119,20 @@ class RequestStatus(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Статус завяки"
+        verbose_name_plural = "Статусы заявок"
+
 
 class Reason(models.Model):
     name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Причина неуспеха"
+        verbose_name_plural = "Причины неуспехов"
 
 
 def get_default_status():
