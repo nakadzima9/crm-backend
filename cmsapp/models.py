@@ -110,7 +110,7 @@ class AdvertisingSource(models.Model):
 
     class Meta:
         verbose_name = "Название источника"
-        verbose_name = "Названия источников"
+        verbose_name_plural = "Названия источников"
 
 
 class RequestStatus(models.Model):
