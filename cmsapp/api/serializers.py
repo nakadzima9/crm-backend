@@ -41,9 +41,9 @@ class ClassroomSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    mentors = serializers.PrimaryKeyRelatedField(
-        required=False, many=True, queryset=User.objects.filter(user_type='mentor')
-    )
+    # mentors = serializers.PrimaryKeyRelatedField(
+    #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
+    # )
 
     class Meta:
         model = Course
@@ -51,7 +51,7 @@ class CourseSerializer(ModelSerializer):
             'id',
             'name',
             'department',
-            'mentors',
+            # 'mentors',
             'image',
             'duration_month',
         ]
@@ -208,27 +208,37 @@ class StudentSerializer(ModelSerializer):
             raise serializers.ValidationError(f"Object {name} does not exist.")
         return data
 
+    # def update(self, instance, validated_data):
+    #     instance.save()
+    #     return instance
+
     # def get_reason(self, obj):
     #     print(obj)
     #     return Student.objects.filter(reason=1).count()
     #     # stud = Student.objects.all()
     #     # i = stud.objects.filter(reason=1).count
 
-    # def update(self, instance, validated_data):
-    #     instance.first_name = validated_data.pop("first_name")
-    #     instance.last_name = validated_data.pop("last_name")
-    #     instance.surname = validated_data.pop("surname")
-    #     instance.notes = validated_data.pop("notes")
-    #     instance.phone = validated_data.pop("phone")
-    #     instance.laptop = validated_data.pop("laptop")
-    #     instance.department = validated_data.pop("department")
-    #     instance.came_from = validated_data.pop("came_from")
-    #     instance.payment_method = validated_data.pop("payment_method")
-    #     instance.status = validated_data.pop("status")
-    #     instance.paid = validated_data.pop("paid")
-    #     instance.reason = validated_data.pop("reason")
-    #     instance.save()
-    #     return instance
+    def update(self, instance, validated_data):
+        print(validated_data.get("department")["name"])
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.surname = validated_data.get("surname", instance.surname)
+        instance.notes = validated_data.get("notes", instance.notes)
+        instance.phone = validated_data.get("phone", instance.phone)
+        instance.laptop = validated_data.get("laptop", instance.laptop)
+        dep = Department.objects.get(name=validated_data.get("department")["name"])
+        instance.department = dep
+        source = AdvertisingSource.objects.get(name=validated_data.get("came_from")["name"])
+        instance.came_from = source
+        method = PaymentMethod.objects.get(name=validated_data.get("payment_method")["name"])
+        instance.payment_method = method
+        statuss = RequestStatus.objects.get(name=validated_data.get("status")["name"])
+        instance.status = statuss
+        instance.paid = validated_data.get("paid", instance.paid)
+        # reason = Reason.objects.get(name=validated_data.get("reason")["name"])
+        # instance.reason = reason
+        instance.save()
+        return instance
 
 
 class StudentOnStudySerializer(ModelSerializer):
