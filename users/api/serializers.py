@@ -20,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'user_type',
             'image',
+            'is_archive'
         ]
 
     read_only_fields = ['user_type']
@@ -33,6 +34,15 @@ class UserSerializer(serializers.ModelSerializer):
     #         return None
 
 
+class UserArchiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'is_archive',
+        ]
+
+
 class AdminSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -44,6 +54,7 @@ class AdminSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'is_archive',
         ]
 
     def validated_email(self, value):
@@ -61,6 +72,15 @@ class AdminSerializer(serializers.ModelSerializer):
         return user
 
 
+class AdminArchiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'is_archive',
+        ]
+
+
 class ManagerSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -72,8 +92,8 @@ class ManagerSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'is_archive',
           ]
-
 
     def validate_email(self, value):
         return validate_email(value)
@@ -89,10 +109,34 @@ class ManagerSerializer(serializers.ModelSerializer):
         return user
 
 
-class MentorSerializer(serializers.ModelSerializer):
-    # department = DepartmentSerializer(read_only=True)
-    # group = GroupSerializer(read_only=True)
-    # schedule_type = ScheduleTypeSerializer(read_only=True)
+class ManagerArchiveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'is_archive',
+        ]
+
+
+class MentorListSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'image',
+            'department',
+        ]
+
+
+
+class MentorDetailSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -106,12 +150,11 @@ class MentorSerializer(serializers.ModelSerializer):
             'linkedin',
             'group',
             'department',
-            # 'schedule_type',
             'patent_number',
             'patent_start',
             'patent_end',
+            'is_archive',
         ]
-
 
     def validate_email(self, value):
         return validate_email(value)
@@ -124,6 +167,16 @@ class MentorSerializer(serializers.ModelSerializer):
         user.user_type = 'mentor'
         user.save()
         return user
+
+
+class MentorArchiveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'is_archive',
+        ]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
