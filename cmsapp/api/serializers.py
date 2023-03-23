@@ -119,7 +119,8 @@ class GroupSerializer(ModelSerializer):
             'created_at',
             'course',
             'schedule_type',
-            'classroom'
+            'classroom',
+            'is_archive'
         ]
 
 
@@ -175,6 +176,7 @@ class StudentSerializer(ModelSerializer):
             "paid",
             "reason",
             "on_request",
+            "is_archive"
         ]
 
     def validate_phone(self, value):
