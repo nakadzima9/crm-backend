@@ -57,6 +57,15 @@ class CourseSerializer(ModelSerializer):
         ]
 
 
+class ArchiveCourseSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'is_archive',
+        ]
+
+
 class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
 
     class Meta:
@@ -121,6 +130,15 @@ class GroupSerializer(ModelSerializer):
             'schedule_type',
             'classroom',
             'is_archive'
+        ]
+
+
+class ArchiveGroupSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'is_archive',
         ]
 
 
@@ -254,6 +272,15 @@ class StudentOnStudySerializer(ModelSerializer):
             "phone",
             "department",
             "payment_method",
+        ]
+
+
+class ArchiveStudentSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'is_archive',
         ]
 
 
