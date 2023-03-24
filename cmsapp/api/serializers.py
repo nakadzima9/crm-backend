@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from cmsapp.models import (
     Department,
-    GroupStatus,
+        GroupStatus,
     Classroom,
     Course,
     ScheduleType,
@@ -289,8 +289,9 @@ class PaymentSerializer(ModelSerializer):
         model = Payment
         fields = [
             'id',
-            'amount',
-            'client_card',
+            'payment_type',
             'created_at',
-            'user'
+            'user',
+            'client_card',
+            'amount',
         ]

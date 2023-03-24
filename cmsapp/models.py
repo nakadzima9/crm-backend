@@ -26,7 +26,7 @@ class Department(models.Model):
 
 
 class GroupStatus(models.Model):
-    status_name = models.CharField(max_length=15, verbose_name="Статус группы")
+    status_name = models.CharField(max_length=50, verbose_name="Статус группы")
 
     def __str__(self):
         return self.status_name
@@ -99,12 +99,12 @@ class PaymentMethod(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Метод оплаты"
-        verbose_name_plural = "Методы оплат"
+        verbose_name = "Метод оплат"
+        verbose_name_plural = "Метод оплаты"
 
 
 class AdvertisingSource(models.Model):
-    name = models.CharField(max_length=15, verbose_name="Название источника")
+    name = models.CharField(max_length=50, verbose_name="Название источника")
 
     def __str__(self):
         return self.name
@@ -122,7 +122,7 @@ class RequestStatus(models.Model):
 
     class Meta:
         verbose_name = "Статус завяки"
-        verbose_name_plural = "Статусы заявок"
+        verbose_name_plural = "Статус заявок"
 
 
 class Reason(models.Model):
@@ -165,9 +165,10 @@ class Student(models.Model):
 
 
 class Payment(models.Model):
-    amount = models.FloatField(verbose_name="Сумма")
+    amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма")
     client_card = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Кто оплатил")
-    created_at = models.DateTimeField(auto_now=True, verbose_name="Дата оплаты")
+    created_at = models.DateTimeField(auto_now=True, verbose_name="Время оплаты")
+    payment_type = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, verbose_name="Тип оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
     def __str__(self):
