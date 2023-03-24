@@ -57,6 +57,15 @@ class CourseSerializer(ModelSerializer):
         ]
 
 
+class ArchiveCourseSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'is_archive',
+        ]
+
+
 class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
 
     class Meta:
@@ -119,7 +128,17 @@ class GroupSerializer(ModelSerializer):
             'created_at',
             'course',
             'schedule_type',
-            'classroom'
+            'classroom',
+            'is_archive'
+        ]
+
+
+class ArchiveGroupSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'is_archive',
         ]
 
 
@@ -176,6 +195,7 @@ class StudentSerializer(ModelSerializer):
             "reason",
             "on_request",
             "request_created_at",
+            "is_archive"
         ]
 
     def validate_phone(self, value):
@@ -220,13 +240,13 @@ class StudentSerializer(ModelSerializer):
     #     # i = stud.objects.filter(reason=1).count
 
     def update(self, instance, validated_data):
-        print(validated_data.get("department")["name"])
         instance.first_name = validated_data.get("first_name", instance.first_name)
         instance.last_name = validated_data.get("last_name", instance.last_name)
         instance.surname = validated_data.get("surname", instance.surname)
         instance.notes = validated_data.get("notes", instance.notes)
         instance.phone = validated_data.get("phone", instance.phone)
         instance.laptop = validated_data.get("laptop", instance.laptop)
+        instance.on_request = validated_data.get("on_request", instance.on_request)
         dep = Department.objects.get(name=validated_data.get("department")["name"])
         instance.department = dep
         source = AdvertisingSource.objects.get(name=validated_data.get("came_from")["name"])
@@ -253,6 +273,15 @@ class StudentOnStudySerializer(ModelSerializer):
             "phone",
             "department",
             "payment_method",
+        ]
+
+
+class ArchiveStudentSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'is_archive',
         ]
 
 

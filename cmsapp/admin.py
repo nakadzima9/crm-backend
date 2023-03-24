@@ -29,7 +29,7 @@ class ClassroomAdmin(admin.ModelAdmin):
 
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'department', 'duration_month', 'image', 'get_mentors', 'archived')
+    list_display = ('id', 'name', 'department', 'duration_month', 'image', 'get_mentors', 'is_archive')
 
 
 class DepartmentAdmin(admin.ModelAdmin):
@@ -37,7 +37,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'number', 'students_max', 'status', 'created_at', 'schedule_type', 'classroom',)
+    list_display = ('id', 'number', 'students_max', 'status', 'created_at', 'schedule_type', 'classroom', 'is_archive')
 
 
 class GroupStatusAdmin(admin.ModelAdmin):
@@ -66,7 +66,7 @@ class ScheduleTypeAdmin(admin.ModelAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'department', 'first_name', 'last_name', 'surname', 'phone', 'came_from',
-                    'notes', 'status', 'laptop', 'payment_method',
+                    'notes', 'status', 'laptop', 'payment_method', 'is_archive',
                     )
 
 

@@ -92,13 +92,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
                                    related_name='department', verbose_name='Департамент')
-    schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, blank=True, null=True,
-                                      related_name='schedule', verbose_name='Расписание')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
                               verbose_name='Группа')
     patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
+    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     is_superuser = models.BooleanField(default=False, verbose_name="Суперь пользователь")

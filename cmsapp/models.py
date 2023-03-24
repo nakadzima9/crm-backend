@@ -44,11 +44,11 @@ def course_directory_path(instance, filename):
 class Course(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    duration_month = models.IntegerField(verbose_name="Продолжительность курса в месяцах")
+    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах")
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True, null=True,
                               verbose_name="Аватар")
     mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
-    archived = models.BooleanField(default=False, verbose_name="Архивировать")
+    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
 
     def get_mentors(self):
         return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
@@ -75,13 +75,14 @@ class ScheduleType(models.Model):
 
 
 class Group(models.Model):
-    number = models.IntegerField(verbose_name="Номер группы")
-    students_max = models.IntegerField(verbose_name="Количество максимальных студентов")
+    number = models.PositiveSmallIntegerField(verbose_name="Номер группы")
+    students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
     status = models.ForeignKey(GroupStatus, on_delete=models.CASCADE, verbose_name="Статус")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     # course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
     schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, verbose_name="Тип расписания")
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, verbose_name="Комната")
+    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
 
     def __str__(self):
         return f'Number: {self.number}, status: {self.status}'
@@ -154,6 +155,7 @@ class Student(models.Model):
     reason = models.ForeignKey(Reason, null=True, blank=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
     request_created_at = models.TimeField(auto_now_add=True, null=True, blank=True, verbose_name="Время создания заявки")
+    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

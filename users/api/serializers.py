@@ -2,9 +2,9 @@ from cloudinary_storage.storage import MediaCloudinaryStorage
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
-from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
+from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer
 from users.models import User, OTP
-from .custom_funcs import validate_phone, validate_email, create, validate, password_reset_validate
+from .custom_funcs import validate_phone, validate_email, password_reset_validate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'user_type',
             'image',
+            'is_archive'
         ]
 
     read_only_fields = ['user_type']
@@ -33,6 +34,15 @@ class UserSerializer(serializers.ModelSerializer):
     #         return None
 
 
+class UserArchiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'is_archive',
+        ]
+
+
 class AdminSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -44,6 +54,7 @@ class AdminSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'is_archive',
         ]
 
     def validated_email(self, value):
@@ -72,8 +83,8 @@ class ManagerSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
+            'is_archive',
           ]
-
 
     def validate_email(self, value):
         return validate_email(value)
@@ -89,10 +100,24 @@ class ManagerSerializer(serializers.ModelSerializer):
         return user
 
 
-class MentorSerializer(serializers.ModelSerializer):
-    # department = DepartmentSerializer(read_only=True)
-    # group = GroupSerializer(read_only=True)
-    # schedule_type = ScheduleTypeSerializer(read_only=True)
+class MentorListSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'image',
+            'department',
+        ]
+
+
+
+class MentorDetailSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -106,12 +131,11 @@ class MentorSerializer(serializers.ModelSerializer):
             'linkedin',
             'group',
             'department',
-            # 'schedule_type',
             'patent_number',
             'patent_start',
             'patent_end',
+            'is_archive',
         ]
-
 
     def validate_email(self, value):
         return validate_email(value)
@@ -124,6 +148,16 @@ class MentorSerializer(serializers.ModelSerializer):
         user.user_type = 'mentor'
         user.save()
         return user
+
+
+class MentorArchiveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'is_archive',
+        ]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -177,44 +211,6 @@ class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
 
     def validate_phone(self, value):
         return validate_phone(self, value)
-
-
-# class AdminSerializerWithoutEmail(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = User
-#         fields = ['id',
-#                   'first_name',
-#                   'last_name',
-#                   'phone',
-#                   'image',
-#                   # 'description',
-#                   # 'sex',
-#                   ]
-#
-#
-#     def validate_phone(self, value):
-#         return validate_phone(value)
-#
-#
-#
-#
-# class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = User
-#         fields = ['id',
-#                   'first_name',
-#                   'last_name',
-#                   'phone',
-#                   'image',
-#                   # 'description',
-#                   # 'sex',
-#                   ]
-#
-#
-#     def validate_phone(self, value):
-#         return validate_phone(value)
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):

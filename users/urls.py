@@ -9,7 +9,12 @@ from .views import (
     AllUserViewSet,
     ManagerViewSet,
     MentorViewSet,
-    PersonalLoginWebView, ProfileViewSet, ProfileImageUpdateViewSet,
+    PersonalLoginWebView,
+    ProfileViewSet,
+    ProfileImageUpdateViewSet,
+    ArchiveAdminViewSet,
+    ArchiveManagerViewSet,
+    ArchiveMentorViewSet,
 )
 
 from .api.password_reset_views import PasswordResetCheckCodeView, PasswordResetEmailView, PasswordChangeView
@@ -21,6 +26,9 @@ user_router.register(r'managers', ManagerViewSet, basename='managers')
 user_router.register(r'mentors', MentorViewSet, basename='mentors')
 user_router.register(r'profiles', ProfileViewSet, basename='profiles')
 user_router.register(r'profiles/avatar', ProfileImageUpdateViewSet, basename='profiles-avatar')
+user_router.register(r'archive/admins', ArchiveAdminViewSet, basename='archives-admins')
+user_router.register(r'archive/managers', ArchiveManagerViewSet, basename='archive-managers')
+user_router.register(r'archive/mentors', ArchiveMentorViewSet, basename='archive-mentors')
 
 urlpatterns = [
     path("login/personal/", PersonalLoginWebView.as_view()),
