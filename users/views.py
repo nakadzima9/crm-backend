@@ -1,5 +1,3 @@
-import coreschema
-import drf_yasg.openapi
 from cloudinary_storage.storage import MediaCloudinaryStorage
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
@@ -25,8 +23,6 @@ from .api.serializers import (
     ProfileSerializer,
     UserSerializerWithoutEmailAndImage,
     ProfileSerializerOnlyWithImage,
-    AdminArchiveSerializer,
-    ManagerArchiveSerializer,
     UserArchiveSerializer,
 )
 
@@ -62,8 +58,8 @@ class AdminViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="admin").order_by('id')
     serializer_class = {
-        'update': AdminArchiveSerializer,
-        'partial_update': AdminArchiveSerializer,
+        'update': UserArchiveSerializer,
+        'partial_update': UserArchiveSerializer,
     }
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
@@ -89,8 +85,8 @@ class ManagerViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = User.objects.filter(user_type="manager").order_by('id')
     serializer_class = {
-        'update': ManagerArchiveSerializer,
-        'partial_update': ManagerArchiveSerializer,
+        'update': UserArchiveSerializer,
+        'partial_update': UserArchiveSerializer,
     }
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
@@ -139,3 +135,39 @@ class ProfileImageUpdateViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
     serializer_class = ProfileSerializerOnlyWithImage
     http_method_names = ['put', 'patch']
+
+
+class ArchiveAdminViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(user_type='admin', is_archive=True)
+    serializer_class = {
+        'update': UserArchiveSerializer,
+        'partial_update': UserArchiveSerializer,
+    }
+    http_method_names = ['get', 'put', 'patch', 'delete']
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action) or UserSerializer
+
+
+class ArchiveManagerViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(user_type='manager', is_archive=True)
+    serializer_class = {
+        'update': UserArchiveSerializer,
+        'partial_update': UserArchiveSerializer,
+    }
+    http_method_names = ['get', 'put', 'patch', 'delete']
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action) or UserSerializer
+
+
+class ArchiveMentorViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(user_type='mentor', is_archive=True)
+    serializer_class = {
+        'update': UserArchiveSerializer,
+        'partial_update': UserArchiveSerializer,
+    }
+    http_method_names = ['get', 'put', 'patch', 'delete']
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action) or UserSerializer

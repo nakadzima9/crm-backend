@@ -2,9 +2,9 @@ from cloudinary_storage.storage import MediaCloudinaryStorage
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
-from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, ScheduleTypeSerializer
+from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer
 from users.models import User, OTP
-from .custom_funcs import validate_phone, validate_email, create, validate, password_reset_validate
+from .custom_funcs import validate_phone, validate_email, password_reset_validate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -72,15 +72,6 @@ class AdminSerializer(serializers.ModelSerializer):
         return user
 
 
-class AdminArchiveSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'is_archive',
-        ]
-
-
 class ManagerSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -107,16 +98,6 @@ class ManagerSerializer(serializers.ModelSerializer):
         user.user_type = 'manager'
         user.save()
         return user
-
-
-class ManagerArchiveSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'is_archive',
-        ]
 
 
 class MentorListSerializer(serializers.ModelSerializer):
@@ -230,44 +211,6 @@ class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
 
     def validate_phone(self, value):
         return validate_phone(self, value)
-
-
-# class AdminSerializerWithoutEmail(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = User
-#         fields = ['id',
-#                   'first_name',
-#                   'last_name',
-#                   'phone',
-#                   'image',
-#                   # 'description',
-#                   # 'sex',
-#                   ]
-#
-#
-#     def validate_phone(self, value):
-#         return validate_phone(value)
-#
-#
-#
-#
-# class ManagerSerializerWithoutEmail(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = User
-#         fields = ['id',
-#                   'first_name',
-#                   'last_name',
-#                   'phone',
-#                   'image',
-#                   # 'description',
-#                   # 'sex',
-#                   ]
-#
-#
-#     def validate_phone(self, value):
-#         return validate_phone(value)
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
