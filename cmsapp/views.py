@@ -109,7 +109,7 @@ class StudentViewSet(ModelViewSet):
 
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Student.objects.filter(paid=True)
+    queryset = Student.objects.filter(on_request=False)
     # queryset = Student.objects.all()
     serializer_class = StudentOnStudySerializer
 

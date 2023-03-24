@@ -175,6 +175,7 @@ class StudentSerializer(ModelSerializer):
             "paid",
             "reason",
             "on_request",
+            "request_created_at",
         ]
 
     def validate_phone(self, value):
