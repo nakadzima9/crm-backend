@@ -116,8 +116,8 @@ class MentorListSerializer(serializers.ModelSerializer):
 
 
 class MentorDetailSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer(read_only=True)
-    group = GroupSerializer(read_only=True)
+    # department = DepartmentSerializer(read_only=True)
+    # group = GroupSerializer(read_only=True)
 
     class Meta:
         model = User
