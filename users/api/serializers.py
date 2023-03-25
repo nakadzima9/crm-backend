@@ -3,8 +3,11 @@ from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
 from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer
+from core import settings
 from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, password_reset_validate
+
+import boto3
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -129,7 +132,7 @@ class MentorDetailSerializer(serializers.ModelSerializer):
             'phone',
             'image',
             'linkedin',
-            'group',
+            #'group',
             'department',
             'patent_number',
             'patent_start',
@@ -192,6 +195,24 @@ class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
     #     instance.image = validated_data.get('image', instance.image)
     #     instance.save()
     #     return instance
+
+    def update(self, instance, validated_data):
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+        image=validated_data.get('image', instance.image)
+        instance.image = image
+        instance.save()
+        try:
+            s3_client.get_object(
+                Bucket='cms-neolabs',
+                Key=instance.image.name,
+            )
+            return instance
+        except s3_client.exceptions.NoSuchKey:
+            raise serializers.ValidationError("The image was not uploaded")
 
 
 class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
