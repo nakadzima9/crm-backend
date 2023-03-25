@@ -19,7 +19,7 @@ from cmsapp.models import (
 )
 from users.models import User
 from .custom_funcs import validate_phone
-from cloudinary_storage.storage import MediaCloudinaryStorage
+# from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
 class AdvertisingSourceSerializer(ModelSerializer):
@@ -75,12 +75,12 @@ class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
             'image',
         ]
 
-    def update(self, instance, validated_data):
-        storage = MediaCloudinaryStorage()
-        storage.delete(name=instance.image.name)
-        instance.image = validated_data.get('image', instance.image)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     storage = MediaCloudinaryStorage()
+    #     storage.delete(name=instance.image.name)
+    #     instance.image = validated_data.get('image', instance.image)
+    #     instance.save()
+    #     return instance
 
 
 class DepartmentSerializer(ModelSerializer):

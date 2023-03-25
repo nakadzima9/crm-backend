@@ -75,8 +75,10 @@ class ScheduleType(models.Model):
 
 
 class Group(models.Model):
-    number = models.PositiveSmallIntegerField(verbose_name="Номер группы")
+    number = models.CharField(max_length=50, verbose_name="Название группы")
     students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
+    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='mentors',
+                               verbose_name="Преподаватель")
     status = models.ForeignKey(GroupStatus, on_delete=models.CASCADE, verbose_name="Статус")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     # course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
