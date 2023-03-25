@@ -92,8 +92,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
                                    related_name='department', verbose_name='Департамент')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
-                              verbose_name='Группа')
+    # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
+    #                           verbose_name='Группа')
     patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
