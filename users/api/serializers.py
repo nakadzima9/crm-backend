@@ -76,11 +76,13 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class ManagerSerializer(serializers.ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
         fields = [
             'id',
+            'fio',
             'first_name',
             'last_name',
             'email',
@@ -89,8 +91,14 @@ class ManagerSerializer(serializers.ModelSerializer):
             'is_archive',
           ]
 
+
+    def get_fio(self, obj):
+       return obj.first_name +' '+ obj.last_name
+
+
     def validate_email(self, value):
         return validate_email(value)
+
 
     def validate_phone(self, value):
         return validate_phone(self, value)
@@ -120,7 +128,8 @@ class MentorListSerializer(serializers.ModelSerializer):
 
 class MentorDetailSerializer(serializers.ModelSerializer):
     # department = DepartmentSerializer(read_only=True)
-    # group = GroupSerializer(read_only=True)
+    # group_set = GroupSerializer(read_only=True, many=True)
+    group_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True, required=False)
 
     class Meta:
         model = User
@@ -132,7 +141,7 @@ class MentorDetailSerializer(serializers.ModelSerializer):
             'phone',
             'image',
             'linkedin',
-            #'group',
+            'group_set',
             'department',
             'patent_number',
             'patent_start',
