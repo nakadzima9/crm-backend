@@ -1,5 +1,5 @@
 import os
-import cloudinary
+# import cloudinary
 
 from datetime import timedelta
 from pathlib import Path
@@ -34,11 +34,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'corsheaders',
-    'cloudinary',
-    'cloudinary_storage',
+    # 'cloudinary',
+    # 'cloudinary_storage',
     'drf_yasg',
     'django_filters',
     'dj_rest_auth',
+    'storages',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
@@ -190,24 +191,32 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', 'seaess')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 # DROPBOX_OAUTH2_TOKEN = config('DROPBOX_OAUTH2_TOKEN')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUD_NAME'),
-    'API_SECRET': config('API_SECRET'),
-    'API_KEY': config('API_KEY'),
-    'SECURE': True,
-    'MEDIA_TAG': 'media',
-    'STATIC_IMAGES_EXTENSIONS': ['jpg', 'jpe', 'jpeg', 'jpc', 'jp2', 'j2k', 'wdp', 'jxr',
-                                 'hdp', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'ico'],
-    'PREFIX': MEDIA_URL
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': config('CLOUD_NAME'),
+#     'API_SECRET': config('API_SECRET'),
+#     'API_KEY': config('API_KEY'),
+#     'SECURE': True,
+#     'MEDIA_TAG': 'media',
+#     'STATIC_IMAGES_EXTENSIONS': ['jpg', 'jpe', 'jpeg', 'jpc', 'jp2', 'j2k', 'wdp', 'jxr',
+#                                  'hdp', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'ico'],
+#     'PREFIX': MEDIA_URL
+#
+# }
 
-}
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
 
 # Default primary key field type
