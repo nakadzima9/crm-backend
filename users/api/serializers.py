@@ -12,11 +12,13 @@ import boto3
 
 class UserSerializer(serializers.ModelSerializer):
     # image = serializers.SerializerMethodField('get_image_url')
+    fio = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
         fields = [
             'id',
+            'fio',
             'first_name',
             'last_name',
             'email',
@@ -27,6 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     read_only_fields = ['user_type']
+
+    def get_fio(self, obj):
+       return obj.first_name +' '+ obj.last_name
 
     # def get_image_url(self, obj):
     #     request = self.context.get('request')
@@ -47,11 +52,13 @@ class UserArchiveSerializer(serializers.ModelSerializer):
 
 
 class AdminSerializer(serializers.ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
         fields = [
             'id',
+            'fio',
             'first_name',
             'last_name',
             'email',
@@ -59,6 +66,9 @@ class AdminSerializer(serializers.ModelSerializer):
             'image',
             'is_archive',
         ]
+
+    def get_fio(self, obj):
+       return obj.first_name +' '+ obj.last_name
 
     def validated_email(self, value):
         return validate_email(value)
