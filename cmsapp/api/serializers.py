@@ -123,6 +123,7 @@ class GroupSerializer(ModelSerializer):
         fields = [
             'id',
             'number',
+            'mentor',
             'students_max',
             'status',
             'created_at',
