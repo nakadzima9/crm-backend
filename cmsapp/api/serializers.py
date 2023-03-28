@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from cmsapp.models import (
     Department,
-    GroupStatus,
+        GroupStatus,
     Classroom,
     Course,
     ScheduleType,
@@ -19,7 +19,7 @@ from cmsapp.models import (
 )
 from users.models import User
 from .custom_funcs import validate_phone
-from cloudinary_storage.storage import MediaCloudinaryStorage
+# from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
 class AdvertisingSourceSerializer(ModelSerializer):
@@ -75,12 +75,12 @@ class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
             'image',
         ]
 
-    def update(self, instance, validated_data):
-        storage = MediaCloudinaryStorage()
-        storage.delete(name=instance.image.name)
-        instance.image = validated_data.get('image', instance.image)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     storage = MediaCloudinaryStorage()
+    #     storage.delete(name=instance.image.name)
+    #     instance.image = validated_data.get('image', instance.image)
+    #     instance.save()
+    #     return instance
 
 
 class DepartmentSerializer(ModelSerializer):
@@ -123,6 +123,7 @@ class GroupSerializer(ModelSerializer):
         fields = [
             'id',
             'number',
+            'mentor',
             'students_max',
             'status',
             'created_at',
@@ -271,8 +272,9 @@ class PaymentSerializer(ModelSerializer):
         model = Payment
         fields = [
             'id',
-            'amount',
-            'client_card',
+            'payment_type',
             'created_at',
-            'user'
+            'user',
+            'client_card',
+            'amount',
         ]

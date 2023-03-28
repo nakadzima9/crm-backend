@@ -1,4 +1,4 @@
-from cloudinary_storage.storage import MediaCloudinaryStorage
+# from cloudinary_storage.storage import MediaCloudinaryStorage
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import generics, viewsets, status
@@ -113,12 +113,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     http_method_names = ['get', 'put', 'patch', 'delete']
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        storage = MediaCloudinaryStorage()
-        storage.delete(name=instance.image.name)
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # def destroy(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     storage = MediaCloudinaryStorage()
+    #     storage.delete(name=instance.image.name)
+    #     self.perform_destroy(instance)
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
     @swagger_auto_schema(request_body=UserSerializerWithoutEmailAndImage)

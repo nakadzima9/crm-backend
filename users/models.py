@@ -24,6 +24,7 @@ class SuperUser(BaseUserManager):
                 **extra_fields
             )
             user.set_password(generate_password)
+            user.fio = user.first_name +" "+ user.last_name
             user.save()
             send_mail("Пароль от CRM",
                       f"Ваши данные для входа в CRM:\nПочта: {user.email}\nПароль: {generate_password}",
@@ -34,6 +35,7 @@ class SuperUser(BaseUserManager):
             return user
         extra_fields.pop('without_generate_password')
         user = self.model(email=self.normalize_email(email), **extra_fields)
+        user.fio = user.first_name + " " + user.last_name
         return user
 
     def create_superuser(self, email, password):
@@ -92,8 +94,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
                                    related_name='department', verbose_name='Департамент')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
-                              verbose_name='Группа')
+    # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
+    #                            verbose_name='Группа')
     patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")

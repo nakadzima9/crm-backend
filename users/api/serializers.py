@@ -1,19 +1,24 @@
-from cloudinary_storage.storage import MediaCloudinaryStorage
+# from cloudinary_storage.storage import MediaCloudinaryStorage
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
 from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer
+from core import settings
 from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, password_reset_validate
+
+import boto3
 
 
 class UserSerializer(serializers.ModelSerializer):
     # image = serializers.SerializerMethodField('get_image_url')
+    fio = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
         fields = [
             'id',
+            'fio',
             'first_name',
             'last_name',
             'email',
@@ -24,6 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     read_only_fields = ['user_type']
+
+    def get_fio(self, obj):
+       return obj.first_name +' '+ obj.last_name
 
     # def get_image_url(self, obj):
     #     request = self.context.get('request')
@@ -44,11 +52,13 @@ class UserArchiveSerializer(serializers.ModelSerializer):
 
 
 class AdminSerializer(serializers.ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
         fields = [
             'id',
+            'fio',
             'first_name',
             'last_name',
             'email',
@@ -56,6 +66,9 @@ class AdminSerializer(serializers.ModelSerializer):
             'image',
             'is_archive',
         ]
+
+    def get_fio(self, obj):
+       return obj.first_name +' '+ obj.last_name
 
     def validated_email(self, value):
         return validate_email(value)
@@ -73,11 +86,13 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class ManagerSerializer(serializers.ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
         fields = [
             'id',
+            'fio',
             'first_name',
             'last_name',
             'email',
@@ -86,8 +101,14 @@ class ManagerSerializer(serializers.ModelSerializer):
             'is_archive',
           ]
 
+
+    def get_fio(self, obj):
+       return obj.first_name +' '+ obj.last_name
+
+
     def validate_email(self, value):
         return validate_email(value)
+
 
     def validate_phone(self, value):
         return validate_phone(self, value)
@@ -116,8 +137,9 @@ class MentorListSerializer(serializers.ModelSerializer):
 
 
 class MentorDetailSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer(read_only=True)
-    group = GroupSerializer(read_only=True)
+    # department = DepartmentSerializer(read_only=True)
+    # group_set = GroupSerializer(read_only=True, many=True)
+    group_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True, required=False)
 
     class Meta:
         model = User
@@ -129,7 +151,7 @@ class MentorDetailSerializer(serializers.ModelSerializer):
             'phone',
             'image',
             'linkedin',
-            'group',
+            'group_set',
             'department',
             'patent_number',
             'patent_start',
@@ -186,12 +208,30 @@ class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
             'image',
         ]
 
+    # def update(self, instance, validated_data):
+    #     storage = MediaCloudinaryStorage()
+    #     storage.delete(name=instance.image.name)
+    #     instance.image = validated_data.get('image', instance.image)
+    #     instance.save()
+    #     return instance
+
     def update(self, instance, validated_data):
-        storage = MediaCloudinaryStorage()
-        storage.delete(name=instance.image.name)
-        instance.image = validated_data.get('image', instance.image)
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+        image=validated_data.get('image', instance.image)
+        instance.image = image
         instance.save()
-        return instance
+        try:
+            s3_client.get_object(
+                Bucket='cms-neolabs',
+                Key=instance.image.name,
+            )
+            return instance
+        except s3_client.exceptions.NoSuchKey:
+            raise serializers.ValidationError("The image was not uploaded")
 
 
 class UserSerializerWithoutEmailAndImage(serializers.ModelSerializer):
