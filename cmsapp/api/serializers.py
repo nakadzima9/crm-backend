@@ -41,9 +41,9 @@ class ClassroomSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    # mentors = serializers.PrimaryKeyRelatedField(
-    #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
-    # )
+    mentor = serializers.PrimaryKeyRelatedField(
+        required=False, many=True, queryset=User.objects.filter(user_type='mentor')
+    )
 
     class Meta:
         model = Course
@@ -51,7 +51,7 @@ class CourseSerializer(ModelSerializer):
             'id',
             'name',
             'department',
-            # 'mentors',
+            'mentor',
             'image',
             'duration_month',
         ]

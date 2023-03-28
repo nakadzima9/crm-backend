@@ -77,7 +77,7 @@ class ScheduleType(models.Model):
 class Group(models.Model):
     number = models.CharField(max_length=50, verbose_name="Название группы")
     students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
-    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE,
                                verbose_name="Преподаватель")
     status = models.ForeignKey(GroupStatus, on_delete=models.CASCADE, verbose_name="Статус")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -171,7 +171,7 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма")
     client_card = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Кто оплатил")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Время оплаты")
-    payment_type = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, verbose_name="Тип оплаты")
+    payment_type = models.ForeignKey(PaymentMethod, null=True, on_delete=models.CASCADE, verbose_name="Тип оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
     def __str__(self):
