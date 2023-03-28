@@ -195,7 +195,7 @@ class StudentSerializer(ModelSerializer):
             "reason",
             "on_request",
             "request_created_at",
-            "is_archive"
+            "is_archive",
         ]
 
     def validate_phone(self, value):
@@ -206,38 +206,13 @@ class StudentSerializer(ModelSerializer):
         payment_method_data = validated_data.pop("payment_method")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
-        try:
-            dep = Department.objects.get(name=department_data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"Object {department_data} does not exist.")
-        try:
-            pay = PaymentMethod.objects.get(name=payment_method_data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"Object {payment_method_data} does not exist.")
-        try:
-            source = AdvertisingSource.objects.get(name=came_from_data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"Object {came_from_data} does not exist.")
+        dep = self.object_not_found_validate(Department.objects, department_data)
+        pay = self.object_not_found_validate(PaymentMethod.objects, payment_method_data)
+        source = self.object_not_found_validate(AdvertisingSource.objects, came_from_data)
+
         student = Student(department=dep, payment_method=pay, came_from=source, **validated_data)
         student.save()
         return student
-
-    def object_not_found_validate(self, obj, name):
-        try:
-            data = obj.objects.get(name=name)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"Object {name} does not exist.")
-        return data
-
-    # def update(self, instance, validated_data):
-    #     instance.save()
-    #     return instance
-
-    # def get_reason(self, obj):
-    #     print(obj)
-    #     return Student.objects.filter(reason=1).count()
-    #     # stud = Student.objects.all()
-    #     # i = stud.objects.filter(reason=1).count
 
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get("first_name", instance.first_name)
@@ -247,19 +222,25 @@ class StudentSerializer(ModelSerializer):
         instance.phone = validated_data.get("phone", instance.phone)
         instance.laptop = validated_data.get("laptop", instance.laptop)
         instance.on_request = validated_data.get("on_request", instance.on_request)
-        dep = Department.objects.get(name=validated_data.get("department")["name"])
-        instance.department = dep
-        source = AdvertisingSource.objects.get(name=validated_data.get("came_from")["name"])
-        instance.came_from = source
-        method = PaymentMethod.objects.get(name=validated_data.get("payment_method")["name"])
-        instance.payment_method = method
-        statuss = RequestStatus.objects.get(name=validated_data.get("status")["name"])
-        instance.status = statuss
         instance.paid = validated_data.get("paid", instance.paid)
-        # reason = Reason.objects.get(name=validated_data.get("reason")["name"])
-        # instance.reason = reason
+
+        instance.department = self.object_not_found_validate(Department.objects,
+                                                             validated_data.get("department")["name"])
+        instance.came_from = self.object_not_found_validate(AdvertisingSource.objects,
+                                                            validated_data.get("came_from")["name"])
+        instance.payment_method = self.object_not_found_validate(PaymentMethod.objects,
+                                                                 validated_data.get("payment_method")["name"])
+        instance.status = self.object_not_found_validate(RequestStatus.objects,
+                                                         validated_data.get("status")["name"])
         instance.save()
         return instance
+
+    def object_not_found_validate(self, obj, name):
+        data = obj.get(name=name)
+
+        if not data:
+            raise serializers.ValidationError(f"Object {name} does not exist.")
+        return data
 
 
 class StudentOnStudySerializer(ModelSerializer):
