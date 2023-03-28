@@ -176,7 +176,8 @@ class StudentSerializer(ModelSerializer):
     reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
-    request_created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+    request_date = serializers.DateTimeField(format="%Y-%m-%d", required=False, read_only=True)
+    request_time = serializers.TimeField(format="%H:%M:%S", required=False, read_only=True)
 
     class Meta:
         model = Student
@@ -196,7 +197,8 @@ class StudentSerializer(ModelSerializer):
             "paid",
             "reason",
             "on_request",
-            "request_created_at",
+            "request_date",
+            "request_time",
             "is_archive",
         ]
 
