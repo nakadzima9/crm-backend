@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.db import models
+from django.utils import timezone
 
 from core import settings
 
@@ -156,8 +159,8 @@ class Student(models.Model):
     paid = models.BooleanField(default=False, null=True, verbose_name="Оплатил или нет")
     reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
-    request_date = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name="Дата создания заявки")
-    request_time = models.TimeField(auto_now_add=True, null=True, blank=True, verbose_name="Время создания заявки")
+    request_date = models.DateTimeField(default=timezone.now, null=True, blank=True, verbose_name="Дата создания заявки")
+    # request_time = models.TimeField(auto_now_add=True, null=True, blank=True, verbose_name="Время создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
 
     def __str__(self):
