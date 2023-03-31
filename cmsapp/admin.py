@@ -12,7 +12,7 @@ from .models import (
     Reason,
     RequestStatus,
     ScheduleType,
-    Student,
+    # Student,
 )
 
 
@@ -45,7 +45,7 @@ class GroupStatusAdmin(admin.ModelAdmin):
 
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'amount', 'client_card', 'created_at', 'user',)
+    list_display = ('id', 'amount', 'created_at', 'user',)
 
 
 class PaymentMethodAdmin(admin.ModelAdmin):
@@ -83,4 +83,4 @@ admin.site.register(Payment, PaymentAdmin)
 # admin.site.register(Payment)
 admin.site.register(PaymentMethod, PaymentMethodAdmin)
 admin.site.register(ScheduleType, ScheduleTypeAdmin)
-admin.site.register(Student, StudentAdmin)
+# admin.site.register(Student, StudentAdmin)

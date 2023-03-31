@@ -145,41 +145,40 @@ def get_default_status():
     return RequestStatus.objects.filter(name="Ждёт звонка").first()
 
 
-class Student(models.Model):
-    first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
-    last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
-    surname = models.CharField(max_length=30, null=True, blank=True, verbose_name="Отчество")
-    notes = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
-    phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
-    laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
-    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
-    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
-    status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")
-    paid = models.BooleanField(default=False, null=True, verbose_name="Оплатил или нет")
-    reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
-    on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
-    request_date = models.DateTimeField(default=timezone.now, null=True, blank=True, verbose_name="Дата создания заявки")
-    # request_time = models.TimeField(auto_now_add=True, null=True, blank=True, verbose_name="Время создания заявки")
-    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
-    class Meta:
-        verbose_name = "Студент"
-        verbose_name_plural = "Студенты"
+# class Student(models.Model):
+#     first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
+#     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
+#     surname = models.CharField(max_length=30, null=True, blank=True, verbose_name="Отчество")
+#     notes = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
+#     phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
+#     laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
+#     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
+#     came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
+#     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
+#     status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")
+#     paid = models.BooleanField(default=False, null=True, verbose_name="Оплатил или нет")
+#     reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
+#     on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
+#     request_date = models.DateTimeField(default=timezone.now, null=True, blank=True, verbose_name="Дата создания заявки")
+#     is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
+#
+#     def __str__(self):
+#         return f"{self.first_name} {self.last_name}"
+#
+#     class Meta:
+#         verbose_name = "Студент"
+#         verbose_name_plural = "Студенты"
 
 
 class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма")
-    client_card = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Кто оплатил")
+    # client_card = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name="Кто оплатил")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Время оплаты")
     payment_type = models.ForeignKey(PaymentMethod, null=True, on_delete=models.CASCADE, verbose_name="Тип оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
-    def __str__(self):
-        return f'{self.client_card}'
+    # def __str__(self):
+    #     return f'{self.client_card}'
 
     class Meta:
         verbose_name = "Платёж"

@@ -10,7 +10,7 @@ from cmsapp.models import (
     AdvertisingSource,
     RequestStatus,
     PaymentMethod,
-    Student,
+    # Student,
     Payment,
     Reason,
 )
@@ -26,13 +26,13 @@ from cmsapp.api.serializers import (
     AdvertisingSourceSerializer,
     RequestStatusSerializer,
     PaymentMethodSerializer,
-    StudentSerializer,
+    # StudentSerializer,
     PaymentSerializer,
     ReasonSerializer,
-    StudentOnStudySerializer,
+    # StudentOnStudySerializer,
     ArchiveCourseSerializer,
     ArchiveGroupSerializer,
-    ArchiveStudentSerializer,
+    # ArchiveStudentSerializer,
 )
 from rest_framework.parsers import MultiPartParser
 
@@ -62,16 +62,16 @@ class ArchiveGroupViewSet(ModelViewSet):
         return self.serializer_class.get(self.action) or GroupSerializer
 
 
-class ArchiveStudentViewSet(ModelViewSet):
-    queryset = Student.objects.filter(is_archive=True)
-    serializer_class = {
-        'update': ArchiveStudentSerializer,
-        'partial_update': ArchiveStudentSerializer,
-    }
-    http_method_names = ['get', 'put', 'patch', 'delete']
-
-    def get_serializer_class(self):
-        return self.serializer_class.get(self.action) or StudentSerializer
+# class ArchiveStudentViewSet(ModelViewSet):
+#     queryset = Student.objects.filter(is_archive=True)
+#     serializer_class = {
+#         'update': ArchiveStudentSerializer,
+#         'partial_update': ArchiveStudentSerializer,
+#     }
+#     http_method_names = ['get', 'put', 'patch', 'delete']
+#
+#     def get_serializer_class(self):
+#         return self.serializer_class.get(self.action) or StudentSerializer
 
 
 
@@ -142,44 +142,44 @@ class PaymentMethodViewSet(ModelViewSet):
     queryset = PaymentMethod.objects.all()
 
 
-class StudentViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True)
-
-
-class StudentStatusAViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Ждёт звонка"))
-    http_method_names = ['get']
-
-
-class StudentStatusBViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Звонок совершён"))
-    http_method_names = ['get']
-
-
-class StudentStatusCViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Записан на пробный урок"))
-    http_method_names = ['get']
-
-
-class StudentStatusDViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Посетил пробный урок"))
-    http_method_names = ['get']
-
-
-class StudentOnStudyViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    queryset = Student.objects.filter(on_request=False)
-    serializer_class = StudentOnStudySerializer
+# class StudentViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.filter(on_request=True)
+#
+#
+# class StudentStatusAViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Ждёт звонка"))
+#     http_method_names = ['get']
+#
+#
+# class StudentStatusBViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Звонок совершён"))
+#     http_method_names = ['get']
+#
+#
+# class StudentStatusCViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Записан на пробный урок"))
+#     http_method_names = ['get']
+#
+#
+# class StudentStatusDViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Посетил пробный урок"))
+#     http_method_names = ['get']
+#
+#
+# class StudentOnStudyViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     queryset = Student.objects.filter(on_request=False)
+#     serializer_class = StudentOnStudySerializer
 
 
 class PaymentViewSet(ModelViewSet):
