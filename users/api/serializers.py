@@ -25,13 +25,13 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'user_type',
             'image',
-            'is_archive'
+            'is_active'
         ]
 
     read_only_fields = ['user_type']
 
     def get_fio(self, obj):
-       return obj.first_name +' '+ obj.last_name
+        return obj.first_name + ' ' + obj.last_name
 
     # def get_image_url(self, obj):
     #     request = self.context.get('request')
@@ -47,7 +47,7 @@ class UserArchiveSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id',
-            'is_archive',
+            'is_active',
         ]
 
 
@@ -64,11 +64,11 @@ class AdminSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
-            'is_archive',
+            'is_active',
         ]
 
     def get_fio(self, obj):
-       return obj.first_name +' '+ obj.last_name
+        return obj.first_name + ' ' + obj.last_name
 
     def validated_email(self, value):
         return validate_email(value)
@@ -98,17 +98,14 @@ class ManagerSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'image',
-            'is_archive',
-          ]
-
+            'is_active',
+        ]
 
     def get_fio(self, obj):
-       return obj.first_name +' '+ obj.last_name
-
+        return obj.first_name + ' ' + obj.last_name
 
     def validate_email(self, value):
         return validate_email(value)
-
 
     def validate_phone(self, value):
         return validate_phone(self, value)
@@ -135,7 +132,6 @@ class MentorListSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class MentorDetailSerializer(serializers.ModelSerializer):
     # department = DepartmentSerializer(read_only=True)
     # group_set = GroupSerializer(read_only=True, many=True)
@@ -156,7 +152,7 @@ class MentorDetailSerializer(serializers.ModelSerializer):
             'patent_number',
             'patent_start',
             'patent_end',
-            'is_archive',
+            'is_active',
         ]
 
     def validate_email(self, value):
@@ -173,17 +169,15 @@ class MentorDetailSerializer(serializers.ModelSerializer):
 
 
 class MentorArchiveSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
             'id',
-            'is_archive',
+            'is_active',
         ]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
@@ -200,7 +194,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
@@ -221,7 +214,7 @@ class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
-        image=validated_data.get('image', instance.image)
+        image = validated_data.get('image', instance.image)
         instance.image = image
         instance.save()
         try:
@@ -266,10 +259,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             'unique_id'
         )
 
-
     def validate(self, data):
         return password_reset_validate(self, data, ChangePasswordSerializer)
-
 
     def update(self, instance, validated_data):
         validators.validate_password(user=instance, password=validated_data['password'])

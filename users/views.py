@@ -63,9 +63,16 @@ class AdminViewSet(viewsets.ModelViewSet):
     }
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.user.is_authenticated:
+            if request.user.id == instance.id:
+                return Response(data="You can't delete yourself", status=status.HTTP_403_FORBIDDEN)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def get_serializer_class(self):
         return self.serializer_class.get(self.action) or AdminSerializer
-
 
 
 class AllUserViewSet(viewsets.ModelViewSet):
@@ -90,9 +97,16 @@ class ManagerViewSet(viewsets.ModelViewSet):
     }
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.user.is_authenticated:
+            if request.user.id == instance.id:
+                return Response(data="You can't delete yourself", status=status.HTTP_403_FORBIDDEN)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def get_serializer_class(self):
         return self.serializer_class.get(self.action) or ManagerSerializer
-
 
 
 class MentorViewSet(viewsets.ModelViewSet):
@@ -120,7 +134,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
     #     self.perform_destroy(instance)
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
-
     @swagger_auto_schema(request_body=UserSerializerWithoutEmailAndImage)
     def get_serializer_class(self):
         serializer_class = self.serializer_class
@@ -138,7 +151,7 @@ class ProfileImageUpdateViewSet(viewsets.ModelViewSet):
 
 
 class ArchiveAdminViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(user_type='admin', is_archive=True)
+    queryset = User.objects.filter(user_type='admin', is_active=False)
     serializer_class = {
         'update': UserArchiveSerializer,
         'partial_update': UserArchiveSerializer,
@@ -150,7 +163,7 @@ class ArchiveAdminViewSet(viewsets.ModelViewSet):
 
 
 class ArchiveManagerViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(user_type='manager', is_archive=True)
+    queryset = User.objects.filter(user_type='manager', is_active=False)
     serializer_class = {
         'update': UserArchiveSerializer,
         'partial_update': UserArchiveSerializer,
@@ -162,7 +175,7 @@ class ArchiveManagerViewSet(viewsets.ModelViewSet):
 
 
 class ArchiveMentorViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(user_type='mentor', is_archive=True)
+    queryset = User.objects.filter(user_type='mentor', is_active=False)
     serializer_class = {
         'update': UserArchiveSerializer,
         'partial_update': UserArchiveSerializer,

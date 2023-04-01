@@ -5,7 +5,7 @@ from users.models import User, OTP #, UserImage
 
 
 class StaffAdmin(admin.ModelAdmin):
-    list_display = ('id', 'email', 'first_name', 'last_name', 'user_type',)
+    list_display = ('id', 'email', 'first_name', 'last_name', 'user_type', 'is_active')
     exclude = ('password', 'username', 'last_login', 'groups', 'user_permissions', 'date_joined', 'is_staff', 'is_superuser',)
     # fieldsets = (
     #     (None, {'fields': ('username', 'email', 'first_name', 'last_name', 'phone', 'image',
