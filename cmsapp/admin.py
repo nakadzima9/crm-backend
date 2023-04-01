@@ -29,7 +29,7 @@ class ClassroomAdmin(admin.ModelAdmin):
 
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'department', 'duration_month', 'image', 'get_mentors', 'is_archive')
+    list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
 
 
 class DepartmentAdmin(admin.ModelAdmin):

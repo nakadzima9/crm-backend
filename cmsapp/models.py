@@ -46,12 +46,13 @@ def course_directory_path(instance, filename):
 
 class Course(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
+    # department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
     duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах")
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True, null=True,
                               verbose_name="Аватар")
-    mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
+    # mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
     is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
+    description = models.CharField(max_length=300, null=True, verbose_name="Описание")
 
     def get_mentors(self):
         return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
@@ -146,13 +147,18 @@ def get_default_status():
 
 
 class Student(models.Model):
+    STATUS_CHOICES = (
+        (1, "Обучается"),
+        (2, "Закончил"),
+        (3, "Прервал")
+    )
     first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, null=True, blank=True, verbose_name="Отчество")
     notes = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
+    department = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
     came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")
@@ -161,6 +167,8 @@ class Student(models.Model):
     on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, null=True, blank=True, verbose_name="Дата создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
+    learning_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
+    payment_status = models.CharField(max_length=15, null=True, default="Оплачено", verbose_name="Статус оплаты")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

@@ -41,19 +41,19 @@ class ClassroomSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    mentor = serializers.PrimaryKeyRelatedField(
-        required=False, many=True, queryset=User.objects.filter(user_type='mentor')
-    )
+    # mentor = serializers.PrimaryKeyRelatedField(
+    #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
+    # )
 
     class Meta:
         model = Course
         fields = [
             'id',
             'name',
-            'department',
-            'mentor',
             'image',
             'duration_month',
+            'description',
+            'is_archive',
         ]
 
 
@@ -210,7 +210,7 @@ class StudentSerializer(ModelSerializer):
         payment_method_data = validated_data.pop("payment_method")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
-        dep = self.object_not_found_validate(Department.objects, department_data)
+        dep = self.object_not_found_validate(Course.objects, department_data)
         pay = self.object_not_found_validate(PaymentMethod.objects, payment_method_data)
         source = self.object_not_found_validate(AdvertisingSource.objects, came_from_data)
 
@@ -228,7 +228,7 @@ class StudentSerializer(ModelSerializer):
         instance.on_request = validated_data.get("on_request", instance.on_request)
         instance.paid = validated_data.get("paid", instance.paid)
 
-        instance.department = self.object_not_found_validate(Department.objects,
+        instance.department = self.object_not_found_validate(Course.objects,
                                                              validated_data.get("department")["name"])
         instance.came_from = self.object_not_found_validate(AdvertisingSource.objects,
                                                             validated_data.get("came_from")["name"])
@@ -257,8 +257,15 @@ class StudentOnStudySerializer(ModelSerializer):
             "surname",
             "phone",
             "department",
-            "payment_method",
+            'learning_status',
+            'on_request',
+            "is_archive",
+            "laptop",
+            "payment_status",
         ]
+
+    def validate_phone(self, value):
+        return validate_phone(self, value)
 
 
 class ArchiveStudentSerializer(ModelSerializer):
