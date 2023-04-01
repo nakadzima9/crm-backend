@@ -8,7 +8,7 @@ from .views import (
     ClassroomViewSet, CourseViewSet, ScheduleTypeViewSet, GroupViewSet, DepartmentViewSet, PaymentMethodViewSet,
     PaymentViewSet, StudentViewSet, StudentOnStudyViewSet, AdvertisingSourceViewSet, RequestStatusViewSet,
     ReasonViewSet, CourseImageUpdateViewSet,
-
+    StudentStatusAViewSet, StudentStatusBViewSet, StudentStatusCViewSet, StudentStatusDViewSet,
 )
 
 app_name = "cmsapp"
@@ -28,10 +28,10 @@ main_page_router.register("departments", DepartmentViewSet)
 main_page_router.register("payment-methods", PaymentMethodViewSet)
 router.register(r"payments", PaymentViewSet)
 main_page_router.register(r"students", StudentViewSet)
-# main_page_router.register(r"students-filter/status1", StudentStatusAViewSet)
-# main_page_router.register(r"students-filter/status2", StudentStatusBViewSet)
-# main_page_router.register(r"students-filter/status3", StudentStatusCViewSet)
-# main_page_router.register(r"students-filter/status4", StudentStatusDViewSet)
+main_page_router.register(r"students-filter/status1", StudentStatusAViewSet)
+main_page_router.register(r"students-filter/status2", StudentStatusBViewSet)
+main_page_router.register(r"students-filter/status3", StudentStatusCViewSet)
+main_page_router.register(r"students-filter/status4", StudentStatusDViewSet)
 main_page_router.register(r"students-on-study", StudentOnStudyViewSet)
 main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
