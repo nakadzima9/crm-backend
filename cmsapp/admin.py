@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     AdvertisingSource,
     Classroom,
-    Course,
+    # Course,
     Department,
     Group,
     GroupStatus,
@@ -28,12 +28,12 @@ class ClassroomAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
 
-class CourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
+# class CourseAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
 
 
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -74,7 +74,7 @@ admin.site.register(AdvertisingSource, AdvertisingSourceAdmin)
 admin.site.register(Reason, ReasonAdmin)
 admin.site.register(RequestStatus, RequestStatusAdmin)
 admin.site.register(Classroom, ClassroomAdmin)
-admin.site.register(Course, CourseAdmin)
+# admin.site.register(Course, CourseAdmin)
 # admin.site.register(Course)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Group, GroupAdmin)

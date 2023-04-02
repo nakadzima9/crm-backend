@@ -17,15 +17,15 @@ class Classroom(models.Model):
         verbose_name_plural = "Комнаты"
 
 
-class Department(models.Model):
-    name = models.CharField(max_length=20, verbose_name="Департамент")
+# class Department(models.Model):
+#     name = models.CharField(max_length=20, verbose_name="Департамент")
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
-    class Meta:
-        verbose_name = "Департамент"
-        verbose_name_plural = "Департаменты"
+#     class Meta:
+#         verbose_name = "Департамент"
+#         verbose_name_plural = "Департаменты"
 
 
 class GroupStatus(models.Model):
@@ -44,10 +44,10 @@ def course_directory_path(instance, filename):
     return f"courses/{filename}"
 
 
-class Course(models.Model):
+class Department(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах")
+    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах", null=True)
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True, null=True,
                               verbose_name="Аватар")
     # mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
@@ -146,6 +146,10 @@ def get_default_status():
     return RequestStatus.objects.filter(name="Ждёт звонка").first()
 
 
+def get_default_department():
+    return Department.objects.all()
+
+
 class Student(models.Model):
     STATUS_CHOICES = (
         (1, "Обучается"),
@@ -158,7 +162,7 @@ class Student(models.Model):
     notes = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
+    department = models.ForeignKey(Department, default=get_default_department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
     came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")

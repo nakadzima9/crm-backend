@@ -7,7 +7,7 @@ from cmsapp.models import (
     Department,
     GroupStatus,
     Classroom,
-    Course,
+    # Course,
     ScheduleType,
     Group,
     AdvertisingSource,
@@ -40,13 +40,13 @@ class ClassroomSerializer(ModelSerializer):
         ]
 
 
-class CourseSerializer(ModelSerializer):
+class DepartmentSerializer(ModelSerializer):
     # mentor = serializers.PrimaryKeyRelatedField(
     #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
     # )
 
     class Meta:
-        model = Course
+        model = Department
         fields = [
             'id',
             'name',
@@ -57,19 +57,19 @@ class CourseSerializer(ModelSerializer):
         ]
 
 
-class ArchiveCourseSerializer(ModelSerializer):
+# class ArchiveCourseSerializer(ModelSerializer):
+#     class Meta:
+#         model = Course
+#         fields = [
+#             'id',
+#             'is_archive',
+#         ]
+
+
+class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
+
     class Meta:
-        model = Course
-        fields = [
-            'id',
-            'is_archive',
-        ]
-
-
-class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
-
-    class Meta:
-        model = Course
+        model = Department
         fields = [
             'id',
             'image',
@@ -83,13 +83,13 @@ class CourseSerializerOnlyWithImage(serializers.ModelSerializer):
     #     return instance
 
 
-class DepartmentSerializer(ModelSerializer):
-    class Meta:
-        model = Department
-        fields = [
-            'id',
-            'name'
-        ]
+# class DepartmentSerializer(ModelSerializer):
+#     class Meta:
+#         model = Department
+#         fields = [
+#             'id',
+#             'name'
+#         ]
 
 
 class GroupStatusSerializer(ModelSerializer):
@@ -114,7 +114,7 @@ class ScheduleTypeSerializer(ModelSerializer):
 
 class GroupSerializer(ModelSerializer):
     status = GroupStatusSerializer(read_only=True)
-    course = CourseSerializer(read_only=True)
+    course = DepartmentSerializer(read_only=True)
     schedule_type = ScheduleTypeSerializer(read_only=True)
     classroom = ClassroomSerializer(read_only=True)
 
@@ -171,7 +171,7 @@ class ReasonSerializer(ModelSerializer):
 
 
 class StudentSerializer(ModelSerializer):
-    department = DepartmentSerializer()
+    # department = DepartmentSerializer()
     payment_method = PaymentMethodSerializer()
     reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
@@ -181,7 +181,7 @@ class StudentSerializer(ModelSerializer):
 
     class Meta:
         model = Student
-        depth = 1
+        # depth = 1
         fields = [
             "id",
             "first_name",
@@ -206,15 +206,15 @@ class StudentSerializer(ModelSerializer):
         return validate_phone(self, value)
 
     def create(self, validated_data):
-        department_data = validated_data.pop("department")["name"]
+        # department_data = validated_data.pop("department")["name"]
         payment_method_data = validated_data.pop("payment_method")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
-        dep = self.object_not_found_validate(Course.objects, department_data)
+        # dep = self.object_not_found_validate(Department.objects, department_data)
         pay = self.object_not_found_validate(PaymentMethod.objects, payment_method_data)
         source = self.object_not_found_validate(AdvertisingSource.objects, came_from_data)
 
-        student = Student(department=dep, payment_method=pay, came_from=source, **validated_data)
+        student = Student(payment_method=pay, came_from=source, **validated_data)
         student.save()
         return student
 
@@ -227,9 +227,10 @@ class StudentSerializer(ModelSerializer):
         instance.laptop = validated_data.get("laptop", instance.laptop)
         instance.on_request = validated_data.get("on_request", instance.on_request)
         instance.paid = validated_data.get("paid", instance.paid)
+        instance.department = validated_data.get("department", instance.department)
 
-        instance.department = self.object_not_found_validate(Course.objects,
-                                                             validated_data.get("department")["name"])
+        # instance.department = self.object_not_found_validate(Department.objects,
+        #                                                      validated_data.get("department")["name"])
         instance.came_from = self.object_not_found_validate(AdvertisingSource.objects,
                                                             validated_data.get("came_from")["name"])
         instance.payment_method = self.object_not_found_validate(PaymentMethod.objects,
@@ -262,6 +263,7 @@ class StudentOnStudySerializer(ModelSerializer):
             "is_archive",
             "laptop",
             "payment_status",
+            'notes',
         ]
 
     def validate_phone(self, value):

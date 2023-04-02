@@ -4,7 +4,7 @@ from cmsapp.models import (
     Department,
     GroupStatus,
     Classroom,
-    Course,
+    # Course,
     ScheduleType,
     Group,
     AdvertisingSource,
@@ -17,10 +17,11 @@ from cmsapp.models import (
 
 from cmsapp.api.serializers import (
     DepartmentSerializer,
+    DepartmentSerializerOnlyWithImage,
     GroupStatusSerializer,
     ClassroomSerializer,
-    CourseSerializer,
-    CourseSerializerOnlyWithImage,
+    # CourseSerializer,
+    # CourseSerializerOnlyWithImage,
     ScheduleTypeSerializer,
     GroupSerializer,
     AdvertisingSourceSerializer,
@@ -30,23 +31,23 @@ from cmsapp.api.serializers import (
     PaymentSerializer,
     ReasonSerializer,
     StudentOnStudySerializer,
-    ArchiveCourseSerializer,
+    # ArchiveCourseSerializer,
     ArchiveGroupSerializer,
     ArchiveStudentSerializer,
 )
 from rest_framework.parsers import MultiPartParser
 
 
-class ArchiveCourseViewSet(ModelViewSet):
-    queryset = Course.objects.filter(is_archive=True)
-    serializer_class = {
-        'update': ArchiveCourseSerializer,
-        'partial_update': ArchiveCourseSerializer,
-    }
-    http_method_names = ['get', 'put', 'patch', 'delete']
+# class ArchiveCourseViewSet(ModelViewSet):
+#     queryset = Course.objects.filter(is_archive=True)
+#     serializer_class = {
+#         'update': ArchiveCourseSerializer,
+#         'partial_update': ArchiveCourseSerializer,
+#     }
+#     http_method_names = ['get', 'put', 'patch', 'delete']
 
-    def get_serializer_class(self):
-        return self.serializer_class.get(self.action) or CourseSerializer
+#     def get_serializer_class(self):
+#         return self.serializer_class.get(self.action) or CourseSerializer
 
 
 class ArchiveGroupViewSet(ModelViewSet):
@@ -73,11 +74,17 @@ class ArchiveStudentViewSet(ModelViewSet):
         return self.serializer_class.get(self.action) or StudentSerializer
 
 
-
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = DepartmentSerializer
     queryset = Department.objects.all()
+
+
+class DepartmentImageUpdateViewSet(ModelViewSet):
+    parser_classes = (MultiPartParser,)
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializerOnlyWithImage
+    http_method_names = ['put', 'patch']
 
 
 class GroupStatusViewSet(ModelViewSet):
@@ -92,17 +99,10 @@ class ClassroomViewSet(ModelViewSet):
     queryset = Classroom.objects.all()
 
 
-class CourseViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = CourseSerializer
-    queryset = Course.objects.all()
-
-
-class CourseImageUpdateViewSet(ModelViewSet):
-    parser_classes = (MultiPartParser,)
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializerOnlyWithImage
-    http_method_names = ['put', 'patch']
+# class CourseViewSet(ModelViewSet):
+#     permission_classes = [IsSuperUser | IsManager]
+#     serializer_class = CourseSerializer
+#     queryset = Course.objects.all()
 
 
 class ScheduleTypeViewSet(ModelViewSet):
@@ -191,6 +191,86 @@ class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = Student.objects.filter(on_request=False)
     serializer_class = StudentOnStudySerializer
+
+
+class StudentOnStudyFilterAViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="UX/UI"))
+
+
+class StudentOnStudyFilterBViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Front-End"))
+
+
+class StudentOnStudyFilterCViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="PM"))
+
+
+class StudentOnStudyFilterDViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Back-End"))
+
+
+class StudentOnStudyFilterEViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Android"))
+
+
+class StudentOnStudyFilterFViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="iOS"))
+
+
+class StudentOnStudyFilterGViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Flutter"))
+
+
+class StudentOnStudyFilterHViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.all()
+    serializer_class = StudentOnStudySerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Олимпиадное программирование"))
 
 
 class PaymentViewSet(ModelViewSet):
