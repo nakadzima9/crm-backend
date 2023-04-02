@@ -170,8 +170,14 @@ class ReasonSerializer(ModelSerializer):
         ]
 
 
+class DepartmentNameSrializer(ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['name']
+
+
 class StudentSerializer(ModelSerializer):
-    # department = DepartmentSerializer()
+    department = DepartmentNameSrializer()
     payment_method = PaymentMethodSerializer()
     reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
@@ -206,15 +212,15 @@ class StudentSerializer(ModelSerializer):
         return validate_phone(self, value)
 
     def create(self, validated_data):
-        # department_data = validated_data.pop("department")["name"]
+        department_data = validated_data.pop("department")["name"]
         payment_method_data = validated_data.pop("payment_method")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
-        # dep = self.object_not_found_validate(Department.objects, department_data)
+        dep = self.object_not_found_validate(Department.objects, department_data)
         pay = self.object_not_found_validate(PaymentMethod.objects, payment_method_data)
         source = self.object_not_found_validate(AdvertisingSource.objects, came_from_data)
 
-        student = Student(payment_method=pay, came_from=source, **validated_data)
+        student = Student(payment_method=pay, department=dep, came_from=source, **validated_data)
         student.save()
         return student
 
@@ -229,8 +235,8 @@ class StudentSerializer(ModelSerializer):
         instance.paid = validated_data.get("paid", instance.paid)
         instance.department = validated_data.get("department", instance.department)
 
-        # instance.department = self.object_not_found_validate(Department.objects,
-        #                                                      validated_data.get("department")["name"])
+        instance.department = self.object_not_found_validate(Department.objects,
+                                                             validated_data.get("department")["name"])
         instance.came_from = self.object_not_found_validate(AdvertisingSource.objects,
                                                             validated_data.get("came_from")["name"])
         instance.payment_method = self.object_not_found_validate(PaymentMethod.objects,
