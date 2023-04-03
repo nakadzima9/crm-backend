@@ -56,7 +56,7 @@ class PersonalLoginWebView(generics.GenericAPIView):
 
 class AdminViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.filter(user_type="admin").order_by('id')
+    queryset = User.objects.filter(user_type="admin", is_active=True).order_by('id')
     serializer_class = {
         'update': UserArchiveSerializer,
         'partial_update': UserArchiveSerializer,
@@ -77,7 +77,7 @@ class AdminViewSet(viewsets.ModelViewSet):
 
 class AllUserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.all().order_by('id')
+    queryset = User.objects.filter(is_active=True).order_by('id')
     serializer_class = {
         'update': UserArchiveSerializer,
         'partial_update': UserArchiveSerializer,
@@ -90,7 +90,7 @@ class AllUserViewSet(viewsets.ModelViewSet):
 
 class ManagerViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.filter(user_type="manager").order_by('id')
+    queryset = User.objects.filter(user_type="manager", is_active=True).order_by('id')
     serializer_class = {
         'update': UserArchiveSerializer,
         'partial_update': UserArchiveSerializer,
@@ -111,7 +111,7 @@ class ManagerViewSet(viewsets.ModelViewSet):
 
 class MentorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = User.objects.filter(user_type="mentor").order_by('id')
+    queryset = User.objects.filter(user_type="mentor", is_active=True).order_by('id')
     serializer_class = {
         'list': MentorListSerializer,
         'retrieve': MentorDetailSerializer,
@@ -123,7 +123,7 @@ class MentorViewSet(viewsets.ModelViewSet):
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(user_type__in=['admin', 'manager']).order_by('id')
+    queryset = User.objects.filter(user_type__in=['admin', 'manager'], is_active=True).order_by('id')
     serializer_class = ProfileSerializer
     http_method_names = ['get', 'put', 'patch', 'delete']
 
