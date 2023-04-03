@@ -170,14 +170,14 @@ class ReasonSerializer(ModelSerializer):
         ]
 
 
-class DepartmentNameSrializer(ModelSerializer):
+class DepartmentNameSerializer(ModelSerializer):
     class Meta:
         model = Department
         fields = ['name']
 
 
 class StudentSerializer(ModelSerializer):
-    department = DepartmentNameSrializer()
+    department = DepartmentNameSerializer()
     payment_method = PaymentMethodSerializer()
     reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
