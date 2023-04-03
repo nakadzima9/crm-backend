@@ -122,7 +122,7 @@ class GroupSerializer(ModelSerializer):
         model = Group
         fields = [
             'id',
-            'number',
+            'name',
             'mentor',
             'students_max',
             'status',
@@ -130,7 +130,7 @@ class GroupSerializer(ModelSerializer):
             'course',
             'schedule_type',
             'classroom',
-            'is_archive'
+            'is_archive',
         ]
 
 

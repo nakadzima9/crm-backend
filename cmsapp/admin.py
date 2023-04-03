@@ -37,7 +37,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'number', 'students_max', 'status', 'created_at', 'schedule_type', 'classroom', 'is_archive')
+    list_display = ('id', 'name', 'students_max', 'status', 'created_at', 'schedule_type', 'classroom', 'is_archive')
 
 
 class GroupStatusAdmin(admin.ModelAdmin):

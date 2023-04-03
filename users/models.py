@@ -82,21 +82,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         ("manager", "Manager"),
         ("mentor", "Mentor"),
     ]
-    email = models.EmailField(unique=True, null=True, verbose_name="Почта")
-    first_name = models.CharField(max_length=255, verbose_name="Имя")
-    last_name = models.CharField(max_length=255, verbose_name="Фамилия")
-    phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
+    email = models.EmailField(unique=True, verbose_name="Почта")
+    first_name = models.CharField(max_length=50, verbose_name="Имя")
+    last_name = models.CharField(max_length=50, verbose_name="Фамилия")
+    phone = models.CharField(max_length=13, blank=True, verbose_name="Номер телефона")
     # unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     # image = models.ForeignKey(UserImage, on_delete=models.CASCADE, blank=True, null=True, verbose_name="Аватар")
-    image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, null=True,
-                              verbose_name="Аватар")
-    linkedin = models.URLField(blank=True, null=True, verbose_name="Ссылка на Linkedin")
-    user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, null=True, verbose_name="Тип пользователя")
+    image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, verbose_name="Аватар")
+    linkedin = models.URLField(blank=True, verbose_name="Ссылка на Linkedin")
+    user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, verbose_name="Тип пользователя")
     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
                                    related_name='department', verbose_name='Департамент')
     # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
     #                            verbose_name='Группа')
-    patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
+    patent_number = models.PositiveIntegerField(blank=True, default=0, verbose_name="Номер патента")
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
     is_staff = models.BooleanField(default=False, verbose_name="Сотрудник")
@@ -135,30 +134,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "Системные пользователи"
 
 
-# class Mentor(User):
-#     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
-#                                    related_name='department', verbose_name='Департамент')
-#     schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, blank=True, null=True,
-#                                       related_name='schedule', verbose_name='Расписание')
-#     group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
-#                               verbose_name='Группа')
-#     patent_number = models.PositiveIntegerField(blank=True, null=True, verbose_name="Номер патента")
-#     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
-#     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
-#
-#     def __str__(self):
-#         return f"Имя: {self.first_name} | Фамилия: {self.last_name} | Департамент {self.department}"
-#
-#     class Meta:
-#         verbose_name = "Ментор"
-#         verbose_name_plural = "Ментора"
-
-
 class OTP(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     status = models.BooleanField(default=False)
-    password_life_time = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+    password_life_time = models.DateTimeField(auto_now_add=True)
     code = models.CharField(max_length=6)
     created_time = models.DateTimeField(auto_now_add=True)
 

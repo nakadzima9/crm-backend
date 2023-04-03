@@ -129,6 +129,7 @@ class MentorListSerializer(serializers.ModelSerializer):
             'last_name',
             'image',
             'department',
+            'linkedin',
         ]
 
 
