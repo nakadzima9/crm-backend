@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework import status
 from cmsapp.models import (
-    Department,
+    DepartmentOfCourse,
     GroupStatus,
     Classroom,
     # Course,
@@ -46,7 +46,7 @@ class DepartmentSerializer(ModelSerializer):
     # )
 
     class Meta:
-        model = Department
+        model = DepartmentOfCourse
         fields = [
             'id',
             'name',
@@ -69,7 +69,7 @@ class DepartmentSerializer(ModelSerializer):
 class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
 
     class Meta:
-        model = Department
+        model = DepartmentOfCourse
         fields = [
             'id',
             'image',
@@ -172,7 +172,7 @@ class ReasonSerializer(ModelSerializer):
 
 class DepartmentNameSerializer(ModelSerializer):
     class Meta:
-        model = Department
+        model = DepartmentOfCourse
         fields = ['name']
 
 
@@ -216,7 +216,7 @@ class StudentSerializer(ModelSerializer):
         payment_method_data = validated_data.pop("payment_method")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
 
-        dep = self.object_not_found_validate(Department.objects, department_data)
+        dep = self.object_not_found_validate(DepartmentOfCourse.objects, department_data)
         pay = self.object_not_found_validate(PaymentMethod.objects, payment_method_data)
         source = self.object_not_found_validate(AdvertisingSource.objects, came_from_data)
 
@@ -235,7 +235,7 @@ class StudentSerializer(ModelSerializer):
         instance.paid = validated_data.get("paid", instance.paid)
         instance.department = validated_data.get("department", instance.department)
 
-        instance.department = self.object_not_found_validate(Department.objects,
+        instance.department = self.object_not_found_validate(DepartmentOfCourse.objects,
                                                              validated_data.get("department")["name"])
         instance.came_from = self.object_not_found_validate(AdvertisingSource.objects,
                                                             validated_data.get("came_from")["name"])

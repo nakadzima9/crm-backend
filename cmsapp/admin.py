@@ -4,7 +4,7 @@ from .models import (
     AdvertisingSource,
     Classroom,
     # Course,
-    Department,
+    DepartmentOfCourse,
     Group,
     GroupStatus,
     Payment,
@@ -32,7 +32,7 @@ class ClassroomAdmin(admin.ModelAdmin):
 #     list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
 
 
-class DepartmentAdmin(admin.ModelAdmin):
+class DepartmentOfCourseAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
 
 
@@ -76,7 +76,7 @@ admin.site.register(RequestStatus, RequestStatusAdmin)
 admin.site.register(Classroom, ClassroomAdmin)
 # admin.site.register(Course, CourseAdmin)
 # admin.site.register(Course)
-admin.site.register(Department, DepartmentAdmin)
+admin.site.register(DepartmentOfCourse, DepartmentOfCourseAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(GroupStatus, GroupStatusAdmin)
 admin.site.register(Payment, PaymentAdmin)

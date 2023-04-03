@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from .permissions import IsManager, IsSuperUser
 from cmsapp.models import (
-    Department,
+    DepartmentOfCourse,
     GroupStatus,
     Classroom,
     # Course,
@@ -77,12 +77,12 @@ class ArchiveStudentViewSet(ModelViewSet):
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = DepartmentSerializer
-    queryset = Department.objects.all()
+    queryset = DepartmentOfCourse.objects.all()
 
 
 class DepartmentImageUpdateViewSet(ModelViewSet):
     parser_classes = (MultiPartParser,)
-    queryset = Department.objects.all()
+    queryset = DepartmentOfCourse.objects.all()
     serializer_class = DepartmentSerializerOnlyWithImage
     http_method_names = ['put', 'patch']
 
@@ -200,7 +200,7 @@ class StudentOnStudyFilterAViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="UX/UI"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="UX/UI"))
 
 
 class StudentOnStudyFilterBViewSet(ModelViewSet):
@@ -210,7 +210,7 @@ class StudentOnStudyFilterBViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Front-End"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Front-End"))
 
 
 class StudentOnStudyFilterCViewSet(ModelViewSet):
@@ -220,7 +220,7 @@ class StudentOnStudyFilterCViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="PM"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="PM"))
 
 
 class StudentOnStudyFilterDViewSet(ModelViewSet):
@@ -230,7 +230,7 @@ class StudentOnStudyFilterDViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Back-End"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Back-End"))
 
 
 class StudentOnStudyFilterEViewSet(ModelViewSet):
@@ -240,7 +240,7 @@ class StudentOnStudyFilterEViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Android"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Android"))
 
 
 class StudentOnStudyFilterFViewSet(ModelViewSet):
@@ -250,7 +250,7 @@ class StudentOnStudyFilterFViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="iOS"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="iOS"))
 
 
 class StudentOnStudyFilterGViewSet(ModelViewSet):
@@ -260,7 +260,7 @@ class StudentOnStudyFilterGViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Flutter"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Flutter"))
 
 
 class StudentOnStudyFilterHViewSet(ModelViewSet):
@@ -270,7 +270,7 @@ class StudentOnStudyFilterHViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=Department.objects.get(name="Олимпиадное программирование"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Олимпиадное программирование"))
 
 
 class PaymentViewSet(ModelViewSet):

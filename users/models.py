@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 
-from cmsapp.models import Department, ScheduleType, Group
+from cmsapp.models import DepartmentOfCourse, ScheduleType, Group
 
 
 class SuperUser(BaseUserManager):
@@ -91,7 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     image = models.ImageField(upload_to=user_directory_path, default='default.jpg', blank=True, verbose_name="Аватар")
     linkedin = models.URLField(blank=True, verbose_name="Ссылка на Linkedin")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, verbose_name="Тип пользователя")
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,
+    department = models.ForeignKey(DepartmentOfCourse, on_delete=models.CASCADE, blank=True, null=True,
                                    related_name='department', verbose_name='Департамент')
     # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
     #                            verbose_name='Группа')

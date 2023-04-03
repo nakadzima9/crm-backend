@@ -44,7 +44,7 @@ def course_directory_path(instance, filename):
     return f"courses/{filename}"
 
 
-class Department(models.Model):
+class DepartmentOfCourse(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
     duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах", default=0)
@@ -147,7 +147,7 @@ def get_default_status():
 
 
 def get_default_department():
-    return Department.objects.all()
+    return DepartmentOfCourse.objects.all()
 
 
 class Student(models.Model):
@@ -162,7 +162,7 @@ class Student(models.Model):
     notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, blank=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(Department, default=get_default_department, on_delete=models.CASCADE, null=True,
+    department = models.ForeignKey(DepartmentOfCourse, default=get_default_department, on_delete=models.CASCADE, null=True,
                                    verbose_name="Департамент")
     came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
