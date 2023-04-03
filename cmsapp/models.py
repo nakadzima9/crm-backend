@@ -47,12 +47,12 @@ def course_directory_path(instance, filename):
 class Department(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах", null=True)
-    image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True, null=True,
+    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах", default=0)
+    image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True,
                               verbose_name="Аватар")
     # mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
-    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
-    description = models.CharField(max_length=300, null=True, verbose_name="Описание")
+    is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
+    description = models.CharField(max_length=300, verbose_name="Описание")
 
     def get_mentors(self):
         return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
@@ -67,8 +67,8 @@ class Department(models.Model):
 
 class ScheduleType(models.Model):
     type_name = models.CharField(max_length=10, verbose_name="Тип расписания")
-    start_time = models.TimeField(null=True, blank=True, verbose_name="Начало урока")
-    end_time = models.TimeField(null=True, blank=True, verbose_name="Конец урока")
+    start_time = models.TimeField(blank=True, null=True, verbose_name="Начало урока")
+    end_time = models.TimeField(blank=True, null=True, verbose_name="Конец урока")
 
     def __str__(self):
         return self.type_name
@@ -79,16 +79,16 @@ class ScheduleType(models.Model):
 
 
 class Group(models.Model):
-    number = models.CharField(max_length=50, verbose_name="Название группы")
+    name = models.CharField(max_length=50, verbose_name="Название группы")
     students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
-    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE,
+    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
                                verbose_name="Преподаватель")
     status = models.ForeignKey(GroupStatus, on_delete=models.CASCADE, verbose_name="Статус")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     # course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
     schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, verbose_name="Тип расписания")
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, verbose_name="Комната")
-    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
+    is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
 
     def __str__(self):
         return f'Number: {self.number}, status: {self.status}'
@@ -156,23 +156,25 @@ class Student(models.Model):
         (2, "Закончил"),
         (3, "Прервал")
     )
-    first_name = models.CharField(max_length=30, null=True, verbose_name="Имя")
-    last_name = models.CharField(max_length=30, null=True, verbose_name="Фамилия")
-    surname = models.CharField(max_length=30, null=True, blank=True, verbose_name="Отчество")
-    notes = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
-    phone = models.CharField(max_length=13, blank=True, null=True, verbose_name="Номер телефона")
-    laptop = models.BooleanField(default=False, null=True, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(Department, default=get_default_department, on_delete=models.CASCADE, verbose_name="Департамент", null=True)
+    first_name = models.CharField(max_length=30, verbose_name="Имя")
+    last_name = models.CharField(max_length=30, verbose_name="Фамилия")
+    surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
+    notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
+    phone = models.CharField(max_length=13, blank=True, verbose_name="Номер телефона")
+    laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")
+    department = models.ForeignKey(Department, default=get_default_department, on_delete=models.CASCADE, null=True,
+                                   verbose_name="Департамент")
     came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
-    status = models.ForeignKey(RequestStatus, blank=True, default=get_default_status, on_delete=models.CASCADE, verbose_name="Статус заявки")
-    paid = models.BooleanField(default=False, null=True, verbose_name="Оплатил или нет")
-    reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE, verbose_name="Причина неуспешной сделки")
-    on_request = models.BooleanField(default=True, null=True, verbose_name="На этапе заявки")
-    request_date = models.DateTimeField(default=timezone.now, null=True, blank=True, verbose_name="Дата создания заявки")
-    is_archive = models.BooleanField(default=False, blank=True, null=True, verbose_name="Архивировать")
+    status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.CASCADE,
+                               blank=True, null=True, verbose_name="Статус заявки")
+    paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
+    reason = models.ForeignKey(Reason, on_delete=models.CASCADE, null=True, verbose_name="Причина неуспешной сделки")
+    on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
+    request_date = models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Дата создания заявки")
+    is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     learning_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
-    payment_status = models.CharField(max_length=15, null=True, default="Оплачено", verbose_name="Статус оплаты")
+    payment_status = models.CharField(max_length=15, default="Оплачено", verbose_name="Статус оплаты")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -184,9 +186,9 @@ class Student(models.Model):
 
 class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма")
-    client_card = models.ForeignKey(Student, null=True, on_delete=models.CASCADE, verbose_name="Кто оплатил")
+    client_card = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, verbose_name="Кто оплатил")
     created_at = models.DateTimeField(auto_now=True, verbose_name="Время оплаты")
-    payment_type = models.ForeignKey(PaymentMethod, null=True, on_delete=models.CASCADE, verbose_name="Тип оплаты")
+    payment_type = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Тип оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
     def __str__(self):
