@@ -91,7 +91,7 @@ class Group(models.Model):
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
 
     def __str__(self):
-        return f'Number: {self.number}, status: {self.status}'
+        return f'Number: {self.name}, status: {self.status}'
 
     class Meta:
         verbose_name = "Группа"
