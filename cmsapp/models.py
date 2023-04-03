@@ -47,7 +47,7 @@ def course_directory_path(instance, filename):
 class DepartmentOfCourse(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
-    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах", default=0)
+    duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах")
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True,
                               verbose_name="Аватар")
     # mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
