@@ -285,6 +285,7 @@ class StudentOnStudySerializer(ModelSerializer):
             "last_name",
             "surname",
             "phone",
+            "came_from",
             "department",
             'learning_status',
             'on_request',
