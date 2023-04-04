@@ -3,6 +3,7 @@ from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
 from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, DepartmentNameSerializer
+from cmsapp.models import DepartmentOfCourse
 from core import settings
 from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, password_reset_validate
@@ -136,9 +137,9 @@ class MentorListSerializer(serializers.ModelSerializer):
 
 
 class MentorDetailSerializer(serializers.ModelSerializer):
-    # department = DepartmentNameSerializer()
+    department = DepartmentNameSerializer()
     # group_set = GroupSerializer(read_only=True, many=True)
-    group_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True, required=False)
+    #group_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True, required=False)
 
     class Meta:
         model = User
@@ -150,7 +151,7 @@ class MentorDetailSerializer(serializers.ModelSerializer):
             'phone',
             'image',
             'linkedin',
-            'group_set',
+            #'group_set',
             'department',
             'patent_number',
             'patent_start',
@@ -165,10 +166,34 @@ class MentorDetailSerializer(serializers.ModelSerializer):
         return validate_phone(self, value)
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data, without_generate_password=True)
+        department_data = validated_data.pop('department')['name']
+        dep = self.object_not_found_validate(DepartmentOfCourse.objects, department_data)
+
+        user = User.objects.create_user(department=dep, **validated_data, without_generate_password=True)
         user.user_type = 'mentor'
         user.save()
         return user
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.image = validated_data.get('image', instance.image)
+        instance.linkedin = validated_data.get('linkedin', instance.linkedin)
+        instance.patent_number = validated_data.get('patent_number', instance.patent_number)
+        instance.patent_start = validated_data.get('patent_start', instance.patent_start)
+        instance.patent_end = validated_data.get('patent_end', instance.patend_end)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+
+        instance.department = self.object_not_found_validate(DepartmentOfCourse.objects,
+                                                             validated_data.get('department')['name'])
+
+    def object_not_found_validate(self, obj, name):
+        data = obj.get(name=name)
+
+        if not data:
+            raise serializers.ValidationError(f"Object {name} does not exist.")
+        return data
 
 
 class MentorArchiveSerializer(serializers.ModelSerializer):
