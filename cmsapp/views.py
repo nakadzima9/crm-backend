@@ -200,7 +200,7 @@ class StudentOnStudyFilterAViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="UX/UI"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="ux/ui"))
 
 
 class StudentOnStudyFilterBViewSet(ModelViewSet):
@@ -210,7 +210,7 @@ class StudentOnStudyFilterBViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Front-End"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="front-end"))
 
 
 class StudentOnStudyFilterCViewSet(ModelViewSet):
@@ -220,7 +220,7 @@ class StudentOnStudyFilterCViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="PM"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="pm"))
 
 
 class StudentOnStudyFilterDViewSet(ModelViewSet):
@@ -230,7 +230,7 @@ class StudentOnStudyFilterDViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Back-End"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="back-end"))
 
 
 class StudentOnStudyFilterEViewSet(ModelViewSet):
@@ -240,7 +240,7 @@ class StudentOnStudyFilterEViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Android"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="android"))
 
 
 class StudentOnStudyFilterFViewSet(ModelViewSet):
@@ -250,7 +250,7 @@ class StudentOnStudyFilterFViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="iOS"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="ios"))
 
 
 class StudentOnStudyFilterGViewSet(ModelViewSet):
@@ -260,7 +260,7 @@ class StudentOnStudyFilterGViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Flutter"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="flutter"))
 
 
 class StudentOnStudyFilterHViewSet(ModelViewSet):
@@ -270,7 +270,7 @@ class StudentOnStudyFilterHViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="Олимпиадное программирование"))
+        return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="olimped_programming"))
 
 
 class PaymentViewSet(ModelViewSet):
