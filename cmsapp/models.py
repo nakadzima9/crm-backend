@@ -79,16 +79,26 @@ class ScheduleType(models.Model):
 
 
 class Group(models.Model):
+    SCHEDULE_TYPE = (
+        (1, "Тип1"),
+        (2, "Тип2"),
+    )
     name = models.CharField(max_length=50, verbose_name="Название группы")
     students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
+    department = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Департмент")
     mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
                                verbose_name="Преподаватель")
     status = models.ForeignKey(GroupStatus, on_delete=models.CASCADE, verbose_name="Статус")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    # course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
-    schedule_type = models.ForeignKey(ScheduleType, on_delete=models.CASCADE, verbose_name="Тип расписания")
+    start_at_date = models.DateTimeField(null=True, verbose_name="Старт группы")
+    end_at_date = models.DateTimeField(null=True, verbose_name="Конец группы")
+    schedule_type = models.PositiveSmallIntegerField(choices=SCHEDULE_TYPE, default=1, verbose_name="Тип расписания")
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, verbose_name="Комната")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
+    start_at_time = models.DateTimeField(null=True, verbose_name="Начало занятий")
+    end_at_time = models.DateTimeField(null=True, verbose_name="Конец занятий")
+
+    def get_mentor(self):
+        return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
 
     def __str__(self):
         return f'Number: {self.name}, status: {self.status}'
@@ -173,7 +183,7 @@ class Student(models.Model):
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Дата создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
-    learning_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1)
+    learning_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус обучения")
     payment_status = models.CharField(max_length=15, default="Оплачено", verbose_name="Статус оплаты")
 
     def __str__(self):

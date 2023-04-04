@@ -2,7 +2,7 @@
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
-from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer
+from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, DepartmentNameSerializer
 from core import settings
 from users.models import User, OTP
 from .custom_funcs import validate_phone, validate_email, password_reset_validate
@@ -130,11 +130,13 @@ class MentorListSerializer(serializers.ModelSerializer):
             'image',
             'department',
             'linkedin',
+            'email',
+            'phone',
         ]
 
 
 class MentorDetailSerializer(serializers.ModelSerializer):
-    # department = DepartmentSerializer(read_only=True)
+    # department = DepartmentNameSerializer()
     # group_set = GroupSerializer(read_only=True, many=True)
     group_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True, required=False)
 

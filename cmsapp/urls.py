@@ -1,7 +1,7 @@
 from rest_framework import routers
 
 from .views import (
-    # ArchiveCourseViewSet,
+    ArchiveCourseViewSet,
     ArchiveGroupViewSet,
     ArchiveStudentViewSet,
     GroupStatusViewSet,
@@ -36,12 +36,11 @@ app_name = "cmsapp"
 main_page_router = routers.DefaultRouter()
 router = routers.DefaultRouter()
 
-# router.register(r'archive/courses', ArchiveCourseViewSet, basename='archive-courses')
+router.register(r'archive/courses', ArchiveCourseViewSet, basename='archive-courses')
 router.register(r'archive/groups', ArchiveGroupViewSet, basename='archive-groups')
 router.register(r'archive/students', ArchiveStudentViewSet, basename='archive-students')
 router.register("group-statuses", GroupStatusViewSet)
 router.register("classrooms", ClassroomViewSet)
-# router.register("courses", CourseViewSet)
 router.register("schedule-types", ScheduleTypeViewSet)
 router.register("groups", GroupViewSet)
 main_page_router.register("departments", DepartmentViewSet)
@@ -57,7 +56,6 @@ main_page_router.register(r"students-on-study", StudentOnStudyViewSet)
 main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
 main_page_router.register(r"reasons", ReasonViewSet)
-# main_page_router.register(r"courses/image", CourseImageUpdateViewSet)
 router.register(r"students-on-study-filter/UX/UI", StudentOnStudyFilterAViewSet),
 router.register(r"students-on-study-filter/Front-End", StudentOnStudyFilterBViewSet),
 router.register(r"students-on-study-filter/PM", StudentOnStudyFilterCViewSet),

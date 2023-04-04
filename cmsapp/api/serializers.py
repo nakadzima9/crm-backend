@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,7 +19,7 @@ from cmsapp.models import (
     Payment,
     Reason,
 )
-from users.models import User
+from django.utils import timezone
 from .custom_funcs import validate_phone
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 
@@ -57,13 +59,13 @@ class DepartmentSerializer(ModelSerializer):
         ]
 
 
-# class ArchiveCourseSerializer(ModelSerializer):
-#     class Meta:
-#         model = Course
-#         fields = [
-#             'id',
-#             'is_archive',
-#         ]
+class ArchiveDepartmentSerializer(ModelSerializer):
+    class Meta:
+        model = DepartmentOfCourse
+        fields = [
+            'id',
+            'is_archive',
+        ]
 
 
 class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
@@ -112,11 +114,38 @@ class ScheduleTypeSerializer(ModelSerializer):
         ]
 
 
+class DepartmentNameSerializer(ModelSerializer):
+    class Meta:
+        model = DepartmentOfCourse
+        fields = ['name']
+
+
+# class CustomDateTimeField(serializers.DateTimeField):
+#     def __init__(self, **kwargs):
+#         kwargs['format'] = '%d/%m/%Y %H:%M'
+#         super().__init__(**kwargs)
+#
+#     def to_representation(self, value):
+#         value = timezone.localtime(value)
+#         return super().to_representation(value)
+#
+#     def to_internal_value(self, data):
+#         try:
+#             value = datetime.strptime(data, self.format)
+#             value = timezone.make_aware(value, timezone.get_current_timezone())
+#         except (TypeError, ValueError):
+#             self.fail('invalid')
+#         return super().to_internal_value(value)
+
+
 class GroupSerializer(ModelSerializer):
-    status = GroupStatusSerializer(read_only=True)
-    course = DepartmentSerializer(read_only=True)
-    schedule_type = ScheduleTypeSerializer(read_only=True)
-    classroom = ClassroomSerializer(read_only=True)
+    status = GroupStatusSerializer()
+    classroom = ClassroomSerializer()
+    department = DepartmentNameSerializer()
+    # start_at_date = serializers.DateTimeField(format="%d/%m/%Y", default=timezone.now)
+    # end_at_date = CustomDateTimeField(format="%d/%m/%Y", default=timezone.now)
+    # start_at_time = CustomDateTimeField(format="%H:%M", default=timezone.now)
+    # end_at_time = CustomDateTimeField(format="%H:%M", default=timezone.now)
 
     class Meta:
         model = Group
@@ -124,13 +153,16 @@ class GroupSerializer(ModelSerializer):
             'id',
             'name',
             'mentor',
+            'department',
             'students_max',
             'status',
-            'created_at',
-            'course',
             'schedule_type',
             'classroom',
             'is_archive',
+            'start_at_date',
+            'end_at_date',
+            'start_at_time',
+            'end_at_time',
         ]
 
 
@@ -170,12 +202,6 @@ class ReasonSerializer(ModelSerializer):
         ]
 
 
-class DepartmentNameSerializer(ModelSerializer):
-    class Meta:
-        model = DepartmentOfCourse
-        fields = ['name']
-
-
 class StudentSerializer(ModelSerializer):
     department = DepartmentNameSerializer()
     payment_method = PaymentMethodSerializer()
@@ -183,11 +209,9 @@ class StudentSerializer(ModelSerializer):
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
     request_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
-    # request_time = serializers.TimeField(format="%H:%M:%S", required=False, read_only=True)
 
     class Meta:
         model = Student
-        # depth = 1
         fields = [
             "id",
             "first_name",
@@ -204,7 +228,6 @@ class StudentSerializer(ModelSerializer):
             "reason",
             "on_request",
             "request_date",
-            # "request_time",
             "is_archive",
         ]
 
@@ -233,7 +256,6 @@ class StudentSerializer(ModelSerializer):
         instance.laptop = validated_data.get("laptop", instance.laptop)
         instance.on_request = validated_data.get("on_request", instance.on_request)
         instance.paid = validated_data.get("paid", instance.paid)
-        instance.department = validated_data.get("department", instance.department)
 
         instance.department = self.object_not_found_validate(DepartmentOfCourse.objects,
                                                              validated_data.get("department")["name"])

@@ -20,8 +20,6 @@ from cmsapp.api.serializers import (
     DepartmentSerializerOnlyWithImage,
     GroupStatusSerializer,
     ClassroomSerializer,
-    # CourseSerializer,
-    # CourseSerializerOnlyWithImage,
     ScheduleTypeSerializer,
     GroupSerializer,
     AdvertisingSourceSerializer,
@@ -31,23 +29,23 @@ from cmsapp.api.serializers import (
     PaymentSerializer,
     ReasonSerializer,
     StudentOnStudySerializer,
-    # ArchiveCourseSerializer,
+    ArchiveDepartmentSerializer,
     ArchiveGroupSerializer,
     ArchiveStudentSerializer,
 )
 from rest_framework.parsers import MultiPartParser
 
 
-# class ArchiveCourseViewSet(ModelViewSet):
-#     queryset = Course.objects.filter(is_archive=True)
-#     serializer_class = {
-#         'update': ArchiveCourseSerializer,
-#         'partial_update': ArchiveCourseSerializer,
-#     }
-#     http_method_names = ['get', 'put', 'patch', 'delete']
+class ArchiveCourseViewSet(ModelViewSet):
+    queryset = DepartmentOfCourse.objects.filter(is_archive=True)
+    serializer_class = {
+        'update': ArchiveDepartmentSerializer,
+        'partial_update': ArchiveDepartmentSerializer,
+    }
+    http_method_names = ['get', 'put', 'patch', 'delete']
 
-#     def get_serializer_class(self):
-#         return self.serializer_class.get(self.action) or CourseSerializer
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action) or DepartmentSerializer
 
 
 class ArchiveGroupViewSet(ModelViewSet):
