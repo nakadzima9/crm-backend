@@ -54,8 +54,8 @@ class DepartmentOfCourse(models.Model):
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     description = models.CharField(max_length=300, verbose_name="Описание")
 
-    def get_mentors(self):
-        return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
+    # def get_mentors(self):
+    #     return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
 
     def __str__(self):
         return self.name
