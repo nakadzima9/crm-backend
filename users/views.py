@@ -50,7 +50,6 @@ class PersonalLoginWebView(generics.GenericAPIView):
             raise NotFound("User not found!")
         if not user.check_password(password):
             raise AuthenticationFailed("Incorrect password!")
-
         return get_token(user)
 
 
