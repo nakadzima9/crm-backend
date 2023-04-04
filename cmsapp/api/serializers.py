@@ -20,7 +20,7 @@ from cmsapp.models import (
     Reason,
 )
 from django.utils import timezone
-from .custom_funcs import validate_phone
+from patches.custom_funcs import validate_phone
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 
 

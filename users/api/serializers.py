@@ -2,11 +2,11 @@
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
-from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer, DepartmentNameSerializer
+from cmsapp.api.serializers import DepartmentSerializer, DepartmentNameSerializer
 from cmsapp.models import DepartmentOfCourse
 from core import settings
 from users.models import User, OTP
-from .custom_funcs import validate_phone, validate_email, password_reset_validate
+from patches.custom_funcs import validate_phone, validate_email, password_reset_validate
 
 import boto3
 

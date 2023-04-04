@@ -4,15 +4,14 @@ from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import generics, viewsets, status
 from rest_framework.exceptions import (
     AuthenticationFailed,
-    NotFound,
-    ValidationError
+    NotFound
 )
 
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .api.custom_funcs import get_token
+from patches.custom_funcs import get_token
 from .api.login_serializers import PersonalLoginWebSerializer
 from .api.serializers import (
     UserSerializer,
