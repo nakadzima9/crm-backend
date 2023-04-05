@@ -21,7 +21,7 @@ from cmsapp.models import (
     Reason,
 )
 from django.utils import timezone
-from .custom_funcs import validate_phone
+from patches.custom_funcs import validate_phone
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
@@ -311,6 +311,7 @@ class StudentOnStudySerializer(ModelSerializer):
             "last_name",
             "surname",
             "phone",
+            "came_from",
             "department",
             'learning_status',
             'on_request',
