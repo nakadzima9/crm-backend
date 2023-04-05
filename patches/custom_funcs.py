@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
 from rest_framework.response import Response
 from users.models import User
+from cmsapp.models import Student
 
 
 def validate_phone(self, value):
@@ -22,6 +23,8 @@ def validate_phone(self, value):
             raise serializers.ValidationError("Phone number must be 13 characters long")
         if not self.partial and not self.instance:
             if User.objects.filter(phone=value).first():
+                raise serializers.ValidationError("This number already exists in the system")
+            if Student.objects.filter(phone=value).first():
                 raise serializers.ValidationError("This number already exists in the system")
         return value
 

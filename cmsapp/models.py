@@ -160,7 +160,19 @@ def get_default_department():
     return DepartmentOfCourse.objects.all()
 
 
-class Student(models.Model):
+class ModelWithUpdate(models.Model):
+    class Meta:
+        abstract = True
+
+    def update(self, commit=False, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        if commit:
+            self.save()
+        return self
+
+
+class Student(ModelWithUpdate):
     STATUS_CHOICES = (
         (1, "Обучается"),
         (2, "Закончил"),

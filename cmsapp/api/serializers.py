@@ -337,6 +337,16 @@ class StudentOnStudySerializer(ModelSerializer):
         student = Student.objects.create(department=dep, came_from=source, **validated_data)
         return student
 
+    def update(self, instance, validated_data):
+        department_data = validated_data.pop("department")["name"]
+        came_from_data = validated_data.pop("came_from")["name"]
+
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
+
+        instance = Student.objects.get(phone=instance.phone, on_request=False).update(commit=True, department=dep, came_from=source, **validated_data)
+        return instance
+
 
 class ArchiveStudentSerializer(ModelSerializer):
     class Meta:
