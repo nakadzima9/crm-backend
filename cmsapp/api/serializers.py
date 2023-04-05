@@ -303,6 +303,9 @@ class StudentSerializer(ModelSerializer):
 
 
 class StudentOnStudySerializer(ModelSerializer):
+    department = DepartmentNameSerializer()
+    came_from = AdvertisingSourceSerializer()
+
     class Meta:
         model = Student
         fields = [
@@ -323,6 +326,16 @@ class StudentOnStudySerializer(ModelSerializer):
 
     def validate_phone(self, value):
         return validate_phone(self, value)
+
+    def create(self, validated_data):
+        department_data = validated_data.pop("department")["name"]
+        came_from_data = validated_data.pop("came_from")["name"]
+
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
+
+        student = Student.objects.create(department=dep, came_from=source, **validated_data)
+        return student
 
 
 class ArchiveStudentSerializer(ModelSerializer):
