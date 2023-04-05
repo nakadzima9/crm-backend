@@ -316,7 +316,6 @@ class StudentOnStudySerializer(ModelSerializer):
             "phone",
             "came_from",
             "department",
-            'learning_status',
             'on_request',
             "is_archive",
             "laptop",

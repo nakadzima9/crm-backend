@@ -173,11 +173,6 @@ class ModelWithUpdate(models.Model):
 
 
 class Student(ModelWithUpdate):
-    STATUS_CHOICES = (
-        (1, "Обучается"),
-        (2, "Закончил"),
-        (3, "Прервал")
-    )
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
@@ -195,7 +190,6 @@ class Student(ModelWithUpdate):
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Дата создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
-    learning_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус обучения")
     payment_status = models.CharField(max_length=15, default="Оплачено", verbose_name="Статус оплаты")
 
     def __str__(self):
