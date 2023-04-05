@@ -83,7 +83,7 @@ class Group(models.Model):
         (1, "Тип1"),
         (2, "Тип2"),
     )
-    name = models.CharField(max_length=50, verbose_name="Название группы")
+    name = models.CharField(max_length=50, unique=True, verbose_name="Название группы")
     students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
     department = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Департмент")
     mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.shortcuts import get_object_or_404
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist
@@ -142,10 +143,10 @@ class GroupSerializer(ModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
-    # start_at_date = serializers.DateTimeField(format="%d/%m/%Y", default=timezone.now)
-    # end_at_date = CustomDateTimeField(format="%d/%m/%Y", default=timezone.now)
-    # start_at_time = CustomDateTimeField(format="%H:%M", default=timezone.now)
-    # end_at_time = CustomDateTimeField(format="%H:%M", default=timezone.now)
+    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
+    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
+    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
+    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
 
     class Meta:
         model = Group
@@ -164,6 +165,31 @@ class GroupSerializer(ModelSerializer):
             'start_at_time',
             'end_at_time',
         ]
+
+    def create(self, validated_data):
+        classroom_data = validated_data.pop("classroom")["name"]
+        department_data = validated_data.pop("department")["name"]
+        status_data = validated_data.pop("status")["status_name"]
+
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
+        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
+
+        group = Group.objects.create(department=dep, classroom=room, status=sta, **validated_data)
+        return group
+
+    def update(self, instance, validated_data):
+        # classroom_data = validated_data.pop("classroom")["name"]
+        # department_data = validated_data.pop("department")["name"]
+        # status_data = validated_data.pop("status")["status_name"]
+        #
+        # dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        # room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
+        # sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
+        #
+        # instance.objects.update(department=dep, classroom=room, status=sta, **validated_data)
+        # instance.save()
+        return instance
 
 
 class ArchiveGroupSerializer(ModelSerializer):
