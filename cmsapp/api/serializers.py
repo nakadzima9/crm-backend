@@ -215,7 +215,7 @@ class ReasonSerializer(ModelSerializer):
 
 
 class StudentSerializer(ModelSerializer):
-    department = DepartmentNameSerializer()
+    department = DepartmentSerializer(fields=['name'])
     payment_method = PaymentMethodSerializer()
     reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
@@ -286,7 +286,7 @@ class StudentSerializer(ModelSerializer):
 
 
 class StudentOnStudySerializer(ModelSerializer):
-    department = DepartmentNameSerializer()
+    department = DepartmentSerializer(fields=['name'])
     came_from = AdvertisingSourceSerializer()
 
     class Meta:
