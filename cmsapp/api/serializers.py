@@ -63,7 +63,7 @@ class ClassroomSerializer(ModelSerializer):
         ]
 
 
-class DepartmentSerializer(ModelSerializer):
+class DepartmentSerializer(DynamicFieldsModelSerializer):
     # mentor = serializers.PrimaryKeyRelatedField(
     #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
     # )
@@ -126,16 +126,10 @@ class ScheduleTypeSerializer(ModelSerializer):
         ]
 
 
-class DepartmentNameSerializer(ModelSerializer):
-    class Meta:
-        model = DepartmentOfCourse
-        fields = ['name']
-
-
 class GroupSerializer(DynamicFieldsModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
-    department = DepartmentNameSerializer()
+    department = DepartmentSerializer(fields=['name'])
     start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
     end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
     start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)

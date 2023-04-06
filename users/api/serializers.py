@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 import django.contrib.auth.password_validation as validators
 
-from cmsapp.api.serializers import DepartmentSerializer, DepartmentNameSerializer, GroupSerializer
+from cmsapp.api.serializers import DepartmentSerializer, GroupSerializer
 from cmsapp.models import DepartmentOfCourse
 from core import settings
 from users.models import User, OTP
@@ -121,7 +121,7 @@ class ManagerSerializer(serializers.ModelSerializer):
 
 
 class MentorListSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer(read_only=True)
+    department = DepartmentSerializer(read_only=True, fields=['name'])
 
     class Meta:
         model = User
@@ -150,7 +150,7 @@ def object_not_found_validate(obj: object, name: object) -> object:
 
 
 class MentorDetailSerializer(serializers.ModelSerializer):
-    department = DepartmentNameSerializer()
+    department = DepartmentSerializer(fields=['name'])
     group_set = GroupSerializer(read_only=True, many=True, fields=['name'])
     #group_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True, required=False)
 
