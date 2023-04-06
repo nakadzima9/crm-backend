@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .permissions import IsManager, IsSuperUser
@@ -192,6 +194,19 @@ class StudentOnStudyViewSet(ModelViewSet):
     queryset = Student.objects.filter(on_request=False)
     serializer_class = StudentOnStudySerializer
 
+    @swagger_auto_schema(
+        operation_id='retrieve_student',
+        operation_description='Retrieve student details by ID.',
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                required=True,
+                description='ID of the student. Can be an integer or a string.'
+            )
+        ],
+    )
     def retrieve(self, request, pk=None):
         queryset = self.get_queryset()
         student = None
@@ -204,86 +219,6 @@ class StudentOnStudyViewSet(ModelViewSet):
             serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
-
-
-# class StudentOnStudyFilterAViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="ux/ui"))
-#
-#
-# class StudentOnStudyFilterBViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="front-end"))
-#
-#
-# class StudentOnStudyFilterCViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="pm"))
-#
-#
-# class StudentOnStudyFilterDViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="back-end"))
-#
-#
-# class StudentOnStudyFilterEViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="android"))
-#
-#
-# class StudentOnStudyFilterFViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="ios"))
-#
-#
-# class StudentOnStudyFilterGViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="flutter"))
-#
-#
-# class StudentOnStudyFilterHViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     queryset = Student.objects.all()
-#     serializer_class = StudentOnStudySerializer
-#     http_method_names = ['get']
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(on_request=False, department=DepartmentOfCourse.objects.get(name="olimped_programming"))
 
 
 class PaymentViewSet(ModelViewSet):

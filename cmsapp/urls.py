@@ -1,3 +1,4 @@
+from django.urls import re_path
 from rest_framework import routers
 
 from .views import (
@@ -57,7 +58,9 @@ main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
 main_page_router.register(r"reasons", ReasonViewSet)
 
-urlpatterns = []
+urlpatterns = [
+    re_path(r'^students-on-study/(?P<id>\d+|[a-zA-Z0-9-]+)$', StudentOnStudyViewSet.as_view({'get': 'retrieve'})),
+]
 
 # urlpatterns += router.urls
 # urlpatterns += main_page_router.urls
