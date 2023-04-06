@@ -24,7 +24,7 @@ class SuperUser(BaseUserManager):
                 **extra_fields
             )
             user.set_password(generate_password)
-            user.fio = user.first_name +" "+ user.last_name
+            user.fio = user.first_name + " " + user.last_name
             user.save()
             send_mail("Пароль от CRM",
                       f"Ваши данные для входа в CRM:\nПочта: {user.email}\nПароль: {generate_password}",
@@ -55,6 +55,7 @@ def user_directory_path(instance, filename):
     extension = filename.split('.')[-1]
     filename = f"{uuid.uuid4()}.{extension}"
     return f"profiles/{timezone.now().date().strftime('%Y/%m/%d')}/{filename}"
+
 
 # def user_directory_path(instance, filename):
 #     extension = filename.split('.')[-1]
@@ -93,8 +94,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, verbose_name="Тип пользователя")
     department = models.ForeignKey(DepartmentOfCourse, on_delete=models.CASCADE, blank=True, null=True,
                                    related_name='department', verbose_name='Департамент')
-    # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
-    #                            verbose_name='Группа')
     patent_number = models.PositiveIntegerField(blank=True, default=0, verbose_name="Номер патента")
     patent_start = models.DateField(blank=True, null=True, verbose_name="Срок действия патента")
     patent_end = models.DateField(blank=True, null=True, verbose_name="Срок окончания патента")
