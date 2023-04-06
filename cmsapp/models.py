@@ -6,6 +6,18 @@ from django.utils import timezone
 from core import settings
 
 
+class ModelWithUpdate(models.Model):
+    class Meta:
+        abstract = True
+
+    def update(self, commit=False, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        if commit:
+            self.save()
+        return self
+
+
 class Classroom(models.Model):
     name = models.CharField(max_length=15, verbose_name="Комната")
 
@@ -15,17 +27,6 @@ class Classroom(models.Model):
     class Meta:
         verbose_name = "Комната"
         verbose_name_plural = "Комнаты"
-
-
-# class Department(models.Model):
-#     name = models.CharField(max_length=20, verbose_name="Департамент")
-
-#     def __str__(self):
-#         return self.name
-
-#     class Meta:
-#         verbose_name = "Департамент"
-#         verbose_name_plural = "Департаменты"
 
 
 class GroupStatus(models.Model):
@@ -46,16 +47,11 @@ def course_directory_path(instance, filename):
 
 class DepartmentOfCourse(models.Model):
     name = models.CharField(max_length=30, verbose_name="Название курса")
-    # department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name="Департамент")
     duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах")
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True,
                               verbose_name="Аватар")
-    # mentor = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="Преподаватели")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     description = models.CharField(max_length=300, verbose_name="Описание")
-
-    # def get_mentors(self):
-    #     return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
 
     def __str__(self):
         return self.name
@@ -78,7 +74,7 @@ class ScheduleType(models.Model):
         verbose_name_plural = "Расписания"
 
 
-class Group(models.Model):
+class Group(ModelWithUpdate):
     SCHEDULE_TYPE = (
         (1, "Тип1"),
         (2, "Тип2"),
@@ -158,18 +154,6 @@ def get_default_status():
 
 def get_default_department():
     return DepartmentOfCourse.objects.all()
-
-
-class ModelWithUpdate(models.Model):
-    class Meta:
-        abstract = True
-
-    def update(self, commit=False, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        if commit:
-            self.save()
-        return self
 
 
 class Student(ModelWithUpdate):

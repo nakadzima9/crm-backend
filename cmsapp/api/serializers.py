@@ -10,7 +10,6 @@ from cmsapp.models import (
     DepartmentOfCourse,
     GroupStatus,
     Classroom,
-    # Course,
     ScheduleType,
     Group,
     AdvertisingSource,
@@ -86,15 +85,6 @@ class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
     #     return instance
 
 
-# class DepartmentSerializer(ModelSerializer):
-#     class Meta:
-#         model = Department
-#         fields = [
-#             'id',
-#             'name'
-#         ]
-
-
 class GroupStatusSerializer(ModelSerializer):
     class Meta:
         model = GroupStatus
@@ -119,24 +109,6 @@ class DepartmentNameSerializer(ModelSerializer):
     class Meta:
         model = DepartmentOfCourse
         fields = ['name']
-
-
-# class CustomDateTimeField(serializers.DateTimeField):
-#     def __init__(self, **kwargs):
-#         kwargs['format'] = '%d/%m/%Y %H:%M'
-#         super().__init__(**kwargs)
-#
-#     def to_representation(self, value):
-#         value = timezone.localtime(value)
-#         return super().to_representation(value)
-#
-#     def to_internal_value(self, data):
-#         try:
-#             value = datetime.strptime(data, self.format)
-#             value = timezone.make_aware(value, timezone.get_current_timezone())
-#         except (TypeError, ValueError):
-#             self.fail('invalid')
-#         return super().to_internal_value(value)
 
 
 class GroupSerializer(ModelSerializer):
@@ -179,16 +151,15 @@ class GroupSerializer(ModelSerializer):
         return group
 
     def update(self, instance, validated_data):
-        # classroom_data = validated_data.pop("classroom")["name"]
-        # department_data = validated_data.pop("department")["name"]
-        # status_data = validated_data.pop("status")["status_name"]
-        #
-        # dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
-        # room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-        # sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
-        #
-        # instance.objects.update(department=dep, classroom=room, status=sta, **validated_data)
-        # instance.save()
+        classroom_data = validated_data.pop("classroom")["name"]
+        department_data = validated_data.pop("department")["name"]
+        status_data = validated_data.pop("status")["status_name"]
+
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
+        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
+
+        instance = Group.objects.get(name=instance.name).update(department=dep, classroom=room, status=sta, **validated_data)
         return instance
 
 
