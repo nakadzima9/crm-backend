@@ -21,14 +21,14 @@ from .views import (
     StudentStatusBViewSet,
     StudentStatusCViewSet,
     StudentStatusDViewSet,
-    StudentOnStudyFilterAViewSet,
-    StudentOnStudyFilterBViewSet,
-    StudentOnStudyFilterCViewSet,
-    StudentOnStudyFilterDViewSet,
-    StudentOnStudyFilterEViewSet,
-    StudentOnStudyFilterFViewSet,
-    StudentOnStudyFilterGViewSet,
-    StudentOnStudyFilterHViewSet,
+    # StudentOnStudyFilterAViewSet,
+    # StudentOnStudyFilterBViewSet,
+    # StudentOnStudyFilterCViewSet,
+    # StudentOnStudyFilterDViewSet,
+    # StudentOnStudyFilterEViewSet,
+    # StudentOnStudyFilterFViewSet,
+    # StudentOnStudyFilterGViewSet,
+    # StudentOnStudyFilterHViewSet,
 )
 
 app_name = "cmsapp"
@@ -52,18 +52,10 @@ main_page_router.register(r"students-filter/status1", StudentStatusAViewSet)
 main_page_router.register(r"students-filter/status2", StudentStatusBViewSet)
 main_page_router.register(r"students-filter/status3", StudentStatusCViewSet)
 main_page_router.register(r"students-filter/status4", StudentStatusDViewSet)
-main_page_router.register(r"students-on-study", StudentOnStudyViewSet)
+main_page_router.register(r"students-on-study", StudentOnStudyViewSet, basename="students-on-study")
 main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
 main_page_router.register(r"reasons", ReasonViewSet)
-router.register(r"students-on-study-filter/UX/UI", StudentOnStudyFilterAViewSet),
-router.register(r"students-on-study-filter/Front-End", StudentOnStudyFilterBViewSet),
-router.register(r"students-on-study-filter/PM", StudentOnStudyFilterCViewSet),
-router.register(r"students-on-study-filter/Back-End", StudentOnStudyFilterDViewSet),
-router.register(r"students-on-study-filter/Android", StudentOnStudyFilterEViewSet),
-router.register(r"students-on-study-filter/iOS", StudentOnStudyFilterFViewSet),
-router.register(r"students-on-study-filter/Flutter", StudentOnStudyFilterGViewSet),
-router.register(r"students-on-study-filter/Olymp", StudentOnStudyFilterHViewSet),
 
 urlpatterns = []
 
