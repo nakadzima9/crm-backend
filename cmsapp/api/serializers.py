@@ -274,24 +274,21 @@ class StudentSerializer(ModelSerializer):
         return student
 
     def update(self, instance, validated_data):
-        instance.first_name = validated_data.get("first_name", instance.first_name)
-        instance.last_name = validated_data.get("last_name", instance.last_name)
-        instance.surname = validated_data.get("surname", instance.surname)
-        instance.notes = validated_data.get("notes", instance.notes)
-        instance.phone = validated_data.get("phone", instance.phone)
-        instance.laptop = validated_data.get("laptop", instance.laptop)
-        instance.on_request = validated_data.get("on_request", instance.on_request)
-        instance.paid = validated_data.get("paid", instance.paid)
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=validated_data.pop("department")["name"])
+        source = get_object_or_404(AdvertisingSource.objects.all(), name=validated_data.pop("came_from")["name"])
+        payment_method = get_object_or_404(PaymentMethod.objects.all(), name=validated_data.pop("payment_method")["name"])
+        status = self.object_not_found_validate(RequestStatus.objects.all(), name=validated_data.pop("status")["name"])
 
-        instance.department = self.object_not_found_validate(DepartmentOfCourse.objects,
-                                                             validated_data.get("department")["name"])
-        instance.came_from = self.object_not_found_validate(AdvertisingSource.objects,
-                                                            validated_data.get("came_from")["name"])
-        instance.payment_method = self.object_not_found_validate(PaymentMethod.objects,
-                                                                 validated_data.get("payment_method")["name"])
-        instance.status = self.object_not_found_validate(RequestStatus.objects,
-                                                         validated_data.get("status")["name"])
-        instance.save()
+        instance = Student.objects.get(phone=instance.phone, on_request=True).update\
+            (
+                commit=True,
+                department=dep,
+                came_from=source,
+                payment_method=payment_method,
+                status=status,
+                **validated_data
+            )
+
         return instance
 
     def object_not_found_validate(self, obj, name):
