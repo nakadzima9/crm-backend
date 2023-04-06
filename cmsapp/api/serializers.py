@@ -63,7 +63,7 @@ class ClassroomSerializer(ModelSerializer):
         ]
 
 
-class DepartmentSerializer(DynamicFieldsModelSerializer):
+class DepartmentSerializer(ModelSerializer):
     # mentor = serializers.PrimaryKeyRelatedField(
     #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
     # )
@@ -126,10 +126,16 @@ class ScheduleTypeSerializer(ModelSerializer):
         ]
 
 
+class DepartmentNameSerializer(ModelSerializer):
+    class Meta:
+        model = DepartmentOfCourse
+        fields = ['name']
+
+
 class GroupSerializer(DynamicFieldsModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
-    department = DepartmentSerializer(fields=['name'])
+    department = DepartmentNameSerializer()
     start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
     end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
     start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
@@ -215,7 +221,7 @@ class ReasonSerializer(ModelSerializer):
 
 
 class StudentSerializer(ModelSerializer):
-    department = DepartmentSerializer(fields=['name'])
+    department = DepartmentNameSerializer()
     payment_method = PaymentMethodSerializer()
     reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
@@ -286,7 +292,7 @@ class StudentSerializer(ModelSerializer):
 
 
 class StudentOnStudySerializer(ModelSerializer):
-    department = DepartmentSerializer(fields=['name'])
+    department = DepartmentNameSerializer()
     came_from = AdvertisingSourceSerializer()
 
     class Meta:
