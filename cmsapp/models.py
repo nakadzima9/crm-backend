@@ -157,6 +157,11 @@ def get_default_department():
 
 
 class Student(ModelWithUpdate):
+    STATUS_CHOICES = (
+        (1, "Оплатил"),
+        (2, "Скоро оплата"),
+        (3, "Должен оплатить"),
+    )
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
@@ -174,7 +179,7 @@ class Student(ModelWithUpdate):
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Дата создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
-    payment_status = models.CharField(max_length=15, default="Оплачено", verbose_name="Статус оплаты")
+    payment_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус оплаты")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
