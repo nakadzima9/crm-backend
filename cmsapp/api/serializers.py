@@ -159,7 +159,7 @@ class GroupSerializer(ModelSerializer):
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
         sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
 
-        instance = Group.objects.get(name=instance.name).update(department=dep, classroom=room, status=sta, **validated_data)
+        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room, status=sta, **validated_data)
         return instance
 
 
