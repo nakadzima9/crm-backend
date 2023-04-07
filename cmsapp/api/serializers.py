@@ -111,6 +111,12 @@ class DepartmentNameSerializer(ModelSerializer):
         fields = ['name']
 
 
+class GroupNameSerializer(ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['name']
+
+
 class GroupSerializer(ModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
