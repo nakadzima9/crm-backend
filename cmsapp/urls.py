@@ -22,6 +22,7 @@ from .views import (
     StudentStatusBViewSet,
     StudentStatusCViewSet,
     StudentStatusDViewSet,
+    BlackListViewSet,
     # StudentOnStudyFilterAViewSet,
     # StudentOnStudyFilterBViewSet,
     # StudentOnStudyFilterCViewSet,
@@ -40,6 +41,7 @@ router = routers.DefaultRouter()
 router.register(r'archive/courses', ArchiveCourseViewSet, basename='archive-courses')
 router.register(r'archive/groups', ArchiveGroupViewSet, basename='archive-groups')
 router.register(r'archive/students', ArchiveStudentViewSet, basename='archive-students')
+router.register(r'blacklist', BlackListViewSet, basename='blacklist')
 router.register("group-statuses", GroupStatusViewSet)
 router.register("classrooms", ClassroomViewSet)
 router.register("schedule-types", ScheduleTypeViewSet)

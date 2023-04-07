@@ -21,6 +21,8 @@ from cmsapp.models import (
 )
 from django.utils import timezone
 from patches.custom_funcs import validate_phone
+from users.models import User
+
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
@@ -69,7 +71,6 @@ class ArchiveDepartmentSerializer(ModelSerializer):
 
 
 class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
-
     class Meta:
         model = DepartmentOfCourse
         fields = [
@@ -117,12 +118,20 @@ class GroupNameSerializer(ModelSerializer):
         fields = ['name']
 
 
+class StudentNameSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ['first_name', 'last_name']
+
+
 class GroupSerializer(ModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
-    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
-    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
+    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"],
+                                              default=timezone.now)
+    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"],
+                                            default=timezone.now)
     start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
     end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
 
@@ -205,6 +214,15 @@ class ReasonSerializer(ModelSerializer):
         ]
 
 
+def object_not_found_validate(obj: object, search_set: object) -> object:
+    if search_set is None:
+        raise serializers.ValidationError(f"Object does note exist")
+    data = obj.filter(**search_set).first()
+    if not data:
+        raise serializers.ValidationError(f"Object does not exist.")
+    return data
+
+
 class StudentSerializer(ModelSerializer):
     department = DepartmentNameSerializer()
     payment_method = PaymentMethodSerializer()
@@ -238,13 +256,13 @@ class StudentSerializer(ModelSerializer):
         return validate_phone(self, value)
 
     def create(self, validated_data):
-        department_data = validated_data.pop("department")["name"]
-        payment_method_data = validated_data.pop("payment_method")["name"]
-        came_from_data = validated_data.pop("came_from")["name"]
+        department_data = validated_data.pop("department")
+        payment_method_data = validated_data.pop("payment_method")
+        came_from_data = validated_data.pop("came_from")
 
-        dep = self.object_not_found_validate(DepartmentOfCourse.objects, department_data)
-        pay = self.object_not_found_validate(PaymentMethod.objects, payment_method_data)
-        source = self.object_not_found_validate(AdvertisingSource.objects, came_from_data)
+        dep = object_not_found_validate(DepartmentOfCourse.objects, department_data)
+        pay = object_not_found_validate(PaymentMethod.objects, payment_method_data)
+        source = object_not_found_validate(AdvertisingSource.objects, came_from_data)
 
         student = Student(payment_method=pay, department=dep, came_from=source, **validated_data)
         student.save()
@@ -253,11 +271,13 @@ class StudentSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=validated_data.pop("department")["name"])
         source = get_object_or_404(AdvertisingSource.objects.all(), name=validated_data.pop("came_from")["name"])
-        payment_method = get_object_or_404(PaymentMethod.objects.all(), name=validated_data.pop("payment_method")["name"])
-        status = self.object_not_found_validate(RequestStatus.objects.all(), name=validated_data.pop("status")["name"])
+        payment_method = get_object_or_404(PaymentMethod.objects.all(),
+                                           name=validated_data.pop("payment_method")["name"])
 
-        instance = Student.objects.get(phone=instance.phone, on_request=True).update\
-            (
+        status = object_not_found_validate(RequestStatus.objects.all(), search_set=validated_data.pop("status"))
+
+        instance = Student.objects.get(phone=instance.phone, on_request=True).update \
+                (
                 commit=True,
                 department=dep,
                 came_from=source,
@@ -267,13 +287,6 @@ class StudentSerializer(ModelSerializer):
             )
 
         return instance
-
-    def object_not_found_validate(self, obj, name):
-        data = obj.get(name=name)
-
-        if not data:
-            raise serializers.ValidationError(f"Object {name} does not exist.")
-        return data
 
 
 class StudentOnStudySerializer(ModelSerializer):
@@ -292,6 +305,7 @@ class StudentOnStudySerializer(ModelSerializer):
             "department",
             'on_request',
             "is_archive",
+            "blacklist",
             "laptop",
             "payment_status",
             'notes',
@@ -317,7 +331,10 @@ class StudentOnStudySerializer(ModelSerializer):
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
 
-        instance = Student.objects.get(phone=instance.phone, on_request=False).update(commit=True, department=dep, came_from=source, **validated_data)
+        user = self.context['request'].user
+        instance = Student.objects.get(phone=instance.phone, on_request=False).update(
+            user=user, commit=True, department=dep, came_from=source, **validated_data
+        )
         return instance
 
 
@@ -330,14 +347,85 @@ class ArchiveStudentSerializer(ModelSerializer):
         ]
 
 
-class PaymentSerializer(ModelSerializer):
+class UserNameSerializer(ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
+
+    class Meta:
+        model = User
+        fields = ['fio']
+
+    def get_fio(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+
+class PaymentListSerializer(ModelSerializer):
+    user = UserNameSerializer(read_only=True)
+    payment_type = PaymentMethodSerializer(read_only=True)
+    client_card = StudentNameSerializer(read_only=True)
+    course = DepartmentNameSerializer(read_only=True)
+
     class Meta:
         model = Payment
         fields = [
             'id',
+            'client_card',
+            'course',
             'payment_type',
             'created_at',
+            'payment_time',
             'user',
-            'client_card',
             'amount',
         ]
+
+
+class PaymentSerializer(ModelSerializer):
+    payment_type = PaymentMethodSerializer()
+    client_card = StudentNameSerializer()
+    course = DepartmentNameSerializer()
+
+    class Meta:
+        model = Payment
+        fields = [
+            'id',
+            'client_card',
+            'course',
+            'payment_type',
+            'created_at',
+            'payment_time',
+            'amount',
+        ]
+
+    def create(self, validated_data):
+        payment_type_data = validated_data.pop('payment_type')
+        client_card_dict = validated_data.pop('client_card')
+        client_card_firstname = client_card_dict['first_name']
+        client_card_lastname = client_card_dict['last_name']
+        course_data = validated_data.pop('course')
+
+        pay = object_not_found_validate(PaymentMethod.objects, payment_type_data)
+        client_card = object_not_found_validate(Student.objects, {"first_name": client_card_firstname,
+                                                                  "last_name": client_card_lastname})
+        course = object_not_found_validate(DepartmentOfCourse.objects, course_data)
+        user = self.context['request'].user
+
+        payment = Payment(payment_type=pay, client_card=client_card, course=course, user=user, **validated_data)
+        payment.save()
+        return payment
+
+
+class BlackListSerializer(ModelSerializer):
+    user = UserNameSerializer(read_only=True)
+    fio = serializers.SerializerMethodField('get_fio')
+
+    class Meta:
+        model = Student
+        fields = [
+            'fio',
+            'user',
+            'blacklist',
+            'blacklist_created_at'
+        ]
+
+
+    def get_fio(self, obj):
+        return f"{obj.first_name} {obj.last_name}"

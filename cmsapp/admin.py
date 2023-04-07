@@ -45,7 +45,7 @@ class GroupStatusAdmin(admin.ModelAdmin):
 
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'amount', 'client_card', 'created_at', 'user',)
+    list_display = ('id', 'amount', 'client_card', 'course', 'created_at', 'user',)
 
 
 class PaymentMethodAdmin(admin.ModelAdmin):
