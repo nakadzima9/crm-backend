@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework import mixins
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .permissions import IsManager, IsSuperUser
 from cmsapp.models import (
     DepartmentOfCourse,
@@ -35,7 +36,7 @@ from cmsapp.api.serializers import (
     StudentOnStudySerializer,
     ArchiveDepartmentSerializer,
     ArchiveGroupSerializer,
-    ArchiveStudentSerializer,
+    ArchiveStudentSerializer, PaymentListSerializer, BlackListSerializer,
 )
 from rest_framework.parsers import MultiPartParser
 
@@ -191,7 +192,7 @@ class StudentStatusDViewSet(ModelViewSet):
 
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Student.objects.filter(on_request=False)
+    queryset = Student.objects.filter(blacklist=False, on_request=False)
     serializer_class = StudentOnStudySerializer
 
     @swagger_auto_schema(
@@ -223,5 +224,19 @@ class StudentOnStudyViewSet(ModelViewSet):
 
 class PaymentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    serializer_class = PaymentSerializer
+    serializer_class = {
+        'list': PaymentListSerializer,
+        'retrieve': PaymentListSerializer,
+    }
     queryset = Payment.objects.all()
+    http_method_names = ['get', 'post']
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action) or PaymentSerializer
+
+
+class BlackListViewSet(mixins.ListModelMixin, GenericViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = Student.objects.filter(blacklist=True)
+    serializer_class = BlackListSerializer
+
