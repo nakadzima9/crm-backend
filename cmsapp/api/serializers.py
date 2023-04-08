@@ -21,6 +21,9 @@ from cmsapp.models import (
 )
 from django.utils import timezone
 from patches.custom_funcs import validate_phone
+from core import settings
+from users.models import User
+# from users.api.serializers import MentorDetailSerializer
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
@@ -42,10 +45,29 @@ class ClassroomSerializer(ModelSerializer):
         ]
 
 
+class MentorNameSerializer(ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
+
+    class Meta:
+        model = User
+        fields = ['fio']
+
+    def get_fio(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+
+class GroupNameAndTimeSerializer(ModelSerializer):
+    start_at_time = serializers.DateTimeField(format="%H:%M", read_only=True)
+    end_at_time = serializers.DateTimeField(format="%H:%M", read_only=True)
+
+    class Meta:
+        model = Group
+        fields = ["name", "start_at_time", "end_at_time"]
+
+
 class DepartmentSerializer(ModelSerializer):
-    # mentor = serializers.PrimaryKeyRelatedField(
-    #     required=False, many=True, queryset=User.objects.filter(user_type='mentor')
-    # )
+    mentor_set = MentorNameSerializer(read_only=True, many=True)
+    group_set = GroupNameAndTimeSerializer(read_only=True, many=True)
 
     class Meta:
         model = DepartmentOfCourse
@@ -56,7 +78,26 @@ class DepartmentSerializer(ModelSerializer):
             'duration_month',
             'description',
             'is_archive',
+            'mentor_set',
+            'group_set'
         ]
+
+    def get_mentor_queryset(self, department):
+        dep = DepartmentOfCourse.objects.get(name=department)
+        return User.objects.filter(department=dep, user_type='mentor')
+
+    def get_groups_queryset(self, department):
+        dep = DepartmentOfCourse.objects.get(name=department)
+        return Group.objects.filter(department=dep)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        mentors = self.get_mentor_queryset(instance)
+        groups = self.get_groups_queryset(instance)
+        if mentors.exists():
+            data['mentor_set'] = MentorNameSerializer(mentors, many=True).data
+            data['group_set'] = GroupNameAndTimeSerializer(groups, many=True).data
+        return data
 
 
 class ArchiveDepartmentSerializer(ModelSerializer):
@@ -117,14 +158,29 @@ class GroupNameSerializer(ModelSerializer):
         fields = ['name']
 
 
+# class TimeField(serializers.Field):
+#     def to_representation(self, value):
+#         return value.strftime("%H:%M") if value else None
+#
+#     def to_internal_value(self, data):
+#         try:
+#             t = timezone.datetime.strptime(data, "%H:%M").time()
+#             return t.strftime('%H:%M')
+#         except ValueError:
+#             raise serializers.ValidationError("Invalid time format (HH:MM)")
+
+
 class GroupSerializer(ModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
-    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
-    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"], default=timezone.now)
-    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
-    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
+    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    # start_at_time = TimeField()
+    # end_at_time = TimeField()
+    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now, style={'input_type': 'time'})
+    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now, style={'input_type': 'time'})
+    # , "iso-8601"
 
     class Meta:
         model = Group
