@@ -422,6 +422,7 @@ class PaymentSerializer(ModelSerializer):
     payment_type = PaymentMethodSerializer()
     client_card = StudentNameSerializer()
     course = DepartmentNameSerializer()
+    name = serializers.CharField()
 
     class Meta:
         model = Payment
@@ -433,6 +434,7 @@ class PaymentSerializer(ModelSerializer):
             'created_at',
             'payment_time',
             'amount',
+            'name',
         ]
 
     def create(self, validated_data):

@@ -147,7 +147,7 @@ class PaymentMethodViewSet(ModelViewSet):
 class StudentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True)
+    queryset = Student.objects.filter(on_request=True, is_archive=False)
 
 
 class StudentStatusAViewSet(ModelViewSet):
@@ -157,7 +157,7 @@ class StudentStatusAViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Ждёт звонка"))
+        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Ждёт звонка"), is_archive=False)
 
 
 class StudentStatusBViewSet(ModelViewSet):
@@ -167,7 +167,7 @@ class StudentStatusBViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Звонок совершён"))
+        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Звонок совершён"), is_archive=False)
 
 
 class StudentStatusCViewSet(ModelViewSet):
@@ -177,7 +177,7 @@ class StudentStatusCViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Записан на пробный урок"))
+        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Записан на пробный урок"), is_archive=False)
 
 
 class StudentStatusDViewSet(ModelViewSet):
@@ -187,12 +187,12 @@ class StudentStatusDViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Посетил пробный урок"))
+        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Посетил пробный урок"), is_archive=False)
 
 
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Student.objects.filter(blacklist=False, on_request=False)
+    queryset = Student.objects.filter(blacklist=False, on_request=False, is_archive=False)
     serializer_class = StudentOnStudySerializer
 
     @swagger_auto_schema(
