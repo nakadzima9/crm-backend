@@ -141,15 +141,15 @@ class RequestStatus(models.Model):
         verbose_name_plural = "Статус заявок"
 
 
-class Reason(models.Model):
-    name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Причина неуспеха"
-        verbose_name_plural = "Причины неуспехов"
+# class Reason(models.Model):
+#     name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
+#
+#     def __str__(self):
+#         return self.name
+#
+#     class Meta:
+#         verbose_name = "Причина неуспеха"
+#         verbose_name_plural = "Причины неуспехов"
 
 
 def get_default_status():
