@@ -18,7 +18,6 @@ from cmsapp.models import (
     PaymentMethod,
     Student,
     Payment,
-    Reason,
 )
 from django.utils import timezone
 from patches.custom_funcs import validate_phone
