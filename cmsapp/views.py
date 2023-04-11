@@ -22,7 +22,6 @@ from cmsapp.models import (
     PaymentMethod,
     Student,
     Payment,
-    Reason,
 )
 
 from cmsapp.api.serializers import (
