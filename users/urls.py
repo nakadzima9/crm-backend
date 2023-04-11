@@ -7,28 +7,32 @@ from rest_framework_simplejwt.views import (
 from .views import (
     AdminViewSet,
     AllUserViewSet,
+    ArchiveAdminViewSet,
+    ArchiveManagerViewSet,
+    ArchiveMentorViewSet,
     ManagerViewSet,
     MentorViewSet,
     PersonalLoginWebView,
     ProfileViewSet,
     ProfileImageUpdateViewSet,
-    ArchiveAdminViewSet,
-    ArchiveManagerViewSet,
-    ArchiveMentorViewSet,
 )
 
-from .api.password_reset_views import PasswordResetCheckCodeView, PasswordResetEmailView, PasswordChangeView
+from .api.password_reset_views import (
+    PasswordChangeView,
+    PasswordResetCheckCodeView,
+    PasswordResetEmailView,
+)
 
 user_router = DefaultRouter()
 user_router.register(r'admins', AdminViewSet, basename='admins')
 user_router.register(r'all-users', AllUserViewSet, basename='all-users')
+user_router.register(r'archive/admins', ArchiveAdminViewSet, basename='archives-admins')
+user_router.register(r'archive/managers', ArchiveManagerViewSet, basename='archive-managers')
+user_router.register(r'archive/mentors', ArchiveMentorViewSet, basename='archive-mentors')
 user_router.register(r'managers', ManagerViewSet, basename='managers')
 user_router.register(r'mentors', MentorViewSet, basename='mentors')
 user_router.register(r'profiles', ProfileViewSet, basename='profiles')
 user_router.register(r'profiles/avatar', ProfileImageUpdateViewSet, basename='profiles-avatar')
-user_router.register(r'archive/admins', ArchiveAdminViewSet, basename='archives-admins')
-user_router.register(r'archive/managers', ArchiveManagerViewSet, basename='archive-managers')
-user_router.register(r'archive/mentors', ArchiveMentorViewSet, basename='archive-mentors')
 
 urlpatterns = [
     path("login/personal/", PersonalLoginWebView.as_view()),

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import models
 from django.utils import timezone
@@ -50,6 +50,7 @@ class DepartmentOfCourse(models.Model):
     duration_month = models.PositiveSmallIntegerField(verbose_name="Продолжительность курса в месяцах")
     image = models.ImageField(upload_to=course_directory_path, default='course_default.jpg', blank=True,
                               verbose_name="Аватар")
+    price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     description = models.CharField(max_length=300, verbose_name="Описание")
 
@@ -92,6 +93,9 @@ class Group(ModelWithUpdate):
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     start_at_time = models.DateTimeField(null=True, verbose_name="Начало занятий")
     end_at_time = models.DateTimeField(null=True, verbose_name="Конец занятий")
+    # Добавлено поле для счисления прошедших месяцев с начала курса/группы
+    month_from_start = models.PositiveSmallIntegerField(
+        verbose_name="Количество прошедших месяцев с начала группы", default=1)
 
     def get_mentor(self):
         return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
@@ -161,28 +165,41 @@ class Student(ModelWithUpdate):
         (1, "Оплатил"),
         (2, "Скоро оплата"),
         (3, "Должен оплатить"),
+        (4, "Оплатил полностью")
     )
+
+    REASON_CHOICES = (
+        (1, "причина1"),
+        (2, "причина2"),
+        (3, "причина3"),
+        (4, "причина4"),
+        (5, "причина5"),
+        (6, "причина6"),
+    )
+
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
     notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, blank=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(DepartmentOfCourse, default=get_default_department, on_delete=models.CASCADE, null=True,
+    department = models.ForeignKey(DepartmentOfCourse, default=get_default_department, on_delete=models.CASCADE,
+                                   null=True,
                                    verbose_name="Департамент")
     came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.CASCADE,
                                blank=True, null=True, verbose_name="Статус заявки")
-    paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
-    reason = models.ForeignKey(Reason, on_delete=models.CASCADE, null=True, verbose_name="Причина неуспешной сделки")
+    reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, default=None, null=True,
+                                              verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
-    request_date = models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Дата создания заявки")
+    request_date = models.DateTimeField(default=timezone.now, blank=True, null=True,
+                                        verbose_name="Дата создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
-    payment_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус оплаты")
+    payment_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=3, verbose_name="Статус оплаты")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, verbose_name="Группа")
     blacklist = models.BooleanField(default=False, blank=True, verbose_name="Чёрный список")
     blacklist_created_at = models.DateField(auto_now_add=True, verbose_name="Дата добавления в чёрный список")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Ментор")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -196,7 +213,7 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма", default=0)
     client_card = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, verbose_name="Кто оплатил")
     course = models.ForeignKey(DepartmentOfCourse, on_delete=models.CASCADE, verbose_name="Курс")
-    created_at = models.DateField(auto_now_add=True, verbose_name="Дата оплаты")
+    last_payment_date = models.DateField(auto_now_add=True, verbose_name="Дата оплаты")
     payment_time = models.TimeField(auto_now_add=True, verbose_name="Время оплаты")
     payment_type = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Тип оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")

@@ -3,13 +3,11 @@ from django.contrib import admin
 from .models import (
     AdvertisingSource,
     Classroom,
-    # Course,
     DepartmentOfCourse,
     Group,
     GroupStatus,
     Payment,
     PaymentMethod,
-    Reason,
     RequestStatus,
     ScheduleType,
     Student,
@@ -20,16 +18,8 @@ class AdvertisingSourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
 
-# class BlackListAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'student', 'reason', 'added_at',)
-
-
 class ClassroomAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
-
-
-# class CourseAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'name', 'duration_month', 'image', 'is_archive', 'description')
 
 
 class DepartmentOfCourseAdmin(admin.ModelAdmin):
@@ -45,14 +35,10 @@ class GroupStatusAdmin(admin.ModelAdmin):
 
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'amount', 'client_card', 'course', 'created_at', 'user',)
+    list_display = ('id', 'amount', 'client_card', 'course', 'last_payment_date', 'user',)
 
 
 class PaymentMethodAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
-
-
-class ReasonAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
 
@@ -71,16 +57,12 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(AdvertisingSource, AdvertisingSourceAdmin)
-admin.site.register(Reason, ReasonAdmin)
 admin.site.register(RequestStatus, RequestStatusAdmin)
 admin.site.register(Classroom, ClassroomAdmin)
-# admin.site.register(Course, CourseAdmin)
-# admin.site.register(Course)
 admin.site.register(DepartmentOfCourse, DepartmentOfCourseAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(GroupStatus, GroupStatusAdmin)
 admin.site.register(Payment, PaymentAdmin)
-# admin.site.register(Payment)
 admin.site.register(PaymentMethod, PaymentMethodAdmin)
 admin.site.register(ScheduleType, ScheduleTypeAdmin)
 admin.site.register(Student, StudentAdmin)
