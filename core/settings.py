@@ -10,7 +10,6 @@ from decouple import config, Csv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -20,7 +19,6 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-
 
 # Application definition
 
@@ -32,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'corsheaders',
     # 'cloudinary',
     # 'cloudinary_storage',
@@ -82,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -121,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -152,7 +148,6 @@ REST_FRAMEWORK = {
     'DATE_FORMAT': '%d.%m.%Y',
     'TIME_FORMAT': '%H:%M',
 }
-
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -221,7 +216,6 @@ AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -264,5 +258,18 @@ JAZZMIN_UI_TWEAKS = {
         "warning": "btn-warning",
         "danger": "btn-danger",
         "success": "btn-success"
+    }
+}
+
+CELERY_TIMEZONE = "Asia/Bishkek"
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_BEAT_SCHEDULE = {
+    'courses_activity_check': {
+        'task': 'cmsapp.tasks.courses_activity_check',
+        'schedule': timedelta(minutes=30),  # Запускать задачу каждые 30 минут
+    },
+    'students_payment_check': {
+        'task': 'cmsapp.tasks.students_payment_check',
+        'schedule': timedelta(minutes=30),
     }
 }
