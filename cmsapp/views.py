@@ -17,7 +17,6 @@ from cmsapp.models import (
     PaymentMethod,
     Student,
     Payment,
-    Reason,
 )
 
 from cmsapp.api.serializers import (
@@ -32,7 +31,6 @@ from cmsapp.api.serializers import (
     PaymentMethodSerializer,
     StudentSerializer,
     PaymentSerializer,
-    ReasonSerializer,
     StudentOnStudySerializer,
     ArchiveDepartmentSerializer,
     ArchiveGroupSerializer,
@@ -130,12 +128,6 @@ class RequestStatusViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = RequestStatusSerializer
     queryset = RequestStatus.objects.all()
-
-
-class ReasonViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = ReasonSerializer
-    queryset = Reason.objects.all()
 
 
 class PaymentMethodViewSet(ModelViewSet):

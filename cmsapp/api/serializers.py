@@ -17,7 +17,6 @@ from cmsapp.models import (
     PaymentMethod,
     Student,
     Payment,
-    Reason,
 )
 from django.utils import timezone
 from patches.custom_funcs import validate_phone
@@ -245,15 +244,6 @@ class PaymentMethodSerializer(ModelSerializer):
         ]
 
 
-class ReasonSerializer(ModelSerializer):
-    class Meta:
-        model = Reason
-        fields = [
-            'id',
-            'name'
-        ]
-
-
 def object_not_found_validate(obj: object, search_set: object) -> object:
     if search_set is None:
         raise serializers.ValidationError(f"Object does note exist")
@@ -266,7 +256,6 @@ def object_not_found_validate(obj: object, search_set: object) -> object:
 class StudentSerializer(ModelSerializer):
     department = DepartmentNameSerializer()
     payment_method = PaymentMethodSerializer()
-    reason = ReasonSerializer(required=False)
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
     request_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
@@ -467,7 +456,6 @@ class BlackListSerializer(ModelSerializer):
             'blacklist',
             'blacklist_created_at'
         ]
-
 
     def get_fio(self, obj):
         return f"{obj.first_name} {obj.last_name}"

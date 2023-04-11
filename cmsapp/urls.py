@@ -16,21 +16,12 @@ from .views import (
     StudentOnStudyViewSet,
     AdvertisingSourceViewSet,
     RequestStatusViewSet,
-    ReasonViewSet,
     DepartmentImageUpdateViewSet,
     StudentStatusAViewSet,
     StudentStatusBViewSet,
     StudentStatusCViewSet,
     StudentStatusDViewSet,
     BlackListViewSet,
-    # StudentOnStudyFilterAViewSet,
-    # StudentOnStudyFilterBViewSet,
-    # StudentOnStudyFilterCViewSet,
-    # StudentOnStudyFilterDViewSet,
-    # StudentOnStudyFilterEViewSet,
-    # StudentOnStudyFilterFViewSet,
-    # StudentOnStudyFilterGViewSet,
-    # StudentOnStudyFilterHViewSet,
 )
 
 app_name = "cmsapp"
@@ -58,7 +49,6 @@ main_page_router.register(r"students-filter/status4", StudentStatusDViewSet)
 main_page_router.register(r"students-on-study", StudentOnStudyViewSet, basename="students-on-study")
 main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
-main_page_router.register(r"reasons", ReasonViewSet)
 
 urlpatterns = [
     re_path(r'^students-on-study/(?P<id>\d+|[a-zA-Z0-9-]+)$', StudentOnStudyViewSet.as_view({'get': 'retrieve'})),

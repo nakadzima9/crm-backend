@@ -137,15 +137,15 @@ class RequestStatus(models.Model):
         verbose_name_plural = "Статус заявок"
 
 
-class Reason(models.Model):
-    name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Причина неуспеха"
-        verbose_name_plural = "Причины неуспехов"
+# class Reason(models.Model):
+#     name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
+#
+#     def __str__(self):
+#         return self.name
+#
+#     class Meta:
+#         verbose_name = "Причина неуспеха"
+#         verbose_name_plural = "Причины неуспехов"
 
 
 def get_default_status():
@@ -162,6 +162,14 @@ class Student(ModelWithUpdate):
         (2, "Скоро оплата"),
         (3, "Должен оплатить"),
     )
+    REASON_CHOICES = (
+        (1, "причина1"),
+        (2, "причина2"),
+        (3, "причина3"),
+        (4, "причина4"),
+        (5, "причина5"),
+        (6, "причина6"),
+    )
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
     surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
@@ -175,7 +183,7 @@ class Student(ModelWithUpdate):
     status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.CASCADE,
                                blank=True, null=True, verbose_name="Статус заявки")
     paid = models.BooleanField(default=False, verbose_name="Оплатил или нет")
-    reason = models.ForeignKey(Reason, on_delete=models.CASCADE, null=True, verbose_name="Причина неуспешной сделки")
+    reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, default=None, null=True, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Дата создания заявки")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
