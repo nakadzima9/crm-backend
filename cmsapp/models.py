@@ -191,6 +191,7 @@ class Student(ModelWithUpdate):
     blacklist = models.BooleanField(default=False, blank=True, verbose_name="Чёрный список")
     blacklist_created_at = models.DateField(auto_now_add=True, null=True, verbose_name="Дата добавления в чёрный список")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Ментор")
+    group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE, verbose_name="Группа")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

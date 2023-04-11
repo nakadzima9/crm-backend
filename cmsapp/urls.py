@@ -50,9 +50,9 @@ main_page_router.register(r"students-on-study", StudentOnStudyViewSet, basename=
 main_page_router.register(r"sources", AdvertisingSourceViewSet)
 main_page_router.register(r"request-statuses", RequestStatusViewSet)
 
-urlpatterns = [
-    re_path(r'^students-on-study/(?P<id>\d+|[a-zA-Z0-9-]+)$', StudentOnStudyViewSet.as_view({'get': 'retrieve'})),
-]
+# urlpatterns = [
+#     re_path(r'^students-on-study/(?P<id>\d+|[a-zA-Z0-9-]+)$', StudentOnStudyViewSet.as_view({'get': 'retrieve'})),
+# ]
 
 # urlpatterns += router.urls
 # urlpatterns += main_page_router.urls

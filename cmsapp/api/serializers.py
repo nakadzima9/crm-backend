@@ -321,6 +321,7 @@ class StudentSerializer(ModelSerializer):
 class StudentOnStudySerializer(ModelSerializer):
     department = DepartmentNameSerializer()
     came_from = AdvertisingSourceSerializer()
+    group = serializers.CharField(source="group.name", required=False)
 
     class Meta:
         model = Student
@@ -338,31 +339,41 @@ class StudentOnStudySerializer(ModelSerializer):
             "laptop",
             "payment_status",
             'notes',
+            'group',
         ]
 
     def validate_phone(self, value):
         return validate_phone(self, value)
 
+    def get_group(self, obj):
+        group_name = obj.group.name
+        serializer = GroupNameSerializer(group_name)
+        return serializer.data
+
     def create(self, validated_data):
         department_data = validated_data.pop("department")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
+        group_data = validated_data.pop("group")["name"]
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
+        gr = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
 
-        student = Student.objects.create(department=dep, came_from=source, **validated_data)
+        student = Student.objects.create(department=dep, came_from=source, group=gr, **validated_data)
         return student
 
     def update(self, instance, validated_data):
         department_data = validated_data.pop("department")["name"]
         came_from_data = validated_data.pop("came_from")["name"]
+        group_data = validated_data.pop("group")["name"]
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
+        gr = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
 
         user = self.context['request'].user
         instance = Student.objects.get(phone=instance.phone, on_request=False).update(
-            user=user, commit=True, department=dep, came_from=source, **validated_data
+            user=user, commit=True, department=dep, came_from=source, group=gr, **validated_data
         )
         return instance
 
