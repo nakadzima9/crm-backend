@@ -1,28 +1,22 @@
-from datetime import datetime
-
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.response import Response
-from rest_framework import status
 from cmsapp.models import (
+    AdvertisingSource,
+    Classroom,
     DepartmentOfCourse,
     GroupStatus,
-    Classroom,
-    ScheduleType,
     Group,
-    AdvertisingSource,
-    RequestStatus,
     PaymentMethod,
-    Student,
     Payment,
+    RequestStatus,
+    ScheduleType,
+    Student,
 )
 from django.utils import timezone
 from patches.custom_funcs import validate_phone
 from users.models import User
-
 
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 

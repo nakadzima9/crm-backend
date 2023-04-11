@@ -27,7 +27,9 @@ class DepartmentOfCourseAdmin(admin.ModelAdmin):
 
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Group._meta.get_fields()]
+    # list_display = [field.name for field in Group._meta.get_fields()]
+    list_display = ['id', 'name', 'students_max', 'department', 'mentor', 'status', 'start_at_date', 'end_at_date',
+                    'is_archive', 'month_from_start']
 
 
 class GroupStatusAdmin(admin.ModelAdmin):

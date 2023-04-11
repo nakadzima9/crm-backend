@@ -1,7 +1,3 @@
-from django.shortcuts import get_object_or_404
-from django.db.models.functions import Concat
-from django.db.models import Value, Q
-
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework import mixins, status
@@ -11,36 +7,38 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from .permissions import IsManager, IsSuperUser
 from cmsapp.models import (
+    AdvertisingSource,
+    Classroom,
     DepartmentOfCourse,
     GroupStatus,
-    Classroom,
-    # Course,
-    ScheduleType,
     Group,
-    AdvertisingSource,
-    RequestStatus,
     PaymentMethod,
-    Student,
     Payment,
+    RequestStatus,
+    ScheduleType,
+    Student,
 )
 
 from cmsapp.api.serializers import (
+    AdvertisingSourceSerializer,
+    ArchiveDepartmentSerializer,
+    ArchiveGroupSerializer,
+    ArchiveStudentSerializer,
+    BlackListSerializer,
+    ClassroomSerializer,
     DepartmentSerializer,
     DepartmentSerializerOnlyWithImage,
     GroupStatusSerializer,
-    ClassroomSerializer,
-    ScheduleTypeSerializer,
     GroupSerializer,
-    AdvertisingSourceSerializer,
-    RequestStatusSerializer,
     PaymentMethodSerializer,
-    StudentSerializer,
     PaymentSerializer,
+    PaymentListSerializer,
+    PaymentSearchSerializer,
+    PaymentStudentNameSerializer,
+    RequestStatusSerializer,
+    ScheduleTypeSerializer,
+    StudentSerializer,
     StudentOnStudySerializer,
-    ArchiveDepartmentSerializer,
-    ArchiveGroupSerializer,
-    ArchiveStudentSerializer, PaymentListSerializer, BlackListSerializer,
-    StudentNameSerializer, PaymentSearchSerializer, PaymentStudentNameSerializer  # , PaymentSearchSerializer
 )
 from rest_framework.parsers import MultiPartParser
 
@@ -234,7 +232,6 @@ class PaymentViewSet(mixins.CreateModelMixin,
         'list': PaymentListSerializer,
     }
     queryset = Payment.objects.all()
-    #http_method_names = ['get', 'post']
 
     def get_serializer_class(self):
         return self.serializer_class.get(self.action) or PaymentSerializer
