@@ -123,6 +123,7 @@ class GroupViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = {
         'list': GroupListSerializer,
+        'retrieve': GroupListSerializer,
         'create': GroupDetailSerializer,
         'update': GroupDetailSerializer,
     }
