@@ -144,8 +144,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
     'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M', '%H:%M', 'iso-8601'],
-    'DATETIME_FORMAT': '%d.%m.%Y',
-    'DATE_FORMAT': '%d.%m.%Y',
+    'DATETIME_FORMAT': '%d/%m/%Y',
+    'DATE_FORMAT': '%d/%m/%Y',
     'TIME_FORMAT': '%H:%M',
 }
 
@@ -175,13 +175,12 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', 'jandosshaimbetov@gmail.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', 'seaess')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

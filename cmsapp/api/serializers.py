@@ -110,6 +110,7 @@ class ArchiveDepartmentSerializer(ModelSerializer):
     class Meta:
         model = DepartmentOfCourse
         fields = [
+            'id',
             'is_archive',
         ]
 
