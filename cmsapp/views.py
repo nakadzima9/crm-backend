@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
-from .permissions import IsManager, IsSuperUser
+from patches.permissions import IsManager, IsSuperUser
 from cmsapp.models import (
     AdvertisingSource,
     Classroom,
@@ -122,6 +122,32 @@ class GroupViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = GroupSerializer
     queryset = Group.objects.all()
+
+    @swagger_auto_schema(
+        operation_id='retrieve_student',
+        operation_description='Retrieve student details by ID.',
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                in_=openapi.IN_PATH,
+                type=openapi.TYPE_STRING,
+                required=True,
+                description='ID of the student. Can be an integer or a string.'
+            )
+        ],
+    )
+    def retrieve(self, request, pk=None):
+        queryset = self.get_queryset()
+        group = None
+
+        if pk.isdigit():
+            group = queryset.filter(id=pk).first()
+            serializer = self.serializer_class(group)
+        else:
+            queryset = self.get_queryset().filter(department=DepartmentOfCourse.objects.filter(name=pk).first())
+            serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
 
 
 class AdvertisingSourceViewSet(ModelViewSet):

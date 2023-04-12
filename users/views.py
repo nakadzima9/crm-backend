@@ -26,7 +26,7 @@ from .api.serializers import (
 )
 
 from .models import User
-from .permissions import IsManager, IsSuperUser
+from patches.permissions import IsManager, IsSuperUser
 
 from drf_yasg.utils import swagger_auto_schema
 

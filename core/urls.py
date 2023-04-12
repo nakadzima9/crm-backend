@@ -8,6 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from cmsapp.urls import router, main_page_router
 from users.urls import user_router
+from analytic.urls import analytics_router
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -31,6 +32,7 @@ urlpatterns = [
     path("api/", include(main_page_router.urls)),
     path("api/", include(router.urls)),
     path("api/", include('cmsapp.urls')),
+    path("api/analytics/", include(analytics_router.urls)),
     path("api/auth/", include("users.urls")),
     re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0),
                           name='schema-json'),
