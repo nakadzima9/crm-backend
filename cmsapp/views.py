@@ -29,7 +29,8 @@ from cmsapp.api.serializers import (
     DepartmentSerializer,
     DepartmentSerializerOnlyWithImage,
     GroupStatusSerializer,
-    GroupSerializer,
+    GroupListSerializer,
+    GroupDetailSerializer,
     PaymentMethodSerializer,
     PaymentSerializer,
     PaymentListSerializer,
@@ -66,7 +67,7 @@ class ArchiveGroupViewSet(ModelViewSet):
     http_method_names = ['get', 'put', 'patch', 'delete']
 
     def get_serializer_class(self):
-        return self.serializer_class.get(self.action) or GroupSerializer
+        return self.serializer_class.get(self.action) or GroupDetailSerializer
 
 
 class ArchiveStudentViewSet(ModelViewSet):
@@ -120,7 +121,11 @@ class ScheduleTypeViewSet(ModelViewSet):
 
 class GroupViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    serializer_class = GroupSerializer
+    serializer_class = {
+        'list': GroupListSerializer,
+        'create': GroupDetailSerializer,
+        'update': GroupDetailSerializer,
+    }
     queryset = Group.objects.all()
 
     @swagger_auto_schema(
@@ -142,12 +147,17 @@ class GroupViewSet(ModelViewSet):
 
         if pk.isdigit():
             group = queryset.filter(id=pk).first()
-            serializer = self.serializer_class(group)
+            serializer_class = self.get_serializer_class()
+            serializer = serializer_class(group, context={'request': request})
         else:
             queryset = self.get_queryset().filter(department=DepartmentOfCourse.objects.filter(name=pk).first())
-            serializer = self.serializer_class(queryset, many=True)
+            serializer_class = self.get_serializer_class()
+            serializer = serializer_class(queryset, many=True, context={'request': request})
 
         return Response(serializer.data)
+
+    def get_serializer_class(self):
+        return self.serializer_class.get(self.action) or GroupDetailSerializer
 
 
 class AdvertisingSourceViewSet(ModelViewSet):

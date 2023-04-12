@@ -187,7 +187,24 @@ class StudentIdSerializer(ModelSerializer):
         ]
 
 
-class GroupSerializer(ModelSerializer):
+class MentorIdSerializer(ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(user_type='mentor'))
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+        ]
+
+
+class MentorForListSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'image']
+
+
+class GroupListSerializer(ModelSerializer):
+    mentor = MentorForListSerializer()
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
@@ -239,6 +256,66 @@ class GroupSerializer(ModelSerializer):
 
         instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room, status=sta,
                                                                 **validated_data)
+        return instance
+
+
+class GroupDetailSerializer(ModelSerializer):
+    mentor = MentorIdSerializer()
+    status = GroupStatusSerializer()
+    classroom = ClassroomSerializer()
+    department = DepartmentNameSerializer()
+    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
+                                              style={'input_type': 'time'})
+    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
+                                            style={'input_type': 'time'})
+
+    class Meta:
+        model = Group
+        fields = [
+            'id',
+            'name',
+            'mentor',
+            'department',
+            'students_max',
+            'status',
+            'schedule_type',
+            'classroom',
+            'is_archive',
+            'start_at_date',
+            'end_at_date',
+            'start_at_time',
+            'end_at_time',
+        ]
+
+    def create(self, validated_data):
+        classroom_data = validated_data.pop("classroom")["name"]
+        department_data = validated_data.pop("department")["name"]
+        status_data = validated_data.pop("status")["status_name"]
+        mentor_data = validated_data.pop("mentor")["id"]
+
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
+        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
+        mtr = get_object_or_404(User.objects.all(), email=mentor_data)
+
+        group = Group.objects.create(department=dep, classroom=room, status=sta, mentor=mtr, **validated_data)
+        return group
+
+    def update(self, instance, validated_data):
+        classroom_data = validated_data.pop("classroom")["name"]
+        department_data = validated_data.pop("department")["name"]
+        status_data = validated_data.pop("status")["status_name"]
+        mentor_data = validated_data.pop("mentor")["id"]
+
+        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
+        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
+        mtr = get_object_or_404(User.objects.all(), email=mentor_data)
+
+        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, mentor=mtr, classroom=room,
+                                                                status=sta, **validated_data)
         return instance
 
 
