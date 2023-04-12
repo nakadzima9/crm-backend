@@ -85,7 +85,7 @@ class ArchiveStudentViewSet(ModelViewSet):
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = DepartmentSerializer
-    queryset = DepartmentOfCourse.objects.all()
+    queryset = DepartmentOfCourse.objects.all().order_by('id')
 
 
 class DepartmentImageUpdateViewSet(ModelViewSet):
@@ -284,7 +284,6 @@ class PaymentSearchAPIView(APIView):
         if not students:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = PaymentSearchSerializer(students, many=True)
-        print(serializer.data)
         fio = {'id': serializer.data[0]['id'],
                'full_name': serializer.data[0]['first_name'] + ' ' + serializer.data[0]['last_name']}
         return Response(fio, status=status.HTTP_201_CREATED)
