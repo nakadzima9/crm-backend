@@ -79,6 +79,7 @@ class DepartmentSerializer(ModelSerializer):
             'mentor_set',
             'group_set',
             'price',
+            'color',
         ]
 
     def get_mentor_queryset(self, department):

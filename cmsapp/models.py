@@ -51,6 +51,7 @@ class DepartmentOfCourse(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     description = models.CharField(max_length=300, verbose_name="Описание")
+    color = models.CharField(max_length=10, null=True, verbose_name="Цвет")
 
     def __str__(self):
         return self.name
@@ -139,17 +140,6 @@ class RequestStatus(models.Model):
         verbose_name_plural = "Статус заявок"
 
 
-# class Reason(models.Model):
-#     name = models.CharField(max_length=30, verbose_name="Причина неуспеха")
-#
-#     def __str__(self):
-#         return self.name
-#
-#     class Meta:
-#         verbose_name = "Причина неуспеха"
-#         verbose_name_plural = "Причины неуспехов"
-
-
 def get_default_status():
     return RequestStatus.objects.filter(name="Ждёт звонка").first()
 
@@ -197,7 +187,7 @@ class Student(ModelWithUpdate):
     payment_status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, default=3, verbose_name="Статус оплаты")
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, verbose_name="Группа")
     blacklist = models.BooleanField(default=False, blank=True, verbose_name="Чёрный список")
-    blacklist_created_at = models.DateField(auto_now_add=True, verbose_name="Дата добавления в чёрный список")
+    blacklist_created_at = models.DateField(auto_now_add=True, null=True, verbose_name="Дата добавления в чёрный список")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -210,9 +200,9 @@ class Student(ModelWithUpdate):
 class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма", default=0)
     client_card = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, verbose_name="Кто оплатил")
-    course = models.ForeignKey(DepartmentOfCourse, on_delete=models.CASCADE, verbose_name="Курс")
-    last_payment_date = models.DateField(auto_now_add=True, verbose_name="Дата оплаты")
-    payment_time = models.TimeField(auto_now_add=True, verbose_name="Время оплаты")
+    course = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Курс")
+    last_payment_date = models.DateField(auto_now_add=True, null=True, verbose_name="Дата оплаты")
+    payment_time = models.TimeField(auto_now_add=True, null=True, verbose_name="Время оплаты")
     payment_type = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Тип оплаты")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
 
