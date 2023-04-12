@@ -18,10 +18,6 @@ class AdvertisingSourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
 
-# class BlackListAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'student', 'reason', 'added_at',)
-
-
 class ClassroomAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
@@ -31,7 +27,9 @@ class DepartmentOfCourseAdmin(admin.ModelAdmin):
 
 
 class GroupAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Group._meta.get_fields()]
+    # list_display = [field.name for field in Group._meta.get_fields()]
+    list_display = ['id', 'name', 'students_max', 'department', 'mentor', 'status', 'start_at_date', 'end_at_date',
+                    'is_archive', 'month_from_start']
 
 
 class GroupStatusAdmin(admin.ModelAdmin):
@@ -39,7 +37,7 @@ class GroupStatusAdmin(admin.ModelAdmin):
 
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'amount', 'client_card', 'course', 'created_at', 'user',)
+    list_display = ('id', 'amount', 'client_card', 'course', 'last_payment_date', 'user',)
 
 
 class PaymentMethodAdmin(admin.ModelAdmin):

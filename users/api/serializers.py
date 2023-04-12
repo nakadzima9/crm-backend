@@ -203,6 +203,7 @@ class MentorDetailSerializer(serializers.ModelSerializer):
             department_name = department.get('name', None)
 
         instance.department = object_not_found_validate(DepartmentOfCourse.objects, department_name)
+        instance.save()
         return instance
 
 

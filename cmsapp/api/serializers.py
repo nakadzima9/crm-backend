@@ -1,29 +1,23 @@
-from datetime import datetime
-
 from django.shortcuts import get_object_or_404
+from django.db.models import Sum
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.response import Response
-from rest_framework import status
 from cmsapp.models import (
+    AdvertisingSource,
+    Classroom,
     DepartmentOfCourse,
     GroupStatus,
-    Classroom,
-    ScheduleType,
     Group,
-    AdvertisingSource,
-    RequestStatus,
     PaymentMethod,
-    Student,
     Payment,
+    RequestStatus,
+    ScheduleType,
+    Student,
 )
 from django.utils import timezone
 from patches.custom_funcs import validate_phone
-from core import settings
 from users.models import User
-# from users.api.serializers import MentorDetailSerializer
-from users.models import User
+
 # from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
@@ -62,7 +56,11 @@ class GroupNameAndTimeSerializer(ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ["name", "start_at_time", "end_at_time"]
+        fields = [
+            "name",
+            "start_at_time",
+            "end_at_time"
+        ]
 
 
 class DepartmentSerializer(ModelSerializer):
@@ -79,7 +77,8 @@ class DepartmentSerializer(ModelSerializer):
             'description',
             'is_archive',
             'mentor_set',
-            'group_set'
+            'group_set',
+            'price',
         ]
 
     def get_mentor_queryset(self, department):
@@ -104,7 +103,6 @@ class ArchiveDepartmentSerializer(ModelSerializer):
     class Meta:
         model = DepartmentOfCourse
         fields = [
-            'id',
             'is_archive',
         ]
 
@@ -158,21 +156,39 @@ class GroupNameSerializer(ModelSerializer):
 
 
 class StudentNameSerializer(ModelSerializer):
+    fio = serializers.SerializerMethodField('get_fio')
+
     class Meta:
         model = Student
-        fields = ['first_name', 'last_name']
+        fields = [
+            'fio',
+            'payment_status'
+        ]
+
+    def get_fio(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+
+
+class StudentIdSerializer(ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(queryset=Student.objects.values_list('id', flat=True))
+
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+        ]
 
 
 class GroupSerializer(ModelSerializer):
     status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
-    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"],
-                                              default=timezone.now)
-    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y", "iso-8601"],
-                                            default=timezone.now)
-    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
-    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M", "iso-8601"], default=timezone.now)
+    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
+                                              style={'input_type': 'time'})
+    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
+                                            style={'input_type': 'time'})
 
     class Meta:
         model = Group
@@ -213,7 +229,8 @@ class GroupSerializer(ModelSerializer):
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
         sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
 
-        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room, status=sta, **validated_data)
+        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room, status=sta,
+                                                                **validated_data)
         return instance
 
 
@@ -246,10 +263,10 @@ class PaymentMethodSerializer(ModelSerializer):
 
 def object_not_found_validate(obj: object, search_set: object) -> object:
     if search_set is None:
-        raise serializers.ValidationError(f"Object does note exist")
+        raise serializers.ValidationError(f"Object {search_set['name']} does note exist")
     data = obj.filter(**search_set).first()
     if not data:
-        raise serializers.ValidationError(f"Object does not exist.")
+        raise serializers.ValidationError(f"Object {search_set['name']} does not exist.")
     return data
 
 
@@ -274,7 +291,6 @@ class StudentSerializer(ModelSerializer):
             "came_from",
             "payment_method",
             "status",
-            "paid",
             "reason",
             "on_request",
             "request_date",
@@ -314,7 +330,7 @@ class StudentSerializer(ModelSerializer):
                 status=status,
                 **validated_data
             )
-
+        instance.save()
         return instance
 
 
@@ -355,11 +371,11 @@ class StudentOnStudySerializer(ModelSerializer):
         came_from_data = validated_data.pop("came_from")["name"]
         group_data = validated_data.pop("group")["name"]
 
-        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        department = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
-        gr = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
+        group = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
 
-        student = Student.objects.create(department=dep, came_from=source, group=gr, **validated_data)
+        student = Student.objects.create(department=department, came_from=source, group=group, **validated_data)
         return student
 
     def update(self, instance, validated_data):
@@ -367,13 +383,13 @@ class StudentOnStudySerializer(ModelSerializer):
         came_from_data = validated_data.pop("came_from")["name"]
         group_data = validated_data.pop("group")["name"]
 
-        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        department = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
-        gr = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
+        group = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
 
         user = self.context['request'].user
         instance = Student.objects.get(phone=instance.phone, on_request=False).update(
-            user=user, commit=True, department=dep, came_from=source, group=gr, **validated_data
+            user=user, commit=True, department=department, group=group, came_from=source, **validated_data
         )
         return instance
 
@@ -398,6 +414,14 @@ class UserNameSerializer(ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
 
+class PaymentStudentSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'payment_status'
+        ]
+
+
 class PaymentListSerializer(ModelSerializer):
     user = UserNameSerializer(read_only=True)
     payment_type = PaymentMethodSerializer(read_only=True)
@@ -411,7 +435,7 @@ class PaymentListSerializer(ModelSerializer):
             'client_card',
             'course',
             'payment_type',
-            'created_at',
+            'last_payment_date',
             'payment_time',
             'user',
             'amount',
@@ -420,9 +444,8 @@ class PaymentListSerializer(ModelSerializer):
 
 class PaymentSerializer(ModelSerializer):
     payment_type = PaymentMethodSerializer()
-    client_card = StudentNameSerializer()
     course = DepartmentNameSerializer()
-    name = serializers.CharField()
+    client_card = StudentIdSerializer()
 
     class Meta:
         model = Payment
@@ -431,26 +454,46 @@ class PaymentSerializer(ModelSerializer):
             'client_card',
             'course',
             'payment_type',
-            'created_at',
+            'last_payment_date',
             'payment_time',
             'amount',
-            'name',
         ]
 
     def create(self, validated_data):
         payment_type_data = validated_data.pop('payment_type')
         client_card_dict = validated_data.pop('client_card')
-        client_card_firstname = client_card_dict['first_name']
-        client_card_lastname = client_card_dict['last_name']
+        client_card_id = client_card_dict['id']
+        #client_card_firstname = client_card_dict['id']
+        #client_card_lastname = client_card_dict['last_name']
         course_data = validated_data.pop('course')
 
         pay = object_not_found_validate(PaymentMethod.objects, payment_type_data)
-        client_card = object_not_found_validate(Student.objects, {"first_name": client_card_firstname,
-                                                                  "last_name": client_card_lastname})
+        #client_card = object_not_found_validate(Student.objects, {"first_name": client_card_firstname,
+        client_card = object_not_found_validate(Student.objects, {'id': client_card_id})
         course = object_not_found_validate(DepartmentOfCourse.objects, course_data)
         user = self.context['request'].user
-
         payment = Payment(payment_type=pay, client_card=client_card, course=course, user=user, **validated_data)
+        payment.save()
+
+        # Вызов этого самого метода для проверки всех платежей студента
+        return self.check_payment(payment)
+
+    # Метод для проверки и изменения статуса студента после оплаты
+    def check_payment(self, payment):
+        course = payment.course
+        course_price = course.price
+        client_card = payment.client_card
+        course_duration_in_months = course.duration_month
+        # округление ежемесячного мимимума оплаты до 2 знаков после запятой
+        course_price_per_month = float(format(course_price / course_duration_in_months, '.2f'))
+        total_student_amount_for_course = Payment.objects.filter(client_card=client_card,
+                                                                 course=course).aggregate(sum=Sum('amount')).get('sum')
+        if total_student_amount_for_course < course_price_per_month * client_card.group.month_from_start:
+            client_card.payment_status = 3  # Должен оплатить
+        elif total_student_amount_for_course >= course_price:
+            client_card.payment_status = 4  # Полностью оплатил
+        else:
+            client_card.payment_status = 1  # Оплачено
         payment.save()
         return payment
 
@@ -470,3 +513,23 @@ class BlackListSerializer(ModelSerializer):
 
     def get_fio(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+
+class PaymentStudentNameSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField()
+
+    class Meta:
+        model = Student
+        fields = [
+            'full_name',
+        ]
+
+
+class PaymentSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+        ]

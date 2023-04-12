@@ -1,42 +1,48 @@
-from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework import mixins
+from rest_framework import mixins, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
+
 from .permissions import IsManager, IsSuperUser
 from cmsapp.models import (
+    AdvertisingSource,
+    Classroom,
     DepartmentOfCourse,
     GroupStatus,
-    Classroom,
-    # Course,
-    ScheduleType,
     Group,
-    AdvertisingSource,
-    RequestStatus,
     PaymentMethod,
-    Student,
     Payment,
+    RequestStatus,
+    ScheduleType,
+    Student,
 )
 
 from cmsapp.api.serializers import (
+    AdvertisingSourceSerializer,
+    ArchiveDepartmentSerializer,
+    ArchiveGroupSerializer,
+    ArchiveStudentSerializer,
+    BlackListSerializer,
+    ClassroomSerializer,
     DepartmentSerializer,
     DepartmentSerializerOnlyWithImage,
     GroupStatusSerializer,
-    ClassroomSerializer,
-    ScheduleTypeSerializer,
     GroupSerializer,
-    AdvertisingSourceSerializer,
-    RequestStatusSerializer,
     PaymentMethodSerializer,
-    StudentSerializer,
     PaymentSerializer,
+    PaymentListSerializer,
+    PaymentSearchSerializer,
+    PaymentStudentNameSerializer,
+    RequestStatusSerializer,
+    ScheduleTypeSerializer,
+    StudentSerializer,
     StudentOnStudySerializer,
-    ArchiveDepartmentSerializer,
-    ArchiveGroupSerializer,
-    ArchiveStudentSerializer, PaymentListSerializer, BlackListSerializer,
 )
 from rest_framework.parsers import MultiPartParser
+
+from .utils import find_user_by_name
 
 
 class ArchiveCourseViewSet(ModelViewSet):
@@ -139,7 +145,7 @@ class PaymentMethodViewSet(ModelViewSet):
 class StudentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = StudentSerializer
-    queryset = Student.objects.filter(on_request=True, is_archive=False)
+    queryset = Student.objects.filter(is_archive=False, on_request=True).order_by('id')
 
 
 class StudentStatusAViewSet(ModelViewSet):
@@ -149,7 +155,8 @@ class StudentStatusAViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Ждёт звонка"), is_archive=False)
+        return Student.objects.filter(is_archive=False, on_request=True,
+                                      status=RequestStatus.objects.filter(name="Ждёт звонка").first())
 
 
 class StudentStatusBViewSet(ModelViewSet):
@@ -159,7 +166,8 @@ class StudentStatusBViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Звонок совершён"), is_archive=False)
+        return Student.objects.filter(is_archive=False, on_request=True,
+                                      status=RequestStatus.objects.filter(name="Звонок совершён").first())
 
 
 class StudentStatusCViewSet(ModelViewSet):
@@ -169,7 +177,8 @@ class StudentStatusCViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Записан на пробный урок"), is_archive=False)
+        return Student.objects.filter(is_archive=False, on_request=True,
+                                      status=RequestStatus.objects.filter(name="Записан на пробный урок").first())
 
 
 class StudentStatusDViewSet(ModelViewSet):
@@ -179,12 +188,13 @@ class StudentStatusDViewSet(ModelViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Student.objects.filter(on_request=True, status=RequestStatus.objects.get(name="Посетил пробный урок"), is_archive=False)
+        return Student.objects.filter(is_archive=False, on_request=True,
+                                      status=RequestStatus.objects.filter(name="Посетил пробный урок").first())
 
 
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Student.objects.filter(blacklist=False, on_request=False, is_archive=False)
+    queryset = Student.objects.filter(blacklist=False, is_archive=False, on_request=False).order_by('id')
     serializer_class = StudentOnStudySerializer
 
     @swagger_auto_schema(
@@ -208,27 +218,42 @@ class StudentOnStudyViewSet(ModelViewSet):
             student = queryset.filter(id=pk).first()
             serializer = self.serializer_class(student)
         else:
-            queryset = self.get_queryset().filter(department=DepartmentOfCourse.objects.get(name=pk))
+            queryset = self.get_queryset().filter(department=DepartmentOfCourse.objects.filter(name=pk).first())
             serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
 
 
-class PaymentViewSet(ModelViewSet):
+class PaymentViewSet(mixins.CreateModelMixin,
+                     mixins.ListModelMixin,
+                     GenericViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = {
         'list': PaymentListSerializer,
-        'retrieve': PaymentListSerializer,
     }
     queryset = Payment.objects.all()
-    http_method_names = ['get', 'post']
 
     def get_serializer_class(self):
         return self.serializer_class.get(self.action) or PaymentSerializer
+
+
+class PaymentSearchAPIView(APIView):
+
+    @swagger_auto_schema(operation_description='Search by student name for payment',
+                         request_body=PaymentStudentNameSerializer)
+    def post(self, request):
+        full_name = request.data.get('full_name')
+        students = find_user_by_name(full_name)
+        if not students:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PaymentSearchSerializer(students, many=True)
+        print(serializer.data)
+        fio = {'id': serializer.data[0]['id'],
+               'full_name': serializer.data[0]['first_name'] + ' ' + serializer.data[0]['last_name']}
+        return Response(fio, status=status.HTTP_201_CREATED)
 
 
 class BlackListViewSet(mixins.ListModelMixin, GenericViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = Student.objects.filter(blacklist=True)
     serializer_class = BlackListSerializer
-

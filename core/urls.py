@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/', include(user_router.urls)),
     path("api/", include(main_page_router.urls)),
     path("api/", include(router.urls)),
+    path("api/", include('cmsapp.urls')),
     path("api/auth/", include("users.urls")),
     re_path(r'^api/v1/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0),
                           name='schema-json'),

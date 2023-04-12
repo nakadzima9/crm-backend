@@ -27,6 +27,8 @@ django-cloudinary-storage = "^0.3.0"
 dropbox = "^11.36.0"
 django-storages = "^1.13.2"
 boto3 = "^1.26.99"
+celery = "^5.2.7"
+redis = "^4.5.4"
 
 
 [build-system]
