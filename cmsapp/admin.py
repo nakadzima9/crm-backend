@@ -53,7 +53,7 @@ class ScheduleTypeAdmin(admin.ModelAdmin):
 
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'department', 'first_name', 'last_name', 'surname', 'phone', 'came_from',
+    list_display = ('id', 'department', 'first_name', 'last_name', 'phone', 'came_from',
                     'notes', 'status', 'laptop', 'payment_method', 'is_archive',
                     )
 

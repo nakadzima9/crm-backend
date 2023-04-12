@@ -167,7 +167,7 @@ class Student(ModelWithUpdate):
 
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
-    surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
+    # surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
     notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, blank=True, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")

@@ -1,5 +1,5 @@
-from .api.serializers import PopularDepartmentsSerializer
-from cmsapp.models import DepartmentOfCourse
+from .api.serializers import PopularDepartmentsSerializer, PopularSourceSerializer
+from cmsapp.models import DepartmentOfCourse, AdvertisingSource
 from rest_framework.viewsets import ModelViewSet
 from patches.permissions import IsManager, IsSuperUser
 
@@ -17,3 +17,8 @@ class PopularDepartmentsViewSet(ModelViewSet):
         return response
 
 
+class PopularSourcesViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = AdvertisingSource.objects.all()
+    serializer_class = PopularSourceSerializer
+    http_method_names = ['get']
