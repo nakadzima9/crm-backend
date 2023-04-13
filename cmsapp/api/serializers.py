@@ -6,7 +6,6 @@ from cmsapp.models import (
     AdvertisingSource,
     Classroom,
     DepartmentOfCourse,
-    GroupStatus,
     Group,
     PaymentMethod,
     Payment,
@@ -131,15 +130,6 @@ class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
     #     return instance
 
 
-class GroupStatusSerializer(ModelSerializer):
-    class Meta:
-        model = GroupStatus
-        fields = [
-            'id',
-            'status_name'
-        ]
-
-
 class ScheduleTypeSerializer(ModelSerializer):
     class Meta:
         model = ScheduleType
@@ -205,7 +195,6 @@ class MentorForListSerializer(ModelSerializer):
 
 class GroupListSerializer(ModelSerializer):
     mentor = MentorForListSerializer()
-    status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
     start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
@@ -223,7 +212,6 @@ class GroupListSerializer(ModelSerializer):
             'mentor',
             'department',
             'students_max',
-            'status',
             'schedule_type',
             'classroom',
             'is_archive',
@@ -240,9 +228,8 @@ class GroupListSerializer(ModelSerializer):
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
 
-        group = Group.objects.create(department=dep, classroom=room, status=sta, **validated_data)
+        group = Group.objects.create(department=dep, classroom=room, **validated_data)
         return group
 
     def update(self, instance, validated_data):
@@ -252,16 +239,14 @@ class GroupListSerializer(ModelSerializer):
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
 
-        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room, status=sta,
+        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room,
                                                                 **validated_data)
         return instance
 
 
 class GroupDetailSerializer(ModelSerializer):
     mentor = MentorIdSerializer()
-    status = GroupStatusSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
     start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
@@ -279,7 +264,6 @@ class GroupDetailSerializer(ModelSerializer):
             'mentor',
             'department',
             'students_max',
-            'status',
             'schedule_type',
             'classroom',
             'is_archive',
@@ -292,30 +276,26 @@ class GroupDetailSerializer(ModelSerializer):
     def create(self, validated_data):
         classroom_data = validated_data.pop("classroom")["name"]
         department_data = validated_data.pop("department")["name"]
-        status_data = validated_data.pop("status")["status_name"]
         mentor_data = validated_data.pop("mentor")["id"]
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
         mtr = get_object_or_404(User.objects.all(), email=mentor_data)
 
-        group = Group.objects.create(department=dep, classroom=room, status=sta, mentor=mtr, **validated_data)
+        group = Group.objects.create(department=dep, classroom=room, mentor=mtr, **validated_data)
         return group
 
     def update(self, instance, validated_data):
         classroom_data = validated_data.pop("classroom")["name"]
         department_data = validated_data.pop("department")["name"]
-        status_data = validated_data.pop("status")["status_name"]
         mentor_data = validated_data.pop("mentor")["id"]
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-        sta = get_object_or_404(GroupStatus.objects.all(), status_name=status_data)
         mtr = get_object_or_404(User.objects.all(), email=mentor_data)
 
         instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, mentor=mtr, classroom=room,
-                                                                status=sta, **validated_data)
+                                                                **validated_data)
         return instance
 
 
@@ -368,7 +348,6 @@ class StudentSerializer(ModelSerializer):
             "id",
             "first_name",
             "last_name",
-            # "surname",
             "notes",
             "phone",
             "laptop",
@@ -430,7 +409,6 @@ class StudentOnStudySerializer(ModelSerializer):
             "id",
             "first_name",
             "last_name",
-            # "surname",
             "phone",
             "came_from",
             "department",
@@ -447,6 +425,7 @@ class StudentOnStudySerializer(ModelSerializer):
         return validate_phone(self, value)
 
     def get_group(self, obj):
+        print(obj)
         group_name = obj.group.name
         serializer = GroupNameSerializer(group_name)
         return serializer.data
@@ -456,9 +435,10 @@ class StudentOnStudySerializer(ModelSerializer):
         came_from_data = validated_data.pop("came_from")["name"]
         group_data = validated_data.pop("group")["name"]
 
-        department = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
+        department = get_object_or_404(DepartmentOfCourse.objects.filter(is_archive=False), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
         group = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
+        print(group)
 
         student = Student.objects.create(department=department, came_from=source, group=group, **validated_data)
         return student

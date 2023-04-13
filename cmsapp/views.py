@@ -10,7 +10,6 @@ from cmsapp.models import (
     AdvertisingSource,
     Classroom,
     DepartmentOfCourse,
-    GroupStatus,
     Group,
     PaymentMethod,
     Payment,
@@ -28,7 +27,6 @@ from cmsapp.api.serializers import (
     ClassroomSerializer,
     DepartmentSerializer,
     DepartmentSerializerOnlyWithImage,
-    GroupStatusSerializer,
     GroupListSerializer,
     GroupDetailSerializer,
     PaymentMethodSerializer,
@@ -95,12 +93,6 @@ class DepartmentImageUpdateViewSet(ModelViewSet):
     http_method_names = ['put', 'patch']
 
 
-class GroupStatusViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = GroupStatusSerializer
-    queryset = GroupStatus.objects.all()
-
-
 class ClassroomViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = ClassroomSerializer
@@ -127,7 +119,7 @@ class GroupViewSet(ModelViewSet):
         'create': GroupDetailSerializer,
         'update': GroupDetailSerializer,
     }
-    queryset = Group.objects.all()
+    queryset = Group.objects.filter(is_archive=False)
 
     @swagger_auto_schema(
         operation_id='retrieve_student',

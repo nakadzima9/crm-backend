@@ -5,7 +5,6 @@ from .models import (
     Classroom,
     DepartmentOfCourse,
     Group,
-    GroupStatus,
     Payment,
     PaymentMethod,
     RequestStatus,
@@ -28,12 +27,8 @@ class DepartmentOfCourseAdmin(admin.ModelAdmin):
 
 class GroupAdmin(admin.ModelAdmin):
     # list_display = [field.name for field in Group._meta.get_fields()]
-    list_display = ['id', 'name', 'students_max', 'department', 'mentor', 'status', 'start_at_date', 'end_at_date',
+    list_display = ['id', 'name', 'students_max', 'department', 'mentor', 'start_at_date', 'end_at_date',
                     'is_archive', 'month_from_start']
-
-
-class GroupStatusAdmin(admin.ModelAdmin):
-    list_display = ('id', 'status_name',)
 
 
 class PaymentAdmin(admin.ModelAdmin):
@@ -63,7 +58,6 @@ admin.site.register(RequestStatus, RequestStatusAdmin)
 admin.site.register(Classroom, ClassroomAdmin)
 admin.site.register(DepartmentOfCourse, DepartmentOfCourseAdmin)
 admin.site.register(Group, GroupAdmin)
-admin.site.register(GroupStatus, GroupStatusAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentMethod, PaymentMethodAdmin)
 admin.site.register(ScheduleType, ScheduleTypeAdmin)

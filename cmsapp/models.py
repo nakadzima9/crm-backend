@@ -27,17 +27,6 @@ class Classroom(models.Model):
         verbose_name_plural = "Комнаты"
 
 
-class GroupStatus(models.Model):
-    status_name = models.CharField(max_length=50, verbose_name="Статус группы")
-
-    def __str__(self):
-        return self.status_name
-
-    class Meta:
-        verbose_name = "Статус группы"
-        verbose_name_plural = "Статусы групп"
-
-
 def course_directory_path(instance, filename):
     # extension = filename.split('.')[-1]
     return f"courses/{filename}"
@@ -84,7 +73,6 @@ class Group(ModelWithUpdate):
     department = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Департмент")
     mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
                                verbose_name="Преподаватель")
-    status = models.ForeignKey(GroupStatus, on_delete=models.CASCADE, verbose_name="Статус")
     start_at_date = models.DateTimeField(null=True, verbose_name="Старт группы")
     end_at_date = models.DateTimeField(null=True, verbose_name="Конец группы")
     schedule_type = models.PositiveSmallIntegerField(choices=SCHEDULE_TYPE, default=1, verbose_name="Тип расписания")
@@ -100,7 +88,7 @@ class Group(ModelWithUpdate):
         return '\n'.join([m.mentor for m in self.mentor.filter(user_type__in='mentor')])
 
     def __str__(self):
-        return f'Number: {self.name}, status: {self.status}'
+        return f'Name: {self.name}'
 
     class Meta:
         verbose_name = "Группа"
@@ -169,7 +157,7 @@ class Student(ModelWithUpdate):
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
     # surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
     notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
-    phone = models.CharField(max_length=13, blank=True, verbose_name="Номер телефона")
+    phone = models.CharField(max_length=13, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")
     department = models.ForeignKey(DepartmentOfCourse, default=get_default_department, on_delete=models.CASCADE,
                                    null=True,

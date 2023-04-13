@@ -8,7 +8,6 @@ from .views import (
     ArchiveStudentViewSet,
     BlackListViewSet,
     ClassroomViewSet,
-    GroupStatusViewSet,
     GroupViewSet,
     DepartmentViewSet,
     DepartmentImageUpdateViewSet,
@@ -36,7 +35,6 @@ router.register(r'archive/students', ArchiveStudentViewSet, basename='archive-st
 router.register(r'blacklist', BlackListViewSet, basename='blacklist')
 router.register(r"classrooms", ClassroomViewSet, basename="classrooms")
 router.register(r"groups", GroupViewSet, basename="groups")
-router.register(r"group-statuses", GroupStatusViewSet, basename="group-statuses")
 router.register(r"departments", DepartmentViewSet, basename="departments")
 router.register(r"departments/image", DepartmentImageUpdateViewSet, basename="departments-image")
 router.register(r"payments", PaymentViewSet, basename="payments")
