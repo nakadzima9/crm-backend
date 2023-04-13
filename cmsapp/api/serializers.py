@@ -252,8 +252,8 @@ class GroupDetailSerializer(ModelSerializer):
     mentor = MentorIdSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
-    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
-    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], default=timezone.now)
+    start_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%Y-%m-%d"], default=timezone.now)
+    end_at_date = serializers.DateTimeField(format="%d/%m/%Y", input_formats=["%Y-%m-%d"], default=timezone.now)
     start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
                                               style={'input_type': 'time'})
     end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,

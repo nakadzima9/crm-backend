@@ -144,7 +144,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
-    'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M', '%H:%M', 'iso-8601'],
+    #'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M', '%H:%M', 'iso-8601'],
     'DATETIME_FORMAT': '%d/%m/%Y',
     'DATE_FORMAT': '%d/%m/%Y',
     'TIME_FORMAT': '%H:%M',
