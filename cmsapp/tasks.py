@@ -13,7 +13,7 @@ from datetime import timedelta
 
 @shared_task
 def courses_activity_check():
-    groups = Group.objects.filter(is_archive=False, status__iexact='Активна')
+    groups = Group.objects.filter(is_archive=False)
     for group in groups.iterator():
         if group.start_at_date + timedelta(days=30 * group.month_from_start) < timezone.now():
             group.month_from_start += 1
@@ -27,7 +27,7 @@ def courses_activity_check():
 
 @shared_task
 def students_payment_check():
-    groups = Group.objects.filter(is_archive=False, status__iexact='Активна')
+    groups = Group.objects.filter(is_archive=False)
     for group in groups.iterator():
         students = Student.objects.filter(is_archive=False, blacklist=False, on_request=False, group=group)
         course = group.department

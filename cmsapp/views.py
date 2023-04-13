@@ -100,12 +100,6 @@ class ClassroomViewSet(ModelViewSet):
     queryset = Classroom.objects.all()
 
 
-# class CourseViewSet(ModelViewSet):
-#     permission_classes = [IsSuperUser | IsManager]
-#     serializer_class = CourseSerializer
-#     queryset = Course.objects.all()
-
-
 class ScheduleTypeViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = ScheduleTypeSerializer
