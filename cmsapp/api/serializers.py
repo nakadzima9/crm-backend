@@ -224,7 +224,6 @@ class GroupListSerializer(ModelSerializer):
     def create(self, validated_data):
         classroom_data = validated_data.pop("classroom")["name"]
         department_data = validated_data.pop("department")["name"]
-        status_data = validated_data.pop("status")["status_name"]
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
@@ -235,7 +234,6 @@ class GroupListSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         classroom_data = validated_data.pop("classroom")["name"]
         department_data = validated_data.pop("department")["name"]
-        status_data = validated_data.pop("status")["status_name"]
 
         dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
         room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
