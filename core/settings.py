@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'users',
     'cmsapp',
+    'analytic',
     'django.contrib.sites',
 ]
 

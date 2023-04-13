@@ -1,4 +1,4 @@
-from cmsapp.models import Student, DepartmentOfCourse, AdvertisingSource
+from cmsapp.models import Student, DepartmentOfCourse, AdvertisingSource, RequestStatus
 from rest_framework import serializers
 
 
@@ -53,3 +53,9 @@ class PopularSourceSerializer(serializers.ModelSerializer):
             is_archive=False,
             blacklist=False
         ).count() * 100, 1)
+
+
+class RequestStatusAnalyticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequestStatus
+        fields = ['name', ]

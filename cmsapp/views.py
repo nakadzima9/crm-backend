@@ -42,6 +42,7 @@ from cmsapp.api.serializers import (
 from rest_framework.parsers import MultiPartParser
 
 from .utils import find_user_by_name
+from analytic.models import DeletionReason
 
 
 class ArchiveCourseViewSet(ModelViewSet):
@@ -175,6 +176,14 @@ class StudentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = StudentSerializer
     queryset = Student.objects.filter(is_archive=False, on_request=True).order_by('id')
+
+    def perform_destroy(self, instance):
+        deletion_reason = instance.reason
+        if deletion_reason:
+            deletion_reason_obj, _ = DeletionReason.object.get_or_create(reason=deletion_reason)
+            deletion_reason_obj.student_count += 1
+            deletion_reason_obj.save()
+        super().perform_destroy(instance)
 
 
 class StudentStatusAViewSet(ModelViewSet):

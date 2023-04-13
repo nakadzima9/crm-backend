@@ -151,6 +151,8 @@ class Student(ModelWithUpdate):
         (4, "причина4"),
         (5, "причина5"),
         (6, "причина6"),
+        (7, "причина7"),
+        (8, "причина8"),
     )
 
     first_name = models.CharField(max_length=30, verbose_name="Имя")
