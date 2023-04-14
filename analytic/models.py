@@ -16,6 +16,9 @@ class DeletionReason(models.Model):
     reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, verbose_name="Причина удаления")
     student_count = models.PositiveIntegerField(default=0, verbose_name="Количество удаленных студентов")
 
+    def __str__(self):
+        return f"{self.reason}: {self.student_count}"
+
     class Meta:
         verbose_name = "Причина удаления"
         verbose_name_plural = "Причины удаления"

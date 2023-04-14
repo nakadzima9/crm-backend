@@ -177,6 +177,7 @@ class StudentViewSet(ModelViewSet):
             deletion_reason_obj, _ = DeletionReason.object.get_or_create(reason=deletion_reason)
             deletion_reason_obj.student_count += 1
             deletion_reason_obj.save()
+            print(deletion_reason_obj)
         super().perform_destroy(instance)
 
 
