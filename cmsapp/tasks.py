@@ -38,6 +38,9 @@ def students_payment_check():
         for student in students:
             total_student_amount_for_course = Payment.objects.filter(client_card=student,
                                                                      course=course).aggregate(sum=Sum('amount')).get('sum')
+            if total_student_amount_for_course is None:
+                total_student_amount_for_course = 0
+
             if total_student_amount_for_course < course_price_per_month * group.month_from_start:
                 student.payment_status = 3
 
