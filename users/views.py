@@ -181,4 +181,4 @@ class ArchiveMentorViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'put', 'patch', 'delete']
 
     def get_serializer_class(self):
-        return self.serializer_class.get(self.action) or UserSerializer
+        return self.serializer_class.get(self.action) or MentorListSerializer
