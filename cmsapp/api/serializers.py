@@ -73,6 +73,7 @@ class GroupNameAndTimeSerializer(ModelSerializer):
 class DepartmentSerializer(ModelSerializer):
     mentor_set = MentorNameSerializer(read_only=True, many=True)
     group_set = GroupNameAndTimeSerializer(read_only=True, many=True)
+    current_groups = serializers.SerializerMethodField()
 
     class Meta:
         model = DepartmentOfCourse
@@ -87,6 +88,7 @@ class DepartmentSerializer(ModelSerializer):
             'group_set',
             'price',
             'color',
+            'current_groups',
         ]
 
     def get_mentor_queryset(self, department):
@@ -96,6 +98,9 @@ class DepartmentSerializer(ModelSerializer):
     def get_groups_queryset(self, department):
         dep = DepartmentOfCourse.objects.get(name=department)
         return Group.objects.filter(department=dep)
+
+    def get_current_groups(self, obj):
+        return Group.objects.filter(is_archive=False, department=obj).count()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
