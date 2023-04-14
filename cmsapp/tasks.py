@@ -15,7 +15,7 @@ from datetime import timedelta
 def courses_activity_check():
     groups = Group.objects.filter(is_archive=False)
     for group in groups.iterator():
-        if group.start_at_date + timedelta(days=30 * group.month_from_start) < timezone.now():
+        if group.start_at_date + timedelta(days=30 * group.month_from_start) < timezone.now().date():
             group.month_from_start += 1
 
 
@@ -46,6 +46,6 @@ def students_payment_check():
 
             else:
                 student.payment_status = 1
-                if group.start_at_date + timedelta(days=15 + (30 * (group.month_from_start - 1))) < timezone.now():
+                if group.start_at_date + timedelta(days=15 + (30 * (group.month_from_start - 1))) < timezone.now().date():
                     student.payment_status = 2
             student.save()
