@@ -73,13 +73,13 @@ class Group(ModelWithUpdate):
     department = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Департмент")
     mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
                                verbose_name="Преподаватель")
-    start_at_date = models.DateTimeField(null=True, verbose_name="Старт группы")
-    end_at_date = models.DateTimeField(null=True, verbose_name="Конец группы")
+    start_at_date = models.DateField(null=True, verbose_name="Старт группы")
+    end_at_date = models.DateField(null=True, verbose_name="Конец группы")
     schedule_type = models.PositiveSmallIntegerField(choices=SCHEDULE_TYPE, default=1, verbose_name="Тип расписания")
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, verbose_name="Комната")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
-    start_at_time = models.DateTimeField(null=True, verbose_name="Начало занятий")
-    end_at_time = models.DateTimeField(null=True, verbose_name="Конец занятий")
+    start_at_time = models.TimeField(null=True, verbose_name="Начало занятий")
+    end_at_time = models.TimeField(null=True, verbose_name="Конец занятий")
     # Добавлено поле для счисления прошедших месяцев с начала курса/группы
     month_from_start = models.PositiveSmallIntegerField(
         verbose_name="Количество прошедших месяцев с начала группы", default=1)

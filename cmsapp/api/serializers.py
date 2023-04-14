@@ -14,6 +14,8 @@ from cmsapp.models import (
     Student,
 )
 from django.utils import timezone
+
+from cmsapp.utils import get_time, get_date
 from patches.custom_funcs import validate_phone
 from users.models import User
 
@@ -198,12 +200,10 @@ class GroupListSerializer(ModelSerializer):
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
     current_students = serializers.SerializerMethodField()
-    start_at_date = serializers.DateTimeField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"], default=timezone.now)
-    end_at_date = serializers.DateTimeField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"], default=timezone.now)
-    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
-                                              style={'input_type': 'time'})
-    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
-                                            style={'input_type': 'time'})
+    start_at_date = serializers.DateField(default=get_date)
+    end_at_date = serializers.DateField(default=get_date)
+    start_at_time = serializers.TimeField( default=get_time)
+    end_at_time = serializers.TimeField(default=get_time)
 
     class Meta:
         model = Group
@@ -252,12 +252,10 @@ class GroupDetailSerializer(ModelSerializer):
     mentor = MentorIdSerializer()
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
-    start_at_date = serializers.DateTimeField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"], default=timezone.now)
-    end_at_date = serializers.DateTimeField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"], default=timezone.now)
-    start_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
-                                              style={'input_type': 'time'})
-    end_at_time = serializers.DateTimeField(format="%H:%M", input_formats=["%H:%M"], default=timezone.now,
-                                            style={'input_type': 'time'})
+    start_at_date = serializers.DateField(default=get_date)
+    end_at_date = serializers.DateField(default=get_date)
+    start_at_time = serializers.TimeField(default=get_time)
+    end_at_time = serializers.TimeField(default=get_time)
 
     class Meta:
         model = Group
@@ -343,7 +341,7 @@ class StudentSerializer(ModelSerializer):
     payment_method = PaymentMethodSerializer()
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
-    request_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+    request_date = serializers.DateTimeField(required=False, read_only=True)
 
     class Meta:
         model = Student
