@@ -130,7 +130,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -144,8 +144,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
-    #'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S', '%d/%m/%Y %H:%M', '%H:%M', 'iso-8601'],
-    'DATETIME_FORMAT': '%Y-%m-%d',
+    'DATE_INPUT_FORMAT': '%Y-%m-%d',
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
     'DATE_FORMAT': '%Y-%m-%d',
     'TIME_FORMAT': '%H:%M',
 }
