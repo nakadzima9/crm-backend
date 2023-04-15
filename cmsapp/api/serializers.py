@@ -207,7 +207,6 @@ class GroupBaseSerializer(ModelSerializer):
     end_at_date = serializers.DateField(default=get_date)
     start_at_time = serializers.TimeField(default=get_time)
     end_at_time = serializers.TimeField(default=get_time)
-    current_students = serializers.IntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -225,7 +224,6 @@ class GroupBaseSerializer(ModelSerializer):
             'end_at_date',
             'start_at_time',
             'end_at_time',
-            'current_students',
         ]
 
     def create(self, validated_data):
@@ -261,6 +259,10 @@ class GroupDetailSerializer(GroupBaseSerializer):
 class GroupListSerializer(GroupBaseSerializer):
     mentor = MentorForListSerializer()
     current_students = serializers.SerializerMethodField()
+
+    class Meta(GroupBaseSerializer.Meta):
+        abstract = False
+        fields = GroupBaseSerializer.Meta.fields + ['current_students']
 
     def get_current_students(self, obj):
         return Student.objects.filter(on_request=False, is_archive=False, blacklist=False, group=obj).count()
