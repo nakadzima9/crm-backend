@@ -97,7 +97,7 @@ class DepartmentSerializer(ModelSerializer):
 
     def get_groups_queryset(self, department):
         dep = DepartmentOfCourse.objects.get(name=department)
-        return Group.objects.filter(department=dep)
+        return Group.objects.filter(is_archive=False, department=dep)
 
     def get_current_groups(self, obj):
         return Group.objects.filter(is_archive=False, department=obj).count()
@@ -200,61 +200,7 @@ class MentorForListSerializer(ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'image']
 
 
-class GroupListSerializer(ModelSerializer):
-    mentor = MentorForListSerializer()
-    classroom = ClassroomSerializer()
-    department = DepartmentNameSerializer()
-    current_students = serializers.SerializerMethodField()
-    start_at_date = serializers.DateField(default=get_date)
-    end_at_date = serializers.DateField(default=get_date)
-    start_at_time = serializers.TimeField( default=get_time)
-    end_at_time = serializers.TimeField(default=get_time)
-
-    class Meta:
-        model = Group
-        fields = [
-            'id',
-            'name',
-            'mentor',
-            'department',
-            'students_max',
-            'schedule_type',
-            'classroom',
-            'is_archive',
-            'start_at_date',
-            'end_at_date',
-            'start_at_time',
-            'end_at_time',
-            'current_students',
-        ]
-
-    def get_current_students(self, obj):
-        return Student.objects.filter(on_request=False, is_archive=False, blacklist=False, group=obj).count()
-
-    def create(self, validated_data):
-        classroom_data = validated_data.pop("classroom")["name"]
-        department_data = validated_data.pop("department")["name"]
-
-        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
-        room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-
-        group = Group.objects.create(department=dep, classroom=room, **validated_data)
-        return group
-
-    def update(self, instance, validated_data):
-        classroom_data = validated_data.pop("classroom")["name"]
-        department_data = validated_data.pop("department")["name"]
-
-        dep = get_object_or_404(DepartmentOfCourse.objects.all(), name=department_data)
-        room = get_object_or_404(Classroom.objects.all(), name=classroom_data)
-
-        instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, classroom=room,
-                                                                **validated_data)
-        return instance
-
-
-class GroupDetailSerializer(ModelSerializer):
-    mentor = MentorIdSerializer()
+class GroupBaseSerializer(ModelSerializer):
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
     start_at_date = serializers.DateField(default=get_date)
@@ -263,6 +209,7 @@ class GroupDetailSerializer(ModelSerializer):
     end_at_time = serializers.TimeField(default=get_time)
 
     class Meta:
+        abstract = True
         model = Group
         fields = [
             'id',
@@ -303,6 +250,14 @@ class GroupDetailSerializer(ModelSerializer):
         instance = Group.objects.get(name=instance.name).update(commit=True, department=dep, mentor=mtr, classroom=room,
                                                                 **validated_data)
         return instance
+
+
+class GroupDetailSerializer(GroupBaseSerializer):
+    mentor = MentorIdSerializer()
+
+
+class GroupListSerializer(GroupBaseSerializer):
+    mentor = MentorForListSerializer()
 
 
 class ArchiveGroupSerializer(ModelSerializer):

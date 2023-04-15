@@ -38,6 +38,8 @@ from cmsapp.api.serializers import (
     ScheduleTypeSerializer,
     StudentSerializer,
     StudentOnStudySerializer,
+    # GroupTest1Serializer,
+    # GroupTest2Serializer,
 )
 from rest_framework.parsers import MultiPartParser
 
