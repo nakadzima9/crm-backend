@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.postgres.fields import ArrayField
 
 from core import settings
 
@@ -168,8 +169,12 @@ class Student(ModelWithUpdate):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.CASCADE,
                                blank=True, null=True, verbose_name="Статус заявки")
-    reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, default=None, null=True,
-                                              verbose_name="Причина неуспешной сделки")
+    # reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, default=None, null=True,
+    #                                           verbose_name="Причина неуспешной сделки")
+    reason = ArrayField(models.IntegerField(default=None, choices=REASON_CHOICES), null=True,
+                        verbose_name="Причина неуспешной сделки")
+    # reason = models.IntegerField(default=None, choices=REASON_CHOICES, null=True,
+    #                     verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True,
                                         verbose_name="Дата создания заявки")

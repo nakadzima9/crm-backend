@@ -310,7 +310,7 @@ class StudentSerializer(ModelSerializer):
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
     request_date = serializers.DateTimeField(required=False, read_only=True)
-    # reason = serializers.ChoiceField(required=False, choices=Student.REASON_CHOICES)
+    reason = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     class Meta:
         model = Student
