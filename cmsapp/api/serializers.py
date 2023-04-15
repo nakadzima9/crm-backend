@@ -224,6 +224,7 @@ class GroupBaseSerializer(ModelSerializer):
             'end_at_date',
             'start_at_time',
             'end_at_time',
+            'current_students',
         ]
 
     def create(self, validated_data):
@@ -258,6 +259,10 @@ class GroupDetailSerializer(GroupBaseSerializer):
 
 class GroupListSerializer(GroupBaseSerializer):
     mentor = MentorForListSerializer()
+    current_students = serializers.SerializerMethodField()
+
+    def get_current_students(self, obj):
+        return Student.objects.filter(on_request=False, is_archive=False, blacklist=False, group=obj).count()
 
 
 class ArchiveGroupSerializer(ModelSerializer):
@@ -386,7 +391,6 @@ class StudentOnStudySerializer(ModelSerializer):
         return validate_phone(self, value)
 
     def get_group(self, obj):
-        print(obj)
         group_name = obj.group.name
         serializer = GroupNameSerializer(group_name)
         return serializer.data
@@ -399,7 +403,6 @@ class StudentOnStudySerializer(ModelSerializer):
         department = get_object_or_404(DepartmentOfCourse.objects.filter(is_archive=False), name=department_data)
         source = get_object_or_404(AdvertisingSource.objects.all(), name=came_from_data)
         group = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
-        print(group)
 
         student = Student.objects.create(department=department, came_from=source, group=group, **validated_data)
         return student
