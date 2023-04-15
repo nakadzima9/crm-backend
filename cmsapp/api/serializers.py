@@ -207,6 +207,7 @@ class GroupBaseSerializer(ModelSerializer):
     end_at_date = serializers.DateField(default=get_date)
     start_at_time = serializers.TimeField(default=get_time)
     end_at_time = serializers.TimeField(default=get_time)
+    current_students = serializers.IntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -307,6 +308,7 @@ class StudentSerializer(ModelSerializer):
     came_from = AdvertisingSourceSerializer()
     status = RequestStatusSerializer(required=False)
     request_date = serializers.DateTimeField(required=False, read_only=True)
+    # reason = serializers.ChoiceField(required=False, choices=Student.REASON_CHOICES)
 
     class Meta:
         model = Student
