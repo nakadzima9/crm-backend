@@ -158,7 +158,6 @@ class Student(ModelWithUpdate):
 
     first_name = models.CharField(max_length=30, verbose_name="Имя")
     last_name = models.CharField(max_length=30, verbose_name="Фамилия")
-    # surname = models.CharField(max_length=30, blank=True, verbose_name="Отчество")
     notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")
@@ -169,12 +168,7 @@ class Student(ModelWithUpdate):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.CASCADE,
                                blank=True, null=True, verbose_name="Статус заявки")
-    # reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, default=None, null=True,
-    #                                           verbose_name="Причина неуспешной сделки")
-    reason = ArrayField(models.IntegerField(default=None, choices=REASON_CHOICES), null=True,
-                        verbose_name="Причина неуспешной сделки")
-    # reason = models.IntegerField(default=None, choices=REASON_CHOICES, null=True,
-    #                     verbose_name="Причина неуспешной сделки")
+    reason = ArrayField(models.IntegerField(), null=True, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True,
                                         verbose_name="Дата создания заявки")
