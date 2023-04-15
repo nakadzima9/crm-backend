@@ -65,5 +65,17 @@ class ReasonPercentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        total = instance.student_count
+        current_quantity = instance.student_count
+        total = self.get_total_values()
+        if total > 0:
+            data['percent_value'] = round(current_quantity / total * 100, 1)
+        else:
+            data['percent_value'] = 100
+        return data
 
+    def get_total_values(self):
+        total = 0
+        queryset = DeletionReason.objects.all()
+        for _ in queryset:
+            total += _.student_count
+        return total
