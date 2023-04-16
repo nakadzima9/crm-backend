@@ -17,7 +17,6 @@ from .views import (
     RequestStatusViewSet,
     StudentViewSet,
     StudentOnStudyViewSet,
-    ScheduleTypeViewSet,
     StudentStatusAViewSet,
     StudentStatusBViewSet,
     StudentStatusCViewSet,
@@ -40,7 +39,6 @@ router.register(r"departments/image", DepartmentImageUpdateViewSet, basename="de
 router.register(r"payments", PaymentViewSet, basename="payments")
 main_page_router.register(r"payment-methods", PaymentMethodViewSet, basename="patment-methods")
 main_page_router.register(r"request-statuses", RequestStatusViewSet, basename="request-statuses")
-main_page_router.register(r"schedule-types", ScheduleTypeViewSet, basename="schedule-types")
 main_page_router.register(r"students", StudentViewSet, basename="students")
 main_page_router.register(r"students-filter/status1", StudentStatusAViewSet, basename="students-filter-status1")
 main_page_router.register(r"students-filter/status2", StudentStatusBViewSet, basename="students-filter-status2")
