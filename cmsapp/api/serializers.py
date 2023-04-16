@@ -572,6 +572,8 @@ class PaymentSerializer(ModelSerializer):
         if client_card.group is None:
             if total_student_amount_for_course >= course_price_per_month:
                 client_card.payment_status = 1
+                if total_student_amount_for_course >= course_price:
+                    client_card.payment_status = 4
                 payment.save()
                 return payment
 
