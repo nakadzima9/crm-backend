@@ -566,6 +566,8 @@ class PaymentSerializer(ModelSerializer):
         course_price_per_month = float(format(course_price / course_duration_in_months, '.2f'))
         total_student_amount_for_course = Payment.objects.filter(client_card=client_card,
                                                                  course=course).aggregate(sum=Sum('amount')).get('sum')
+        if total_student_amount_for_course is None:
+            total_student_amount_for_course = 0
         if total_student_amount_for_course < course_price_per_month * client_card.group.month_from_start:
             client_card.payment_status = 3  # Должен оплатить
         elif total_student_amount_for_course >= course_price:
