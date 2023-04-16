@@ -522,6 +522,15 @@ class PaymentListSerializer(ModelSerializer):
             'amount',
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['user'] is not None:
+            data['acceptBy'] = data['user']['acceptBy']
+        else:
+            data['acceptBy'] = data['user']
+        data.pop('user')
+        return data
+
 
 class PaymentSerializer(ModelSerializer):
     payment_type = PaymentMethodSerializer()
