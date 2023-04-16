@@ -308,33 +308,7 @@ class GroupListSerializer(GroupBaseSerializer):
         return Student.objects.filter(on_request=False, is_archive=False, blacklist=False, group=obj).count()
 
 
-class ArchiveGroupListSerializer(ModelSerializer):
-    classroom = ClassroomSerializer()
-    department = DepartmentNameSerializer()
-    mentor = MentorForListSerializer()
-    current_students = serializers.SerializerMethodField()
-    start_at_date = serializers.DateField(default=get_date)
-    end_at_date = serializers.DateField(default=get_date)
-    start_at_time = serializers.TimeField(default=get_time)
-    end_at_time = serializers.TimeField(default=get_time)
-
-    class Meta:
-        model = Group
-        fields = [
-            'id',
-            'name',
-            'mentor',
-            'department',
-            'students_max',
-            'schedule_type',
-            'classroom',
-            'is_archive',
-            'current_students',
-            'start_at_date',
-            'end_at_date',
-            'start_at_time',
-            'end_at_time',
-        ]
+class ArchiveGroupListSerializer(GroupListSerializer):
 
     def get_current_students(self, obj):
         return Student.objects.filter(on_request=False, is_archive=True, blacklist=False, group=obj).count()
@@ -509,11 +483,13 @@ class ArchiveStudentSerializer(ModelSerializer):
 
 
 class UserNameSerializer(ModelSerializer):
-    fio = serializers.SerializerMethodField('get_fio')
+    acceptBy = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
-        fields = ['fio']
+        fields = [
+            'acceptBy'
+        ]
 
     def get_fio(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -545,6 +521,15 @@ class PaymentListSerializer(ModelSerializer):
             'user',
             'amount',
         ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['user'] is not None:
+            data['acceptBy'] = data['user']['acceptBy']
+        else:
+            data['acceptBy'] = data['user']
+        data.pop('user')
+        return data
 
 
 class PaymentSerializer(ModelSerializer):
@@ -610,6 +595,7 @@ class BlackListSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = [
+            'id',
             'fio',
             'user',
             'blacklist',
@@ -618,6 +604,15 @@ class BlackListSerializer(ModelSerializer):
 
     def get_fio(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['user'] is not None:
+            data['acceptBy'] = data['user']['acceptBy']
+        else:
+            data['acceptBy'] = data['user']
+        data.pop('user')
+        return data
 
 
 class PaymentStudentNameSerializer(serializers.ModelSerializer):
