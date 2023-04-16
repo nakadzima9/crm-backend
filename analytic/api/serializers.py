@@ -1,7 +1,8 @@
 from cmsapp.models import Student, DepartmentOfCourse, AdvertisingSource, RequestStatus
 from rest_framework import serializers
 from analytic.models import DeletionReason
-from cmsapp.models RequestStatus
+from cmsapp.models import RequestStatus
+from django.db.models import Count, Q
 
 
 class PopularDepartmentsSerializer(serializers.ModelSerializer):
@@ -11,17 +12,23 @@ class PopularDepartmentsSerializer(serializers.ModelSerializer):
         model = DepartmentOfCourse
         fields = ['name', 'quantity']
 
-    def get_students(self, department):
-        dep = DepartmentOfCourse.objects.filter(name=department).first()
-        return Student.objects.filter(department=dep, on_request=False, is_archive=False, blacklist=False)
+    def get_queryset(self):
+        # Используем annotate для добавления поля num_students в queryset
+        queryset = DepartmentOfCourse.objects.annotate(num_students=Count('student', 
+            filter=Q(
+                student__on_request=False, 
+                student__is_archive=False, 
+                student__blacklist=False
+                )
+            )
+        )
+        return queryset
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        queryset = self.get_students(instance)
-        if queryset.exists():
-            data['quantity'] = queryset.count()
-        else:
-            data['quantity'] = 0
+        queryset = self.get_queryset()
+        department = queryset.get(name=data['name'])
+        data['quantity'] = department.num_students
         return data
 
     def get_total(self):
@@ -82,15 +89,37 @@ class ReasonPercentSerializer(serializers.ModelSerializer):
         return total
 
 
-class RequestStatusesCounterSerializer(ModelSerializer):
-    departments = PopularDepartmentsSerializer()
+class DepartmentSerializer(serializers.ModelSerializer):
+    num_students = serializers.IntegerField(default=0)
+
+    class Meta:
+        model = DepartmentOfCourse
+        fields = ['name', 'num_students']
+
+
+class RequestStatusesCounterSerializer(serializers.ModelSerializer):
+    departments = serializers.SerializerMethodField()
+    total = serializers.SerializerMethodField()
 
     class Meta:
         model = RequestStatus
-        fields = ['name', 'departments']
+        fields = ['name', 'departments', 'total']
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['departments'] = PopularDepartmentsSerializer()
-        return data
+    def get_departments(self, obj):
+        popular_departments = DepartmentOfCourse.objects.annotate(
+            num_students=Count('student', 
+                filter=Q(
+                    student__on_request=True, 
+                    student__is_archive=False, 
+                    student__blacklist=False,
+                    student__status=obj,
+                )
+            )
+        )
+        serializer = DepartmentSerializer(popular_departments, many=True)
+        return serializer.data
+
+    def get_total(self, obj):
+        total = Student.objects.filter(on_request=True, status=obj, is_archive=False, blacklist=False).count()
+        return total
   

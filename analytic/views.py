@@ -1,5 +1,10 @@
-from .api.serializers import PopularDepartmentsSerializer, PopularSourceSerializer, ReasonPercentSerializer
-from cmsapp.models import DepartmentOfCourse, AdvertisingSource
+from .api.serializers import (
+    PopularDepartmentsSerializer, 
+    PopularSourceSerializer, 
+    ReasonPercentSerializer,
+    RequestStatusesCounterSerializer,
+)
+from cmsapp.models import DepartmentOfCourse, AdvertisingSource, RequestStatus
 from rest_framework.viewsets import ModelViewSet
 from patches.permissions import IsManager, IsSuperUser
 from .models import DeletionReason
@@ -29,4 +34,11 @@ class ReasonPercentViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = DeletionReason.objects.all()
     serializer_class = ReasonPercentSerializer
+    http_method_names = ['get']
+
+
+class RequestStatusesCounterViewSet(ModelViewSet):
+    permission_classes = [IsSuperUser | IsManager]
+    queryset = RequestStatus.objects.all()
+    serializer_class = RequestStatusesCounterSerializer
     http_method_names = ['get']
