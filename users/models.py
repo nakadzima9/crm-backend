@@ -92,7 +92,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     linkedin = models.URLField(blank=True, verbose_name="Ссылка на Linkedin")
     user_type = models.CharField(max_length=255, choices=TYPE_ROLE_CHOICES, verbose_name="Тип пользователя")
     department = models.ForeignKey(DepartmentOfCourse, on_delete=models.CASCADE, blank=True, null=True,
-                                   related_name='department', verbose_name='Департамент')
+                                  related_name='department', verbose_name='Департамент')
     # group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True, related_name='group',
     #                            verbose_name='Группа')
     patent_number = models.PositiveIntegerField(blank=True, default=0, verbose_name="Номер патента")

@@ -1,6 +1,7 @@
 from cmsapp.models import Student, DepartmentOfCourse, AdvertisingSource, RequestStatus
 from rest_framework import serializers
 from analytic.models import DeletionReason
+from cmsapp.models RequestStatus
 
 
 class PopularDepartmentsSerializer(serializers.ModelSerializer):
@@ -79,3 +80,17 @@ class ReasonPercentSerializer(serializers.ModelSerializer):
         for _ in queryset:
             total += _.student_count
         return total
+
+
+class RequestStatusesCounterSerializer(ModelSerializer):
+    departments = PopularDepartmentsSerializer()
+
+    class Meta:
+        model = RequestStatus
+        fields = ['name', 'departments']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['departments'] = PopularDepartmentsSerializer()
+        return data
+  
