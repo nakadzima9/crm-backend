@@ -47,7 +47,7 @@ from analytic.models import DeletionReason
 
 
 class ArchiveCourseViewSet(ModelViewSet):
-    queryset = DepartmentOfCourse.objects.filter(is_archive=True)
+    queryset = DepartmentOfCourse.objects.filter(is_archive=True).order_by('id')
     serializer_class = {
         'update': ArchiveDepartmentStatusSerializer,
         'partial_update': ArchiveDepartmentStatusSerializer,
@@ -59,7 +59,7 @@ class ArchiveCourseViewSet(ModelViewSet):
 
 
 class ArchiveGroupViewSet(ModelViewSet):
-    queryset = Group.objects.filter(is_archive=True)
+    queryset = Group.objects.filter(is_archive=True).order_by('id')
     serializer_class = {
         'update': ArchiveGroupStatusSerializer,
         'partial_update': ArchiveGroupStatusSerializer,
@@ -71,7 +71,7 @@ class ArchiveGroupViewSet(ModelViewSet):
 
 
 class ArchiveStudentViewSet(ModelViewSet):
-    queryset = Student.objects.filter(is_archive=True)
+    queryset = Student.objects.filter(is_archive=True, on_request=False).order_by('id')
     serializer_class = {
         'update': ArchiveStudentSerializer,
         'partial_update': ArchiveStudentSerializer,
@@ -98,13 +98,13 @@ class DepartmentImageUpdateViewSet(ModelViewSet):
 class ClassroomViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = ClassroomSerializer
-    queryset = Classroom.objects.all()
+    queryset = Classroom.objects.all().order_by('id')
 
 
 class ScheduleTypeViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = ScheduleTypeSerializer
-    queryset = ScheduleType.objects.all()
+    queryset = ScheduleType.objects.all().order_by('id')
 
 
 class GroupViewSet(ModelViewSet):
@@ -115,7 +115,7 @@ class GroupViewSet(ModelViewSet):
         'create': GroupDetailSerializer,
         'update': GroupDetailSerializer,
     }
-    queryset = Group.objects.filter(is_archive=False)
+    queryset = Group.objects.filter(is_archive=False).order_by('id')
 
     @swagger_auto_schema(
         operation_id='retrieve_student',
@@ -152,19 +152,19 @@ class GroupViewSet(ModelViewSet):
 class AdvertisingSourceViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = AdvertisingSourceSerializer
-    queryset = AdvertisingSource.objects.all()
+    queryset = AdvertisingSource.objects.all().order_by('id')
 
 
 class RequestStatusViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = RequestStatusSerializer
-    queryset = RequestStatus.objects.all()
+    queryset = RequestStatus.objects.all().order_by('id')
 
 
 class PaymentMethodViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = PaymentMethodSerializer
-    queryset = PaymentMethod.objects.all()
+    queryset = PaymentMethod.objects.all().order_by('id')
 
 
 class StudentViewSet(ModelViewSet):
@@ -289,5 +289,5 @@ class PaymentSearchAPIView(APIView):
 
 class BlackListViewSet(mixins.ListModelMixin, GenericViewSet):
     permission_classes = [IsSuperUser | IsManager]
-    queryset = Student.objects.filter(blacklist=True)
+    queryset = Student.objects.filter(blacklist=True).order_by('id')
     serializer_class = BlackListSerializer

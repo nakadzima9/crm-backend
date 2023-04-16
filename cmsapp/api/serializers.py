@@ -114,6 +114,7 @@ class DepartmentSerializer(ModelSerializer):
 class ArchiveDepartmentDetailSerializer(ModelSerializer):
     mentor_set = MentorNameSerializer(read_only=True, many=True)
     group_set = GroupNameAndTimeSerializer(read_only=True, many=True)
+    current_groups = serializers.SerializerMethodField()
 
     class Meta:
         model = DepartmentOfCourse
@@ -126,6 +127,7 @@ class ArchiveDepartmentDetailSerializer(ModelSerializer):
             'is_archive',
             'mentor_set',
             'group_set',
+            'current_groups',
             'price',
             'color',
         ]
@@ -137,6 +139,9 @@ class ArchiveDepartmentDetailSerializer(ModelSerializer):
     def get_groups_queryset(self, department):
         dep = DepartmentOfCourse.objects.get(name=department)
         return Group.objects.filter(is_archive=True, department=dep)
+
+    def get_current_groups(self, obj):
+        return Group.objects.filter(is_archive=True, department=obj).count()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -307,6 +312,7 @@ class ArchiveGroupListSerializer(ModelSerializer):
     classroom = ClassroomSerializer()
     department = DepartmentNameSerializer()
     mentor = MentorForListSerializer()
+    current_students = serializers.SerializerMethodField()
     start_at_date = serializers.DateField(default=get_date)
     end_at_date = serializers.DateField(default=get_date)
     start_at_time = serializers.TimeField(default=get_time)
@@ -323,11 +329,15 @@ class ArchiveGroupListSerializer(ModelSerializer):
             'schedule_type',
             'classroom',
             'is_archive',
+            'current_students',
             'start_at_date',
             'end_at_date',
             'start_at_time',
             'end_at_time',
         ]
+
+    def get_current_students(self, obj):
+        return Student.objects.filter(on_request=False, is_archive=True, blacklist=False, group=obj).count()
 
 
 class ArchiveGroupStatusSerializer(ModelSerializer):
