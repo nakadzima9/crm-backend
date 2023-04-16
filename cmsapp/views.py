@@ -20,8 +20,9 @@ from cmsapp.models import (
 
 from cmsapp.api.serializers import (
     AdvertisingSourceSerializer,
-    ArchiveDepartmentSerializer,
-    ArchiveGroupSerializer,
+    ArchiveDepartmentDetailSerializer,
+    ArchiveDepartmentStatusSerializer,
+    ArchiveGroupStatusSerializer,
     ArchiveStudentSerializer,
     BlackListSerializer,
     ClassroomSerializer,
@@ -37,7 +38,7 @@ from cmsapp.api.serializers import (
     RequestStatusSerializer,
     ScheduleTypeSerializer,
     StudentSerializer,
-    StudentOnStudySerializer,
+    StudentOnStudySerializer, ArchiveGroupListSerializer,
 )
 from rest_framework.parsers import MultiPartParser
 
@@ -48,25 +49,25 @@ from analytic.models import DeletionReason
 class ArchiveCourseViewSet(ModelViewSet):
     queryset = DepartmentOfCourse.objects.filter(is_archive=True)
     serializer_class = {
-        'update': ArchiveDepartmentSerializer,
-        'partial_update': ArchiveDepartmentSerializer,
+        'update': ArchiveDepartmentStatusSerializer,
+        'partial_update': ArchiveDepartmentStatusSerializer,
     }
     http_method_names = ['get', 'put', 'patch', 'delete']
 
     def get_serializer_class(self):
-        return self.serializer_class.get(self.action) or DepartmentSerializer
+        return self.serializer_class.get(self.action) or ArchiveDepartmentDetailSerializer
 
 
 class ArchiveGroupViewSet(ModelViewSet):
     queryset = Group.objects.filter(is_archive=True)
     serializer_class = {
-        'update': ArchiveGroupSerializer,
-        'partial_update': ArchiveGroupSerializer,
+        'update': ArchiveGroupStatusSerializer,
+        'partial_update': ArchiveGroupStatusSerializer,
     }
     http_method_names = ['get', 'put', 'patch', 'delete']
 
     def get_serializer_class(self):
-        return self.serializer_class.get(self.action) or GroupDetailSerializer
+        return self.serializer_class.get(self.action) or ArchiveGroupListSerializer
 
 
 class ArchiveStudentViewSet(ModelViewSet):

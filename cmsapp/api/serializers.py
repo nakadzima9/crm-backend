@@ -106,13 +106,48 @@ class DepartmentSerializer(ModelSerializer):
         data = super().to_representation(instance)
         mentors = self.get_mentor_queryset(instance)
         groups = self.get_groups_queryset(instance)
-        if mentors.exists():
-            data['mentor_set'] = MentorNameSerializer(mentors, many=True).data
-            data['group_set'] = GroupNameAndTimeSerializer(groups, many=True).data
+        data['mentor_set'] = MentorNameSerializer(mentors, many=True).data
+        data['group_set'] = GroupNameAndTimeSerializer(groups, many=True).data
         return data
 
 
-class ArchiveDepartmentSerializer(ModelSerializer):
+class ArchiveDepartmentDetailSerializer(ModelSerializer):
+    mentor_set = MentorNameSerializer(read_only=True, many=True)
+    group_set = GroupNameAndTimeSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = DepartmentOfCourse
+        fields = [
+            'id',
+            'name',
+            'image',
+            'duration_month',
+            'description',
+            'is_archive',
+            'mentor_set',
+            'group_set',
+            'price',
+            'color',
+        ]
+
+    def get_mentor_queryset(self, department):
+        dep = DepartmentOfCourse.objects.get(name=department)
+        return User.objects.filter(department=dep, user_type='mentor')
+
+    def get_groups_queryset(self, department):
+        dep = DepartmentOfCourse.objects.get(name=department)
+        return Group.objects.filter(is_archive=True, department=dep)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        mentors = self.get_mentor_queryset(instance)
+        groups = self.get_groups_queryset(instance)
+        data['mentor_set'] = MentorNameSerializer(mentors, many=True).data
+        data['group_set'] = GroupNameAndTimeSerializer(groups, many=True).data
+        return data
+
+
+class ArchiveDepartmentStatusSerializer(ModelSerializer):
     class Meta:
         model = DepartmentOfCourse
         fields = [
@@ -268,7 +303,34 @@ class GroupListSerializer(GroupBaseSerializer):
         return Student.objects.filter(on_request=False, is_archive=False, blacklist=False, group=obj).count()
 
 
-class ArchiveGroupSerializer(ModelSerializer):
+class ArchiveGroupListSerializer(ModelSerializer):
+    classroom = ClassroomSerializer()
+    department = DepartmentNameSerializer()
+    mentor = MentorForListSerializer()
+    start_at_date = serializers.DateField(default=get_date)
+    end_at_date = serializers.DateField(default=get_date)
+    start_at_time = serializers.TimeField(default=get_time)
+    end_at_time = serializers.TimeField(default=get_time)
+
+    class Meta:
+        model = Group
+        fields = [
+            'id',
+            'name',
+            'mentor',
+            'department',
+            'students_max',
+            'schedule_type',
+            'classroom',
+            'is_archive',
+            'start_at_date',
+            'end_at_date',
+            'start_at_time',
+            'end_at_time',
+        ]
+
+
+class ArchiveGroupStatusSerializer(ModelSerializer):
     class Meta:
         model = Group
         fields = [
