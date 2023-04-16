@@ -51,19 +51,6 @@ class DepartmentOfCourse(models.Model):
         verbose_name_plural = "Курсы"
 
 
-class ScheduleType(models.Model):
-    type_name = models.CharField(max_length=10, verbose_name="Тип расписания")
-    start_time = models.TimeField(blank=True, null=True, verbose_name="Начало урока")
-    end_time = models.TimeField(blank=True, null=True, verbose_name="Конец урока")
-
-    def __str__(self):
-        return self.type_name
-
-    class Meta:
-        verbose_name = "Расписание"
-        verbose_name_plural = "Расписания"
-
-
 class Group(ModelWithUpdate):
     SCHEDULE_TYPE = (
         (1, "Тип1"),

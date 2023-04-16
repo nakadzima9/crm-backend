@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 
-from cmsapp.models import DepartmentOfCourse, ScheduleType, Group
+from cmsapp.models import DepartmentOfCourse, Group
 
 
 class SuperUser(BaseUserManager):

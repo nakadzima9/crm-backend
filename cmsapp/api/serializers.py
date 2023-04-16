@@ -10,7 +10,6 @@ from cmsapp.models import (
     PaymentMethod,
     Payment,
     RequestStatus,
-    ScheduleType,
     Student,
 )
 from django.utils import timezone
@@ -175,17 +174,6 @@ class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
     #     instance.image = validated_data.get('image', instance.image)
     #     instance.save()
     #     return instance
-
-
-class ScheduleTypeSerializer(ModelSerializer):
-    class Meta:
-        model = ScheduleType
-        fields = [
-            'id',
-            'type_name',
-            'start_time',
-            'end_time'
-        ]
 
 
 class DepartmentNameSerializer(ModelSerializer):
@@ -428,13 +416,13 @@ class StudentOnStudySerializer(ModelSerializer):
             "phone",
             "came_from",
             "department",
-            'on_request',
+            "on_request",
             "is_archive",
             "blacklist",
             "laptop",
             "payment_status",
-            'notes',
-            'group',
+            "notes",
+            "group",
         ]
 
     def validate_phone(self, value):
@@ -578,10 +566,21 @@ class PaymentSerializer(ModelSerializer):
         course_price_per_month = float(format(course_price / course_duration_in_months, '.2f'))
         total_student_amount_for_course = Payment.objects.filter(client_card=client_card,
                                                                  course=course).aggregate(sum=Sum('amount')).get('sum')
+        if total_student_amount_for_course is None:
+            total_student_amount_for_course = 0
+
+        if client_card.group is None:
+            if total_student_amount_for_course >= course_price_per_month:
+                client_card.payment_status = 1
+                payment.save()
+                return payment
+
         if total_student_amount_for_course < course_price_per_month * client_card.group.month_from_start:
             client_card.payment_status = 3  # Должен оплатить
+
         elif total_student_amount_for_course >= course_price:
             client_card.payment_status = 4  # Полностью оплатил
+
         else:
             client_card.payment_status = 1  # Оплачено
         payment.save()
