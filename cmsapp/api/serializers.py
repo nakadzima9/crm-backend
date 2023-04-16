@@ -416,13 +416,13 @@ class StudentOnStudySerializer(ModelSerializer):
             "phone",
             "came_from",
             "department",
-            'on_request',
+            "on_request",
             "is_archive",
             "blacklist",
             "laptop",
             "payment_status",
-            'notes',
-            'group',
+            "notes",
+            "group",
         ]
 
     def validate_phone(self, value):
@@ -568,6 +568,12 @@ class PaymentSerializer(ModelSerializer):
                                                                  course=course).aggregate(sum=Sum('amount')).get('sum')
         if total_student_amount_for_course is None:
             total_student_amount_for_course = 0
+
+        if client_card.group is None:
+            if total_student_amount_for_course >= course_price_per_month:
+                client_card.payment_status = 1
+                payment.save()
+                return payment
 
         if total_student_amount_for_course < course_price_per_month * client_card.group.month_from_start:
             client_card.payment_status = 3  # Должен оплатить
