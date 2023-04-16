@@ -308,33 +308,7 @@ class GroupListSerializer(GroupBaseSerializer):
         return Student.objects.filter(on_request=False, is_archive=False, blacklist=False, group=obj).count()
 
 
-class ArchiveGroupListSerializer(ModelSerializer):
-    classroom = ClassroomSerializer()
-    department = DepartmentNameSerializer()
-    mentor = MentorForListSerializer()
-    current_students = serializers.SerializerMethodField()
-    start_at_date = serializers.DateField(default=get_date)
-    end_at_date = serializers.DateField(default=get_date)
-    start_at_time = serializers.TimeField(default=get_time)
-    end_at_time = serializers.TimeField(default=get_time)
-
-    class Meta:
-        model = Group
-        fields = [
-            'id',
-            'name',
-            'mentor',
-            'department',
-            'students_max',
-            'schedule_type',
-            'classroom',
-            'is_archive',
-            'current_students',
-            'start_at_date',
-            'end_at_date',
-            'start_at_time',
-            'end_at_time',
-        ]
+class ArchiveGroupListSerializer(GroupListSerializer):
 
     def get_current_students(self, obj):
         return Student.objects.filter(on_request=False, is_archive=True, blacklist=False, group=obj).count()
@@ -610,6 +584,7 @@ class BlackListSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = [
+            'id',
             'fio',
             'user',
             'blacklist',
