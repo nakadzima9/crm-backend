@@ -8,7 +8,6 @@ from .models import (
     Payment,
     PaymentMethod,
     RequestStatus,
-    ScheduleType,
     Student,
 )
 
@@ -43,10 +42,6 @@ class RequestStatusAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
 
-class ScheduleTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type_name', 'start_time', 'end_time',)
-
-
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('id', 'department', 'first_name', 'last_name', 'phone', 'came_from', 'on_request',
                     'notes', 'status', 'laptop', 'payment_method', 'is_archive', 'blacklist',
@@ -60,5 +55,4 @@ admin.site.register(DepartmentOfCourse, DepartmentOfCourseAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentMethod, PaymentMethodAdmin)
-admin.site.register(ScheduleType, ScheduleTypeAdmin)
 admin.site.register(Student, StudentAdmin)

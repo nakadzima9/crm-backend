@@ -14,7 +14,6 @@ from cmsapp.models import (
     PaymentMethod,
     Payment,
     RequestStatus,
-    ScheduleType,
     Student,
 )
 
@@ -36,7 +35,6 @@ from cmsapp.api.serializers import (
     PaymentSearchSerializer,
     PaymentStudentNameSerializer,
     RequestStatusSerializer,
-    ScheduleTypeSerializer,
     StudentSerializer,
     StudentOnStudySerializer, ArchiveGroupListSerializer,
 )
@@ -99,12 +97,6 @@ class ClassroomViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     serializer_class = ClassroomSerializer
     queryset = Classroom.objects.all().order_by('id')
-
-
-class ScheduleTypeViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = ScheduleTypeSerializer
-    queryset = ScheduleType.objects.all().order_by('id')
 
 
 class GroupViewSet(ModelViewSet):

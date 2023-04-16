@@ -10,7 +10,6 @@ from cmsapp.models import (
     PaymentMethod,
     Payment,
     RequestStatus,
-    ScheduleType,
     Student,
 )
 from django.utils import timezone
@@ -175,17 +174,6 @@ class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
     #     instance.image = validated_data.get('image', instance.image)
     #     instance.save()
     #     return instance
-
-
-class ScheduleTypeSerializer(ModelSerializer):
-    class Meta:
-        model = ScheduleType
-        fields = [
-            'id',
-            'type_name',
-            'start_time',
-            'end_time'
-        ]
 
 
 class DepartmentNameSerializer(ModelSerializer):
