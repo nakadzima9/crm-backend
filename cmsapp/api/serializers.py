@@ -483,11 +483,13 @@ class ArchiveStudentSerializer(ModelSerializer):
 
 
 class UserNameSerializer(ModelSerializer):
-    fio = serializers.SerializerMethodField('get_fio')
+    acceptBy = serializers.SerializerMethodField('get_fio')
 
     class Meta:
         model = User
-        fields = ['fio']
+        fields = [
+            'acceptBy'
+        ]
 
     def get_fio(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -593,6 +595,15 @@ class BlackListSerializer(ModelSerializer):
 
     def get_fio(self, obj):
         return f"{obj.first_name} {obj.last_name}"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['user'] is not None:
+            data['acceptBy'] = data['user']['acceptBy']
+        else:
+            data['acceptBy'] = data['user']
+        data.pop('user')
+        return data
 
 
 class PaymentStudentNameSerializer(serializers.ModelSerializer):
