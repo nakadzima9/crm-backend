@@ -95,11 +95,10 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 class RequestStatusesCounterSerializer(serializers.ModelSerializer):
     departments = serializers.SerializerMethodField()
-    total = serializers.SerializerMethodField()
 
     class Meta:
         model = RequestStatus
-        fields = ['name', 'departments', 'total']
+        fields = ['name', 'departments']
 
     def get_departments(self, obj):
         popular_departments = DepartmentOfCourse.objects.annotate(
@@ -114,8 +113,4 @@ class RequestStatusesCounterSerializer(serializers.ModelSerializer):
         )
         serializer = DepartmentSerializer(popular_departments, many=True)
         return serializer.data
-
-    def get_total(self, obj):
-        total = Student.objects.filter(on_request=True, status=obj, is_archive=False, blacklist=False).count()
-        return total
   
