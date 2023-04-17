@@ -10,7 +10,7 @@ class PopularDepartmentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DepartmentOfCourse
-        fields = ['name', 'quantity']
+        fields = ['name', 'quantity', 'color']
 
     def get_queryset(self):
         # Используем annotate для добавления поля num_students в queryset
@@ -31,20 +31,17 @@ class PopularDepartmentsSerializer(serializers.ModelSerializer):
         data['quantity'] = department.num_students
         return data
 
-    def get_total(self):
-        return Student.objects.filter(on_request=False, is_archive=False, blacklist=False).count()
-
 
 class PopularSourceSerializer(serializers.ModelSerializer):
     percent_value = serializers.FloatField(read_only=True)
 
     class Meta:
         model = AdvertisingSource
-        fields = ['name', 'percent_value']
+        fields = ['name', 'percent_value', 'color']
 
     def get_students(self, source):
         sc = AdvertisingSource.objects.filter(name=source).first()
-        return Student.objects.filter(came_from=sc, on_request=False, is_archive=False, blacklist=False)
+        return Student.objects.filter(came_from=sc, is_archive=False, blacklist=False)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -58,7 +55,6 @@ class PopularSourceSerializer(serializers.ModelSerializer):
 
     def get_percent_value(self, quantity):
         return round(quantity / Student.objects.filter(
-            on_request=False,
             is_archive=False,
             blacklist=False
         ).count() * 100, 1)
@@ -69,7 +65,7 @@ class ReasonPercentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DeletionReason
-        fields = ['reason', 'percent_value']
+        fields = ['reason', 'percent_value', 'color']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -94,7 +90,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DepartmentOfCourse
-        fields = ['name', 'num_students']
+        fields = ['name', 'num_students', 'color']
 
 
 class RequestStatusesCounterSerializer(serializers.ModelSerializer):

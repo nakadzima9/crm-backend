@@ -15,6 +15,7 @@ class DeletionReason(models.Model):
 
     reason = models.PositiveSmallIntegerField(choices=REASON_CHOICES, verbose_name="Причина удаления")
     student_count = models.PositiveIntegerField(default=0, verbose_name="Количество удаленных студентов")
+    color = models.CharField(max_length=10, null=True, blank=True, verbose_name="Цвет")
 
     def __str__(self):
         return f"{self.reason}: {self.student_count}"

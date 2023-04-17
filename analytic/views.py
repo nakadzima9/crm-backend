@@ -16,12 +16,6 @@ class PopularDepartmentsViewSet(ModelViewSet):
     serializer_class = PopularDepartmentsSerializer
     http_method_names = ['get']
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        total = self.get_serializer().get_total()
-        response.data.append({'total': total})
-        return response
-
 
 class PopularSourcesViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]

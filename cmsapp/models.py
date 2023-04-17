@@ -96,6 +96,7 @@ class PaymentMethod(models.Model):
 
 class AdvertisingSource(models.Model):
     name = models.CharField(max_length=50, verbose_name="Название источника")
+    color = models.CharField(max_length=10, null=True, blank=True, verbose_name="Цвет")
 
     def __str__(self):
         return self.name

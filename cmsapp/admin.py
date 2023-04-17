@@ -13,7 +13,7 @@ from .models import (
 
 
 class AdvertisingSourceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'color')
 
 
 class ClassroomAdmin(admin.ModelAdmin):
