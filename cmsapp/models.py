@@ -58,13 +58,13 @@ class Group(ModelWithUpdate):
     )
     name = models.CharField(max_length=50, unique=True, verbose_name="Название группы")
     students_max = models.PositiveSmallIntegerField(verbose_name="Количество максимальных студентов")
-    department = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Департмент")
-    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+    department = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.SET_NULL, verbose_name="Департмент")
+    mentor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
                                verbose_name="Преподаватель")
     start_at_date = models.DateField(null=True, verbose_name="Старт группы")
     end_at_date = models.DateField(null=True, verbose_name="Конец группы")
     schedule_type = models.PositiveSmallIntegerField(choices=SCHEDULE_TYPE, default=1, verbose_name="Тип расписания")
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, verbose_name="Комната")
+    classroom = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null=True, verbose_name="Комната")
     is_archive = models.BooleanField(default=False, blank=True, verbose_name="Архивировать")
     start_at_time = models.TimeField(null=True, verbose_name="Начало занятий")
     end_at_time = models.TimeField(null=True, verbose_name="Конец занятий")
@@ -149,12 +149,12 @@ class Student(ModelWithUpdate):
     notes = models.CharField(max_length=200, blank=True, verbose_name="Заметка")
     phone = models.CharField(max_length=13, verbose_name="Номер телефона")
     laptop = models.BooleanField(default=False, verbose_name="Наличиее ноутбука")
-    department = models.ForeignKey(DepartmentOfCourse, default=get_default_department, on_delete=models.CASCADE,
+    department = models.ForeignKey(DepartmentOfCourse, default=get_default_department, on_delete=models.SET_NULL,
                                    null=True,
                                    verbose_name="Департамент")
-    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.CASCADE, null=True, verbose_name="Откуда пришёл")
-    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Метод оплаты")
-    status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.CASCADE,
+    came_from = models.ForeignKey(AdvertisingSource, on_delete=models.SET_NULL, null=True, verbose_name="Откуда пришёл")
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True, verbose_name="Метод оплаты")
+    status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.SET_NULL,
                                blank=True, null=True, verbose_name="Статус заявки")
     reason = ArrayField(models.IntegerField(), null=True, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
@@ -165,7 +165,7 @@ class Student(ModelWithUpdate):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, verbose_name="Группа")
     blacklist = models.BooleanField(default=False, blank=True, verbose_name="Чёрный список")
     blacklist_created_at = models.DateField(auto_now_add=True, null=True, verbose_name="Дата добавления в чёрный список")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Сотрудник")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name="Сотрудник")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -177,12 +177,12 @@ class Student(ModelWithUpdate):
 
 class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма", default=0)
-    client_card = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, verbose_name="Кто оплатил")
-    course = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.CASCADE, verbose_name="Курс")
+    client_card = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, verbose_name="Кто оплатил")
+    course = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.SET_NULL, verbose_name="Курс")
     last_payment_date = models.DateField(auto_now_add=True, null=True, verbose_name="Дата оплаты")
     payment_time = models.TimeField(auto_now_add=True, null=True, verbose_name="Время оплаты")
-    payment_type = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE, null=True, verbose_name="Тип оплаты")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, verbose_name="Пользователь")
+    payment_type = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True, verbose_name="Тип оплаты")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name="Пользователь")
 
     def __str__(self):
         return f'{self.client_card}'
