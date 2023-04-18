@@ -21,6 +21,7 @@ from cmsapp.api.serializers import (
     AdvertisingSourceSerializer,
     ArchiveDepartmentDetailSerializer,
     ArchiveDepartmentStatusSerializer,
+    ArchiveGroupListSerializer,
     ArchiveGroupStatusSerializer,
     ArchiveStudentSerializer,
     BlackListSerializer,
@@ -36,7 +37,7 @@ from cmsapp.api.serializers import (
     PaymentStudentNameSerializer,
     RequestStatusSerializer,
     StudentSerializer,
-    StudentOnStudySerializer, ArchiveGroupListSerializer,
+    StudentOnStudySerializer,
 )
 from rest_framework.parsers import MultiPartParser
 

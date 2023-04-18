@@ -233,6 +233,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializerOnlyWithImage(serializers.ModelSerializer):
+    image = serializers.ImageField(required=True)
+
     class Meta:
         model = User
         fields = [

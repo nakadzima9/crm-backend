@@ -50,12 +50,6 @@ class MentorNameSerializer(ModelSerializer):
         return f"{obj.first_name} {obj.last_name}"
 
 
-class MentorNameAndImageSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name']
-
-
 class GroupNameAndTimeSerializer(ModelSerializer):
     start_at_time = serializers.DateTimeField(format="%H:%M", read_only=True)
     end_at_time = serializers.DateTimeField(format="%H:%M", read_only=True)
@@ -161,6 +155,8 @@ class ArchiveDepartmentStatusSerializer(ModelSerializer):
 
 
 class DepartmentSerializerOnlyWithImage(serializers.ModelSerializer):
+    image = serializers.ImageField(required=True)
+
     class Meta:
         model = DepartmentOfCourse
         fields = [
