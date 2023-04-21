@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from rest_framework import routers
 
 from .views import (
@@ -13,7 +13,8 @@ from .views import (
     DepartmentImageUpdateViewSet,
     PaymentViewSet,
     PaymentMethodViewSet,
-    PaymentSearchAPIView,
+    PaymentSearchGetAPIView,
+    PaymentSearchPostAPIView,
     RequestStatusViewSet,
     StudentViewSet,
     StudentOnStudyViewSet,
@@ -40,5 +41,6 @@ cmsapp_router.register(r"sources", AdvertisingSourceViewSet, basename="sources")
 
 
 urlpatterns = [
-    path('payment-search/', PaymentSearchAPIView.as_view(), name='payment-search'),
+    path(r'payment-search/', PaymentSearchPostAPIView.as_view(), name='payment-search-get'),
+    path(r'payment-search/<str:names>/', PaymentSearchGetAPIView.as_view(), name='payment-search-post'),
 ]

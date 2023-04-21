@@ -221,7 +221,22 @@ class PaymentViewSet(mixins.CreateModelMixin,
         return self.serializer_class.get(self.action) or PaymentSerializer
 
 
-class PaymentSearchAPIView(APIView):
+class PaymentSearchGetAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        students = find_user_by_name(kwargs['names'])
+        if not students:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PaymentSearchSerializer(students, many=True)
+        result = list()
+        for elem in serializer.data:
+            fio = {'id': elem['id'],
+                   'full_name': elem['first_name'] + ' ' + elem['last_name']}
+            result.append(fio)
+        return Response(result, status=status.HTTP_201_CREATED)
+
+
+class PaymentSearchPostAPIView(APIView):
 
     @swagger_auto_schema(operation_description='Search by student name for payment',
                          request_body=PaymentStudentNameSerializer)
@@ -231,9 +246,12 @@ class PaymentSearchAPIView(APIView):
         if not students:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = PaymentSearchSerializer(students, many=True)
-        fio = {'id': serializer.data[0]['id'],
-               'full_name': serializer.data[0]['first_name'] + ' ' + serializer.data[0]['last_name']}
-        return Response(fio, status=status.HTTP_201_CREATED)
+        result = list()
+        for elem in serializer.data:
+            fio = {'id': elem['id'],
+                   'full_name': elem['first_name'] + ' ' + elem['last_name']}
+            result.append(fio)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class BlackListViewSet(mixins.ListModelMixin, GenericViewSet):
