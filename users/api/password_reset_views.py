@@ -22,7 +22,6 @@ class PasswordResetEmailView(APIView):
     # will be adding later object permission
     # self.check_object_permissions(request, contact)
 
-
     @swagger_auto_schema(
         responses={"201": "created", "400": "bad request", "404": "not found"},
         operation_description="for create code and send mail",
@@ -35,29 +34,28 @@ class PasswordResetEmailView(APIView):
             return Response(data="Required field email", status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.filter(email=request_email).first()
         OTP.objects.filter(
-                    created_time__lte=datetime.datetime.fromtimestamp(
-                        timezone.now().timestamp() - 120, tz=timezone.utc
-                    )
-                ).delete()
+            created_time__lte=datetime.datetime.fromtimestamp(
+                timezone.now().timestamp() - 120, tz=timezone.utc
+            )
+        ).delete()
         if not user:
             return Response(data='Email doesn\'t exists or check email', status=status.HTTP_404_NOT_FOUND)
 
         OTP.objects.filter(user=user).delete()
 
-
         otp_obj = OTP.objects.create(user=user, code=otp)
 
         send_mail(
-                    "Код активации",
-                    f"Ваш код для сброса пароля: {otp} ",
-                    "from@crm-project.com",
-                    [user.email],
-                    fail_silently=False,
-                )
+            "Код активации",
+            f"Ваш код для сброса пароля: {otp} ",
+            "from@crm-project.com",
+            [user.email],
+            fail_silently=False,
+        )
         return Response(
-                    data={'detail' : "Code expired after 2 minutes", 'unique_id' : otp_obj.unique_id},
+            data={'detail': "Code expired after 2 minutes", 'unique_id': otp_obj.unique_id},
             status=status.HTTP_201_CREATED
-            )
+        )
 
 
 # for check otp
@@ -109,12 +107,12 @@ class PasswordResetCheckCodeView(APIView):
         #     return Response(data="This user does not exist", status=status.HTTP_404_NOT_FOUND)
         # user = user_queryset.first()
 
-        if otp_obj.created_time <= datetime.datetime.fromtimestamp(timezone.now().timestamp() - 120,
-                                                                   tz=timezone.utc) and not otp_obj.status:
+        if otp_obj.created_time <= datetime.datetime.fromtimestamp(
+                timezone.now().timestamp() - 120) and not otp_obj.status:
             otp_obj.delete()
             return Response(data="Code has expired", status=status.HTTP_400_BAD_REQUEST)
 
-        otp_obj.status=True
+        otp_obj.status = True
         otp_obj.password_life_time = timezone.now() + datetime.timedelta(seconds=300)
         otp_obj.save()
         return Response(data="You can change password during 5 minutes", status=status.HTTP_200_OK)
@@ -144,7 +142,6 @@ class PasswordChangeView(APIView):
         except ValueError:
             return Response(data='Your unique_id is not valid', status=status.HTTP_400_BAD_REQUEST)
 
-
         if not otp_obj:
             return Response(data='Current user can\'t change the password!', status=status.HTTP_404_NOT_FOUND)
 
@@ -161,7 +158,7 @@ class PasswordChangeView(APIView):
         if otp_obj.password_life_time <= timezone.now():
             return Response(data='Password change time has expired', status=status.HTTP_401_UNAUTHORIZED)
 
-        #request.data.pop('unique_id')
+        # request.data.pop('unique_id')
 
         serializer = ChangePasswordSerializer(user, data=request.data)
 
