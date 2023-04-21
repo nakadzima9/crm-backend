@@ -176,50 +176,6 @@ class StudentViewSet(ModelViewSet):
         super().perform_destroy(instance)
 
 
-class StudentStatusAViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Ждёт звонка").first())
-
-
-class StudentStatusBViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Звонок совершён").first())
-
-
-class StudentStatusCViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Записан на пробный урок").first())
-
-
-class StudentStatusDViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Посетил пробный урок").first())
-
-
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = Student.objects.filter(blacklist=False, is_archive=False, on_request=False).order_by('id')
