@@ -41,7 +41,7 @@ from cmsapp.api.serializers import (
 )
 from rest_framework.parsers import MultiPartParser
 
-from .utils import find_user_by_name
+from .utils import find_user_by_name, find_group_by_name
 from analytic.models import DeletionReason
 
 
@@ -176,50 +176,6 @@ class StudentViewSet(ModelViewSet):
         super().perform_destroy(instance)
 
 
-class StudentStatusAViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Ждёт звонка").first())
-
-
-class StudentStatusBViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Звонок совершён").first())
-
-
-class StudentStatusCViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Записан на пробный урок").first())
-
-
-class StudentStatusDViewSet(ModelViewSet):
-    permission_classes = [IsSuperUser | IsManager]
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
-    http_method_names = ['get']
-
-    def get_queryset(self):
-        return Student.objects.filter(is_archive=False, on_request=True,
-                                      status=RequestStatus.objects.filter(name="Посетил пробный урок").first())
-
-
 class StudentOnStudyViewSet(ModelViewSet):
     permission_classes = [IsSuperUser | IsManager]
     queryset = Student.objects.filter(blacklist=False, is_archive=False, on_request=False).order_by('id')
@@ -265,7 +221,35 @@ class PaymentViewSet(mixins.CreateModelMixin,
         return self.serializer_class.get(self.action) or PaymentSerializer
 
 
-class PaymentSearchAPIView(APIView):
+class PaymentSearchGroup(APIView):
+
+    def get(self, request, *args, **kwargs):
+        groups = find_group_by_name(kwargs['names'])
+        if not groups:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = GroupDetailSerializer(groups, many=True)
+        result = list()
+        for elem in serializer.data:
+            result.append(elem)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class PaymentSearchGetAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        students = find_user_by_name(kwargs['names'])
+        if not students:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PaymentSearchSerializer(students, many=True)
+        result = list()
+        for elem in serializer.data:
+            fio = {'id': elem['id'],
+                   'full_name': elem['first_name'] + ' ' + elem['last_name']}
+            result.append(fio)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class PaymentSearchPostAPIView(APIView):
 
     @swagger_auto_schema(operation_description='Search by student name for payment',
                          request_body=PaymentStudentNameSerializer)
@@ -275,9 +259,12 @@ class PaymentSearchAPIView(APIView):
         if not students:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = PaymentSearchSerializer(students, many=True)
-        fio = {'id': serializer.data[0]['id'],
-               'full_name': serializer.data[0]['first_name'] + ' ' + serializer.data[0]['last_name']}
-        return Response(fio, status=status.HTTP_201_CREATED)
+        result = list()
+        for elem in serializer.data:
+            fio = {'id': elem['id'],
+                   'full_name': elem['first_name'] + ' ' + elem['last_name']}
+            result.append(fio)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class BlackListViewSet(mixins.ListModelMixin, GenericViewSet):

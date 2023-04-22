@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from rest_framework import routers
 
 from .views import (
@@ -13,41 +13,35 @@ from .views import (
     DepartmentImageUpdateViewSet,
     PaymentViewSet,
     PaymentMethodViewSet,
-    PaymentSearchAPIView,
+    PaymentSearchGetAPIView,
+    PaymentSearchPostAPIView,
     RequestStatusViewSet,
     StudentViewSet,
-    StudentOnStudyViewSet,
-    StudentStatusAViewSet,
-    StudentStatusBViewSet,
-    StudentStatusCViewSet,
-    StudentStatusDViewSet,
+    StudentOnStudyViewSet, PaymentSearchGroup,
 )
 
 app_name = "cmsapp"
 
-main_page_router = routers.DefaultRouter()
-router = routers.DefaultRouter()
+cmsapp_router = routers.DefaultRouter()
 
-router.register(r'archive/courses', ArchiveCourseViewSet, basename='archive-courses')
-router.register(r'archive/groups', ArchiveGroupViewSet, basename='archive-groups')
-router.register(r'archive/students', ArchiveStudentViewSet, basename='archive-students')
-router.register(r'blacklist', BlackListViewSet, basename='blacklist')
-router.register(r"classrooms", ClassroomViewSet, basename="classrooms")
-router.register(r"groups", GroupViewSet, basename="groups")
-router.register(r"departments", DepartmentViewSet, basename="departments")
-router.register(r"departments/image", DepartmentImageUpdateViewSet, basename="departments-image")
-router.register(r"payments", PaymentViewSet, basename="payments")
-main_page_router.register(r"payment-methods", PaymentMethodViewSet, basename="patment-methods")
-main_page_router.register(r"request-statuses", RequestStatusViewSet, basename="request-statuses")
-main_page_router.register(r"students", StudentViewSet, basename="students")
-main_page_router.register(r"students-filter/status1", StudentStatusAViewSet, basename="students-filter-status1")
-main_page_router.register(r"students-filter/status2", StudentStatusBViewSet, basename="students-filter-status2")
-main_page_router.register(r"students-filter/status3", StudentStatusCViewSet, basename="students-filter-status3")
-main_page_router.register(r"students-filter/status4", StudentStatusDViewSet, basename="students-filter-status4")
-main_page_router.register(r"students-on-study", StudentOnStudyViewSet, basename="students-on-study")
-main_page_router.register(r"sources", AdvertisingSourceViewSet, basename="sources")
+cmsapp_router.register(r'archive/courses', ArchiveCourseViewSet, basename='archive-courses')
+cmsapp_router.register(r'archive/groups', ArchiveGroupViewSet, basename='archive-groups')
+cmsapp_router.register(r'archive/students', ArchiveStudentViewSet, basename='archive-students')
+cmsapp_router.register(r'blacklist', BlackListViewSet, basename='blacklist')
+cmsapp_router.register(r"classrooms", ClassroomViewSet, basename="classrooms")
+cmsapp_router.register(r"groups", GroupViewSet, basename="groups")
+cmsapp_router.register(r"departments", DepartmentViewSet, basename="departments")
+cmsapp_router.register(r"departments/image", DepartmentImageUpdateViewSet, basename="departments-image")
+cmsapp_router.register(r"payments", PaymentViewSet, basename="payments")
+cmsapp_router.register(r"payment-methods", PaymentMethodViewSet, basename="patment-methods")
+cmsapp_router.register(r"request-statuses", RequestStatusViewSet, basename="request-statuses")
+cmsapp_router.register(r"students", StudentViewSet, basename="students")
+cmsapp_router.register(r"students-on-study", StudentOnStudyViewSet, basename="students-on-study")
+cmsapp_router.register(r"sources", AdvertisingSourceViewSet, basename="sources")
 
 
 urlpatterns = [
-    path('payment-search/', PaymentSearchAPIView.as_view(), name='payment-search'),
+    path(r'payment-search/', PaymentSearchPostAPIView.as_view(), name='payment-search-get'),
+    path(r'payment-search/<str:names>/', PaymentSearchGetAPIView.as_view(), name='payment-search-post'),
+    path(r'payment-search-group/<str:names>/', PaymentSearchGroup.as_view(), name='payment-search-group')
 ]

@@ -6,7 +6,7 @@ from rest_framework import permissions
 
 from django.conf import settings
 from django.conf.urls.static import static
-from cmsapp.urls import router, main_page_router
+from cmsapp.urls import cmsapp_router
 from users.urls import user_router
 from analytic.urls import analytics_router
 
@@ -29,8 +29,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path('api/', include(user_router.urls)),
-    path("api/", include(main_page_router.urls)),
-    path("api/", include(router.urls)),
+    path("api/", include(cmsapp_router.urls)),
     path("api/", include('cmsapp.urls')),
     path("api/analytics/", include(analytics_router.urls)),
     path("api/auth/", include("users.urls")),
