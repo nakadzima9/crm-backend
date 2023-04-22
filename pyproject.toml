@@ -29,6 +29,7 @@ django-storages = "^1.13.2"
 boto3 = "^1.26.99"
 celery = "^5.2.7"
 redis = "^4.5.4"
+coverage = "^7.2.3"
 
 
 [build-system]
