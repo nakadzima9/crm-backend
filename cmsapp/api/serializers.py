@@ -186,6 +186,14 @@ class GroupNameSerializer(ModelSerializer):
         model = Group
         fields = ['name']
 
+class GroupNameSerializerForPayment(ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['name']
+        extra_kwargs = {
+            'name': {'validators': []},
+        }
+
 
 class StudentNameSerializer(ModelSerializer):
     fio = serializers.SerializerMethodField('get_fio')
@@ -203,13 +211,13 @@ class StudentNameSerializer(ModelSerializer):
 
 class StudentIdSerializer(ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Student.objects.values_list('id', flat=True))
-    group = serializers.CharField(source="group.name", required=False)
+    #group = serializers.CharField(source="group.name", required=False)
 
     class Meta:
         model = Student
         fields = [
             'id',
-            'group',
+     #       'group',
         ]
 
 
@@ -331,15 +339,15 @@ class PaymentMethodSerializer(ModelSerializer):
 
 
 def object_not_found_validate(obj: object, search_set: object) -> object:
-    buff = [key if re.match("[a-zA-Z]+__", key) else False for key, value in search_set.items()]
-    name = list(filter(lambda key: key, buff))[0].split("__")[0] if any(buff) else 'name'
+   # buff = [key if re.match("[a-zA-Z]+__", key) else False for key, value in search_set.items()]
+   # name = list(filter(lambda key: key, buff))[0].split("__")[0] if any(buff) else 'name'
     if search_set is None:
         # raise serializers.ValidationError(f"Object {search_set['name']} does note exist")
-        raise serializers.ValidationError(f"Object {name} does not exist.")
+        raise serializers.ValidationError(f"Object does not exist.")
     data = obj.filter(**search_set).first()
     if not data:
         # raise serializers.ValidationError(f"Object {search_set['name']} does not exist.")
-        raise serializers.ValidationError(f"Object {name} does not exist.")
+        raise serializers.ValidationError(f"Object does not exist.")
     return data
 
 
@@ -529,12 +537,14 @@ class PaymentSerializer(ModelSerializer):
     payment_type = PaymentMethodSerializer()
     course = DepartmentNameSerializer()
     client_card = StudentIdSerializer()
+    group = GroupNameSerializerForPayment(required=False)
 
     class Meta:
         model = Payment
         fields = [
             'id',
             'client_card',
+            'group',
             'course',
             'payment_type',
             'last_payment_date',
@@ -544,22 +554,26 @@ class PaymentSerializer(ModelSerializer):
 
     def create(self, validated_data):
         payment_type_data = validated_data.pop('payment_type')
+        group = None
+        if "group" in validated_data:
+            group_name = validated_data.pop('group')['name']
+            group = object_not_found_validate(Group.objects, {"name": group_name})
         client_card_dict = validated_data.pop('client_card')
         client_card_id = client_card_dict['id']
-        client_card_group = client_card_dict['group']
+        #client_card_group = client_card_dict['group']
         # client_card_firstname = client_card_dict['id']
         # client_card_lastname = client_card_dict['last_name']
         course_data = validated_data.pop('course')
 
         pay = object_not_found_validate(PaymentMethod.objects, payment_type_data)
         # client_card = object_not_found_validate(Student.objects, {"first_name": client_card_firstname,
-        client_card = object_not_found_validate(Student.objects,
-                                                {'id': client_card_id, 'group__name': client_card_group['name']})
+        # client_card = object_not_found_validate(Student.objects,
+        #                                         {'id': client_card_id, 'group__name': client_card_group['name']})
+        client_card = object_not_found_validate(Student.objects, {'id': client_card_id})
         course = object_not_found_validate(DepartmentOfCourse.objects, course_data)
         user = self.context['request'].user
-        payment = Payment(payment_type=pay, client_card=client_card, course=course, user=user, **validated_data)
+        payment = Payment(payment_type=pay, client_card=client_card, course=course, user=user, group=group, **validated_data)
         payment.save()
-
         # Вызов этого самого метода для проверки всех платежей студента
         return self.check_payment(payment)
 
@@ -582,7 +596,7 @@ class PaymentSerializer(ModelSerializer):
                 if total_student_amount_for_course >= course_price:
                     client_card.payment_status = 4
                 payment.save()
-                return payment
+            return payment
 
         if total_student_amount_for_course < course_price_per_month * client_card.group.month_from_start:
             client_card.payment_status = 3  # Должен оплатить
