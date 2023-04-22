@@ -41,7 +41,7 @@ from cmsapp.api.serializers import (
 )
 from rest_framework.parsers import MultiPartParser
 
-from .utils import find_user_by_name
+from .utils import find_user_by_name, find_group_by_name
 from analytic.models import DeletionReason
 
 
@@ -221,6 +221,19 @@ class PaymentViewSet(mixins.CreateModelMixin,
         return self.serializer_class.get(self.action) or PaymentSerializer
 
 
+class PaymentSearchGroup(APIView):
+
+    def get(self, request, *args, **kwargs):
+        groups = find_group_by_name(kwargs['names'])
+        if not groups:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = GroupDetailSerializer(groups, many=True)
+        result = list()
+        for elem in serializer.data:
+            result.append(elem)
+        return Response(result, status=status.HTTP_200_OK)
+
+
 class PaymentSearchGetAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -233,7 +246,7 @@ class PaymentSearchGetAPIView(APIView):
             fio = {'id': elem['id'],
                    'full_name': elem['first_name'] + ' ' + elem['last_name']}
             result.append(fio)
-        return Response(result, status=status.HTTP_201_CREATED)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class PaymentSearchPostAPIView(APIView):

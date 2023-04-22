@@ -17,7 +17,7 @@ from .views import (
     PaymentSearchPostAPIView,
     RequestStatusViewSet,
     StudentViewSet,
-    StudentOnStudyViewSet,
+    StudentOnStudyViewSet, PaymentSearchGroup,
 )
 
 app_name = "cmsapp"
@@ -43,4 +43,5 @@ cmsapp_router.register(r"sources", AdvertisingSourceViewSet, basename="sources")
 urlpatterns = [
     path(r'payment-search/', PaymentSearchPostAPIView.as_view(), name='payment-search-get'),
     path(r'payment-search/<str:names>/', PaymentSearchGetAPIView.as_view(), name='payment-search-post'),
+    path(r'payment-search-group/<str:names>/', PaymentSearchGroup.as_view(), name='payment-search-group')
 ]

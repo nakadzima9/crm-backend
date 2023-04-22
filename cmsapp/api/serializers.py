@@ -347,7 +347,6 @@ class StudentSerializer(ModelSerializer):
     department = DepartmentNameSerializer()
     payment_method = PaymentMethodSerializer()
     came_from = AdvertisingSourceSerializer()
-    group = serializers.CharField(source="group.name", required=False)
     status = RequestStatusSerializer(required=False)
     request_date = serializers.DateTimeField(required=False, read_only=True)
     reason = serializers.ListField(child=serializers.IntegerField(), required=False)
@@ -363,7 +362,6 @@ class StudentSerializer(ModelSerializer):
             "laptop",
             "department",
             "came_from",
-            "group",
             "payment_method",
             "status",
             "reason",
@@ -379,14 +377,12 @@ class StudentSerializer(ModelSerializer):
         department_data = validated_data.pop("department")
         payment_method_data = validated_data.pop("payment_method")
         came_from_data = validated_data.pop("came_from")
-        group_data = validated_data.pop("group")["name"]
 
         dep = object_not_found_validate(DepartmentOfCourse.objects, department_data)
         pay = object_not_found_validate(PaymentMethod.objects, payment_method_data)
         source = object_not_found_validate(AdvertisingSource.objects, came_from_data)
-        group = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
 
-        student = Student(payment_method=pay, department=dep, came_from=source, group=group, **validated_data)
+        student = Student(payment_method=pay, department=dep, came_from=source, **validated_data)
         student.save()
         return student
 
@@ -395,17 +391,14 @@ class StudentSerializer(ModelSerializer):
         source = get_object_or_404(AdvertisingSource.objects.all(), name=validated_data.pop("came_from")["name"])
         payment_method = get_object_or_404(PaymentMethod.objects.all(),
                                            name=validated_data.pop("payment_method")["name"])
-        group_data = validated_data.pop("group")["name"]
 
         status = object_not_found_validate(RequestStatus.objects.all(), search_set=validated_data.pop("status"))
-        group = get_object_or_404(Group.objects.filter(is_archive=False), name=group_data)
 
         instance = Student.objects.get(phone=instance.phone, on_request=True).update \
                 (
                 commit=True,
                 department=dep,
                 came_from=source,
-                group=group,
                 payment_method=payment_method,
                 status=status,
                 **validated_data
