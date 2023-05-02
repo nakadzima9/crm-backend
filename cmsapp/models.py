@@ -178,6 +178,7 @@ class Student(ModelWithUpdate):
 class Payment(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Сумма", default=0)
     client_card = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, verbose_name="Кто оплатил")
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Группа")
     course = models.ForeignKey(DepartmentOfCourse, null=True, on_delete=models.SET_NULL, verbose_name="Курс")
     last_payment_date = models.DateField(auto_now_add=True, null=True, verbose_name="Дата оплаты")
     payment_time = models.TimeField(auto_now_add=True, null=True, verbose_name="Время оплаты")
