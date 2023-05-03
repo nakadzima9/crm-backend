@@ -125,6 +125,11 @@ def get_default_department():
     return DepartmentOfCourse.objects.all()
 
 
+class IntegerArrayField(models.IntegerField):
+    def db_type(self, connection):
+        return 'integer[]'
+
+
 class Student(ModelWithUpdate):
     STATUS_CHOICES = (
         (1, "Оплатил"),
@@ -156,7 +161,7 @@ class Student(ModelWithUpdate):
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True, verbose_name="Метод оплаты")
     status = models.ForeignKey(RequestStatus, default=get_default_status, on_delete=models.SET_NULL,
                                blank=True, null=True, verbose_name="Статус заявки")
-    reason = ArrayField(models.IntegerField(), null=True, verbose_name="Причина неуспешной сделки")
+    reason = ArrayField(models.IntegerField(), null=True, default=list, verbose_name="Причина неуспешной сделки")
     on_request = models.BooleanField(default=True, verbose_name="На этапе заявки")
     request_date = models.DateTimeField(default=timezone.now, blank=True, null=True,
                                         verbose_name="Дата создания заявки")

@@ -211,13 +211,13 @@ class StudentNameSerializer(ModelSerializer):
 
 class StudentIdSerializer(ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Student.objects.values_list('id', flat=True))
-    #group = serializers.CharField(source="group.name", required=False)
+    # group = serializers.CharField(source="group.name", required=False)
 
     class Meta:
         model = Student
         fields = [
             'id',
-     #       'group',
+            # 'group',
         ]
 
 
