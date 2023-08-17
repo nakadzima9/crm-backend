@@ -22,5 +22,3 @@ poetry install
 ```
 python3 manage.py runserver
 ```
-
-Bermet is cool girl! >_>
